@@ -1,0 +1,18 @@
+{
+  "name": "tales-of-reval",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/site-dev.mjs",
+    "start": "node scripts/site-dev.mjs",
+    "dev:static": "node scripts/dev-server.mjs",
+    "start:static": "node scripts/dev-server.mjs",
+    "build": "node scripts/site-build.mjs",
+    "build:static": "vite build",
+    "preview:static": "vite preview --host 0.0.0.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.0"
+  }
+}
