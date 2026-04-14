@@ -1,15 +1,40 @@
 const asyncHandler = require('express-async-handler');
 
 const nodemailer = require('nodemailer');
-const transporter = nodemailer.createTransport({
-    host: 'localhost',
-    port: 25,
-    secure: false,        // no SSL/TLS
-    auth: null,           // no authentication
-    tls: {
-      rejectUnauthorized: false // ignore cert verification
+
+const parseBoolean = (value, fallback = false) => {
+    if (value === undefined) {
+        return fallback;
     }
-  });
+
+    return String(value).toLowerCase() === 'true';
+};
+
+const SMTP_HOST = process.env.SMTP_HOST || 'localhost';
+const SMTP_PORT = Number(process.env.SMTP_PORT || 25);
+const SMTP_SECURE = parseBoolean(process.env.SMTP_SECURE, false);
+const SMTP_REJECT_UNAUTHORIZED = parseBoolean(process.env.SMTP_REJECT_UNAUTHORIZED, false);
+const SMTP_USER = process.env.SMTP_USER || '';
+const SMTP_PASS = process.env.SMTP_PASS || '';
+
+const MAIL_FROM = process.env.MAIL_FROM || 'info@talesofreval.ee';
+const MAIL_TO = process.env.MAIL_TO || 'info@talesofreval.ee';
+const MAIL_SIGNATURE_NAME = process.env.MAIL_SIGNATURE_NAME || 'Tales of Reval';
+const MAIL_SIGNATURE_PHONE = process.env.MAIL_SIGNATURE_PHONE || '+372 5560 4421';
+const MAIL_WEBSITE = process.env.MAIL_WEBSITE || 'https://www.talesofreval.ee';
+
+const transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_SECURE,
+    auth: SMTP_USER && SMTP_PASS ? {
+        user: SMTP_USER,
+        pass: SMTP_PASS,
+    } : undefined,
+    tls: {
+        rejectUnauthorized: SMTP_REJECT_UNAUTHORIZED,
+    },
+});
 
 const sendNodeEmail = async (msg) => {
   try {
@@ -21,6 +46,13 @@ const sendNodeEmail = async (msg) => {
     return 0;
   }
 };
+
+const signatureHtml = () => `
+    ${MAIL_SIGNATURE_NAME}<br />
+    <a href="${MAIL_WEBSITE}">${MAIL_WEBSITE}</a><br />
+    <a href="mailto:${MAIL_TO}">${MAIL_TO}</a><br />
+    ${MAIL_SIGNATURE_PHONE}
+`;
 
 const formatBookingDate = (dateString, time = '') => {
   const parsed = new Date(dateString);
@@ -42,14 +74,11 @@ const FREE_TOUR_CONFIRMATION_TEMPLATE = ({ date, time, people, name }) => `
     </p>
     <p>
       If anything changes, please contact us at
-      <a href="mailto:info@talesofreval.ee">info@talesofreval.ee</a>.
+      <a href="mailto:${MAIL_TO}">${MAIL_TO}</a>.
     </p>
     <p>With warm regards</p>
     <p>
-      Tales of Reval<br />
-      <a href="https://www.talesofreval.ee">www.talesofreval.ee</a><br />
-      <a href="mailto:info@talesofreval.ee">info@talesofreval.ee</a><br />
-      +372 5560 4421
+      ${signatureHtml()}
     </p>
   </div>
 `;
@@ -57,8 +86,8 @@ const FREE_TOUR_CONFIRMATION_TEMPLATE = ({ date, time, people, name }) => `
 
 const sendBookingTor = async (mailData) => {
     const msg = {
-        to: "info@talesofreval.ee",
-        from: 'info@talesofreval.ee',
+        to: MAIL_TO,
+        from: MAIL_FROM,
         subject: "Tor Booking",
         text: `Name: ${mailData.name}\nEmail: ${mailData.email}\nMessage: ${mailData.message}`,
         html: `
@@ -87,7 +116,7 @@ const sendBookingTor = async (mailData) => {
 const sendBookingClient = async (mailData) => {
     const msg = {
         to: mailData.email,
-        from: 'info@talesofreval.ee',
+        from: MAIL_FROM,
         subject: "Copy of Booking Email",
         text: `Name: ${mailData.name}\nEmail: ${mailData.email}\nMessage: ${mailData.message}`,
         html: `
@@ -102,10 +131,7 @@ const sendBookingClient = async (mailData) => {
                         Service type: ${mailData.eventType}
                     </p>
                     <p>With warm regards</p>
-                    <p>Cedric Stimmlich <br>
-                    <a href="www.talesofreval.ee">www.talesofreval.ee</a> <br>
-                    <a href="mailto:info@talesofreval.ee">info@talesofreval.ee</a> <br>
-                    +372 5560 4421</p>
+                    <p>${signatureHtml()}</p>
                 </div>
             </div>
         `
@@ -132,8 +158,8 @@ const sendBookingEmail = asyncHandler(async (req, res) => {
 
 const sendContactTor = async (mailData) => {
     const msg = {
-        to: "info@talesofreval.ee",
-        from: 'info@talesofreval.ee', // Change to your verified sender
+        to: MAIL_TO,
+        from: MAIL_FROM,
         subject: "Contact Us",
         text: `Name: ${mailData.name}\nEmail: ${mailData.email}\nMessage: ${mailData.message}`,
         html: `<p style="font-weight:bold;">Name: ${mailData.name}</p><p style="font-weight:bold;">Email: ${mailData.email}</p><p style="font-size:18px;">Message: ${mailData.message}</p>`,
@@ -147,10 +173,10 @@ const sendContactTor = async (mailData) => {
 const sendContactClient = async (mailData) => {
     const msg = {
         to: mailData.email,
-        from: 'info@talesofreval.ee',
+        from: MAIL_FROM,
         subject: "Copy of Contact Us Email",
         text: `Name: ${mailData.name}\nEmail: ${mailData.email}\nMessage: ${mailData.message}`,
-        html: `<p style="font-size: 8px;">This message includes a copy of the email sent to info@talesofreval.ee regarding your most recent contact us message.</p><p style="font-weight:bold;">Name: ${mailData.name}</p><p style="font-weight:bold;">Email: ${mailData.email}</p><p style="font-size:18px;">Message: ${mailData.message}</p>`
+        html: `<p style="font-size: 8px;">This message includes a copy of the email sent to ${MAIL_TO} regarding your most recent contact us message.</p><p style="font-weight:bold;">Name: ${mailData.name}</p><p style="font-weight:bold;">Email: ${mailData.email}</p><p style="font-size:18px;">Message: ${mailData.message}</p>`
     };
     
     const info = await sendNodeEmail(msg);
@@ -187,8 +213,8 @@ const sendFreeTourEmail = asyncHandler(async (req, res) => {
 
 const sendFreeTourTor = async (mailData) => {
     const msg = {
-        to: "info@talesofreval.ee", 
-        from: 'info@talesofreval.ee',
+        to: MAIL_TO, 
+        from: MAIL_FROM,
         subject: "Free Tour Booking",
         html: `
             <div style="width: 500px; min-height: 100px; font-family: Arial, sans-serif; color:black !important;">
@@ -217,7 +243,7 @@ const sendFreeTourTor = async (mailData) => {
 const sendFreeTourClient = async (mailData) => {
     const msg = {
         to: mailData.email,
-        from: 'info@talesofreval.ee',
+        from: MAIL_FROM,
         subject: "Free Tour Booking Confirmation",
         html: FREE_TOUR_CONFIRMATION_TEMPLATE({
             date: mailData.dateObject?.date || mailData.date,

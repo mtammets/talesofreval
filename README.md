@@ -85,6 +85,13 @@ E-mailide saatmine:
 - see on mõeldud Zone serveri kohaliku mail relay jaoks
 - lokaalses arvutis ei pruugi mail tegelikult välja minna, kui kohalik SMTP puudub
 
+Lokaalne päris e-maili test:
+- backend toetab nüüd ka tavalist SMTP seadistust `.env` kaudu
+- kui määrad `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, siis saad testida oma päris e-mailidega ka lokaalselt
+- kui `SMTP_HOST` puudub, jääb vaikimisi Zone-stiilis `localhost:25` režiim
+- `MAIL_TO` määrab, kuhu sinu saidi vormiteavitused lähevad
+- `MAIL_FROM` määrab, millise saatja aadressiga kiri välja läheb
+
 ## Homme edasi
 
 Järgmine loogiline samm:
