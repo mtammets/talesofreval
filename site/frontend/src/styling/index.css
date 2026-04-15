@@ -2282,13 +2282,23 @@ p.line-height-spaced{
   color: var(--cream) !important;
 }
 
+.year-info-content > div p{
+  margin: 0 0 18px;
+  line-height: 1.45;
+}
+
+.year-info-content > div p:last-child{
+  margin-bottom: 0;
+}
+
 .year-info-content a{
-  text-decoration: none;
-  color: var(--salmon) !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--cream) !important;
 }
 
 .year-info-content a:hover{
-  color: var(--salmon) !important;
+  color: var(--cream) !important;
   cursor: pointer;
 }
 
@@ -3937,8 +3947,17 @@ button.year-event-switch.disabled{
 }
 
 .home-page .our-team-grid{
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0;
+}
+
+.home-page .contacts-team-grid{
+  align-items: stretch;
+}
+
+.home-page .contacts-team{
+  aspect-ratio: 1 / 1;
+  height: auto;
 }
 
 .team-home{
@@ -4523,9 +4542,23 @@ button.year-event-switch.disabled{
   gap: 12px;
 }
 
+.story-admin-actions--confirm{
+  justify-content: flex-end;
+}
+
 .story-admin-actions button:nth-child(n + 2),
 .story-admin-topbar-actions button:last-child{
   background: #ece6dc;
+}
+
+.story-admin-actions__secondary{
+  background: #ece6dc !important;
+  color: #202533;
+}
+
+.story-admin-actions__danger{
+  background: var(--salmon) !important;
+  color: #202533;
 }
 
 .story-admin-help{
@@ -4775,6 +4808,10 @@ button.year-event-switch.disabled{
   color: #202533;
   padding: 28px;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+}
+
+.story-editor-sheet--compact{
+  width: min(520px, 100%);
 }
 
 .story-editor-header{

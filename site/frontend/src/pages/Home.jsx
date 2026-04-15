@@ -282,6 +282,7 @@ function Home({
         />
         <OurTeam
           texts={resolvedMiscTexts}
+          limit={siteSettings.homeTeam.members?.length || 4}
           heading={siteSettings.homeTeam.heading}
           items={siteSettings.homeTeam.members}
           language={language}

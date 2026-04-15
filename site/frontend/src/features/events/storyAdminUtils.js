@@ -1,14 +1,67 @@
 export const encodeBasicToken = (username, password) =>
   window.btoa(`${username}:${password}`);
 
+const decodeHtml = (text = '') =>
+  text
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+
+const stripTags = (text = '') => decodeHtml(text.replace(/<[^>]+>/g, ''));
+
+const sanitizeLinkUrl = (url = '') => {
+  const trimmed = url.trim();
+
+  if (!trimmed) {
+    return '';
+  }
+
+  return /^(https?:\/\/|mailto:|tel:)/i.test(trimmed) ? trimmed : '';
+};
+
+const renderInlineText = (text = '') => {
+  const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let cursor = 0;
+  let html = '';
+  let match;
+
+  while ((match = linkPattern.exec(text)) !== null) {
+    html += escapeHtml(text.slice(cursor, match.index));
+
+    const label = match[1].trim();
+    const href = sanitizeLinkUrl(match[2]);
+
+    if (label && href) {
+      html += `<a href="${escapeHtml(href)}" target="_blank" rel="noreferrer noopener">${escapeHtml(label)}</a>`;
+    } else {
+      html += escapeHtml(match[0]);
+    }
+
+    cursor = match.index + match[0].length;
+  }
+
+  html += escapeHtml(text.slice(cursor));
+
+  return html.replace(/\n/g, '<br />');
+};
+
 export const htmlToEditorText = (html = '') =>
-  html
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/p>\s*<p>/gi, '\n\n')
-    .replace(/^<p>/i, '')
-    .replace(/<\/p>$/i, '')
-    .replace(/<[^>]+>/g, '')
-    .trim();
+  decodeHtml(
+    html
+      .replace(
+        /<a\b[^>]*href=(["'])(.*?)\1[^>]*>(.*?)<\/a>/gi,
+        (_, __, href, label) => `[${stripTags(label).trim()}](${decodeHtml(href).trim()})`
+      )
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>\s*<p>/gi, '\n\n')
+      .replace(/^<p>/i, '')
+      .replace(/<\/p>$/i, '')
+      .replace(/<[^>]+>/g, '')
+      .trim()
+  );
 
 const escapeHtml = (text) =>
   text
@@ -27,7 +80,7 @@ export const editorTextToHtml = (text = '') => {
 
   return trimmed
     .split(/\n{2,}/)
-    .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br />')}</p>`)
+    .map((paragraph) => `<p>${renderInlineText(paragraph)}</p>`)
     .join('');
 };
 

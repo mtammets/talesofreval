@@ -1,5 +1,23 @@
 [
   {
+    "_id": "4908dedc-b190-4553-8c35-343e0fe7e4b6",
+    "year": 2018,
+    "order": 1,
+    "mediaType": 0,
+    "image": {
+      "src": "/uploads/story/1776275833632-0d2f1ba1-f366-40ec-b75c-5668b08e41f7.png",
+      "name": "Screenshot 2026-04-15 at 20.56.24.png",
+      "width": 1200,
+      "height": 760
+    },
+    "images": [],
+    "video": "",
+    "title": "April",
+    "title_estonian": "Aprill",
+    "description": "<p>The very first Tales of Reval walking tour. To immortalize this moment, the following poem can be found on our Facebook page:<br />Hear all ye travelers standing by Willhelm Weltwanderer am I! To the daily Merchants Walk, we’ll go! where the ancient tales of Reval I shall show. Grand stories and legends of old about our riches shall be told. So come and spare an hour accompanying me grand history, legends, and stories you shall see!</p>",
+    "description_estonian": "<p>The very first Tales of Reval walking tour. To immortalize this moment, the following poem can be found on our Facebook page:<br />Hear all ye travelers standing by Willhelm Weltwanderer am I! To the daily Merchants Walk, we’ll go! where the ancient tales of Reval I shall show. Grand stories and legends of old about our riches shall be told. So come and spare an hour accompanying me grand history, legends, and stories you shall see!</p>"
+  },
+  {
     "_id": "fallback-event-2019-1",
     "year": 2019,
     "order": 1,
@@ -56,7 +74,7 @@
   {
     "_id": "81f6ddb2-072f-4e1a-bf2a-10a53a853cb9",
     "year": 2020,
-    "order": 2,
+    "order": 1,
     "mediaType": 0,
     "image": {
       "src": "/uploads/story/1776230668296-0b2c72c9-d077-4282-b20d-9961d9289357.png",
@@ -68,7 +86,38 @@
     "video": "",
     "title": "January",
     "title_estonian": "Jaanuar",
-    "description": "<p>Opened with a huge surprise and very wide smiles on all of our faces, as our lovely guests on TripAdvisor had voted Tales of Reval to be the #2 thing to do in Tallinn. Considering that the first place was dedicated to the entirety of the Old Town, this was an exceptional honor. The high praise also came with our very first awards:</p><p>The Traveller’s choice of 2020 title on TripAdvisor, and the Travel and Hospitality Award of 2020 in the category of Best tour in Estonia.</p><p>New authentic costumes on our backs, rewards rolling in, and Tallinn preparing for the biggest tourism season the town had ever seen - needless to say we were hyped and ready.   Had we only known…</p>",
+    "description": "<p>Opened with a huge surprise and very wide smiles on all of our faces, as our lovely guests on TripAdvisor had voted Tales of Reval to be the #2 thing to do in Tallinn. </p><p>Considering that the first place was dedicated to the entirety of the Old Town, this was an exceptional honor. The high praise also came with our very first awards:</p><p>The Traveller’s choice of 2020 title on TripAdvisor, and the <a href=\"https://awards.travel/europe-2020/\" target=\"_blank\" rel=\"noreferrer noopener\">Travel and Hospitality Award 2020</a> of 2020 in the category of Best tour in Estonia. </p><p>New authentic costumes on our backs, rewards rolling in, and Tallinn preparing for the biggest tourism season the town had ever seen - needless to say we were hyped and ready.   Had we only known…</p>",
     "description_estonian": "<p>Avasime selle aja suure üllatuse ja väga laiade naeratustega, sest meie armsad külalised TripAdvisoris olid hääletanud Tales of Revali Tallinna tegevuste seas teisele kohale. Arvestades, et esikoht kuulus tervele vanalinnale, oli see meie jaoks erakordne au. Selle suure tunnustusega kaasnesid ka meie esimesed auhinnad:</p><p>TripAdvisori Traveller’s Choice 2020 tiitel ning Travel and Hospitality Award 2020 kategoorias Eesti parim tuur.</p><p>Seljas uued autentsed kostüümid, auhinnad saabumas ja Tallinn valmistumas suurimaks turismihooajaks, mida linn eales näinud oli — pole vist vaja öeldagi, et olime elevil ja valmis.</p><p>Kui me vaid oleks teadnud…</p><p>Kui soovid, võin teha sellest ka veidi loomulikuma ja voolavama turundusteksti eesti keeles.</p>"
+  },
+  {
+    "_id": "c4f9271c-8b1f-4b23-818c-c293109f5b42",
+    "year": 2021,
+    "order": 1,
+    "mediaType": 0,
+    "image": {
+      "src": "/uploads/story/1776275452627-89d04c81-e9b0-4eee-a98a-af4845f7a090.png",
+      "name": "Screenshot 2026-04-15 at 20.50.38.png",
+      "width": 1200,
+      "height": 760
+    },
+    "images": [],
+    "video": "",
+    "title": "January",
+    "title_estonian": "Jaanuar",
+    "description": "<p>brought us in contact with Fränz Wendler who was studying to be a director in Baltic Film and Media school (BFM) in Tallinn. He was working on a documentary project and needed someone to make a portrait-documentary out of. Kaupo agreed and thus was born a short film named “Costumised”. 25.01.2021 “Costumised”.</p>",
+    "description_estonian": "<p>viis meid kokku Fränz Wendleriga, kes õppis Tallinnas Balti filmi, meedia ja kunstide instituudis (BFM) režissööriks. Ta töötas dokumentaalfilmiprojekti kallal ja vajas kedagi, kellest teha portreedokumentaal. Kaupo nõustus ning nii sündis lühifilm pealkirjaga „Costumised“.<br />25.01.2021 – „Costumised“</p>"
+  },
+  {
+    "_id": "9841cb4a-5198-4a8e-8ebc-f85a7aca2667",
+    "year": 2021,
+    "order": 2,
+    "mediaType": 1,
+    "image": null,
+    "images": [],
+    "video": "",
+    "title": "February",
+    "title_estonian": "Veebruar",
+    "description": "<p>It was time of bringing all our efforts together. As Nathan Popa was hard at work editing the Kingdom of Thieves, we undertook the ambitious task of transforming a humble 1.5 cubic meter room in a Soviet era bomb shelter (the home to the best VR salon in town) into a cozy medieval lounge with a fireplace.</p>",
+    "description_estonian": "<p>Oli aeg koondada kõik meie pingutused ühte. Samal ajal kui Nathan Popa töötas suure hoolega Kingdom of Thievesi monteerimise kallal, võtsime ette ambitsioonika ülesande muuta tagasihoidlik 1,5 kuupmeetri suurune ruum nõukogudeaegses pommivarjendis — mis oli ühtlasi linna parima VR-salongi kodu — hubaseks keskaegseks puhkeruumiks kaminaga.</p>"
   }
 ]

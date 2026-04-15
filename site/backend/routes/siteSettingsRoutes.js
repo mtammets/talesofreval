@@ -163,6 +163,11 @@ router.put(
         heading,
         members: nextMembers,
       },
+      contactPage: {
+        ...settings.contactPage,
+        teamHeading: heading,
+        teamMembers: nextMembers,
+      },
     };
 
     const saved = await writeSiteSettings(nextSettings);
@@ -212,6 +217,11 @@ router.put(
 
     const nextSettings = {
       ...settings,
+      homeTeam: {
+        ...settings.homeTeam,
+        heading: teamHeading,
+        members: nextTeamMembers,
+      },
       contactPage: {
         ...settings.contactPage,
         image: fileMap.get('contactHeroImage')

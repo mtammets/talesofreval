@@ -54,36 +54,45 @@ const normalizeSiteSettings = (settings = {}) => ({
       ? settings.homeServices.items.map(normalizeServiceItem)
       : [],
   },
-  homeTeam: {
-    heading: localized(settings.homeTeam?.heading),
-    members: Array.isArray(settings.homeTeam?.members)
-      ? settings.homeTeam.members.map(normalizeTeamMember)
-      : [],
-  },
+  ...(() => {
+    const sharedTeamHeading = settings.contactPage?.teamHeading || settings.homeTeam?.heading;
+    const sharedTeamMembers = Array.isArray(settings.contactPage?.teamMembers) && settings.contactPage.teamMembers.length
+      ? settings.contactPage.teamMembers
+      : settings.homeTeam?.members;
+    const normalizedTeamHeading = localized(sharedTeamHeading);
+    const normalizedTeamMembers = Array.isArray(sharedTeamMembers)
+      ? sharedTeamMembers.map(normalizeTeamMember)
+      : [];
+
+    return {
+      homeTeam: {
+        heading: normalizedTeamHeading,
+        members: normalizedTeamMembers,
+      },
+      contactPage: {
+        imageKey: settings.contactPage?.imageKey || 'contactBg',
+        image: settings.contactPage?.image ? imageShape(settings.contactPage.image) : null,
+        teamHeading: normalizedTeamHeading,
+        teamMembers: normalizedTeamMembers,
+        formTitle: localized(settings.contactPage?.formTitle),
+        nameLabel: localized(settings.contactPage?.nameLabel),
+        emailLabel: localized(settings.contactPage?.emailLabel),
+        messageLabel: localized(settings.contactPage?.messageLabel),
+        submitLabel: localized(settings.contactPage?.submitLabel),
+        companyName: settings.contactPage?.companyName || '',
+        companyReg: settings.contactPage?.companyReg || '',
+        address: localized(settings.contactPage?.address),
+        bankLine1: settings.contactPage?.bankLine1 || '',
+        bankLine2: settings.contactPage?.bankLine2 || '',
+        email: settings.contactPage?.email || '',
+        phone: settings.contactPage?.phone || '',
+      },
+    };
+  })(),
   homeReview: {
     heading: localized(settings.homeReview?.heading),
     text: localized(settings.homeReview?.text),
     reviewer: localized(settings.homeReview?.reviewer),
-  },
-  contactPage: {
-    imageKey: settings.contactPage?.imageKey || 'contactBg',
-    image: settings.contactPage?.image ? imageShape(settings.contactPage.image) : null,
-    teamHeading: localized(settings.contactPage?.teamHeading),
-    teamMembers: Array.isArray(settings.contactPage?.teamMembers)
-      ? settings.contactPage.teamMembers.map(normalizeTeamMember)
-      : [],
-    formTitle: localized(settings.contactPage?.formTitle),
-    nameLabel: localized(settings.contactPage?.nameLabel),
-    emailLabel: localized(settings.contactPage?.emailLabel),
-    messageLabel: localized(settings.contactPage?.messageLabel),
-    submitLabel: localized(settings.contactPage?.submitLabel),
-    companyName: settings.contactPage?.companyName || '',
-    companyReg: settings.contactPage?.companyReg || '',
-    address: localized(settings.contactPage?.address),
-    bankLine1: settings.contactPage?.bankLine1 || '',
-    bankLine2: settings.contactPage?.bankLine2 || '',
-    email: settings.contactPage?.email || '',
-    phone: settings.contactPage?.phone || '',
   },
   footer: {
     freeTourHeading: localized(settings.footer?.freeTourHeading),

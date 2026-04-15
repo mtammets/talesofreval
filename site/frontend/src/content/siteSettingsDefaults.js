@@ -126,6 +126,14 @@ export const DEFAULT_SITE_SETTINGS = {
         imageKey: 'teamMember3',
         image: null,
       },
+      {
+        key: 'member-4',
+        name: 'Tales of Reval Host',
+        email: 'info@talesofreval.ee',
+        phone: '+372 5560 4421',
+        imageKey: 'contactMember4',
+        image: null,
+      },
     ],
   },
   homeReview: {

@@ -9,6 +9,7 @@ import StoryYear from '../components/StoryYear.jsx';
 import Spinner from '../components/Spinner';
 import StoryFeedEditorModal from '../components/StoryFeedEditorModal';
 import HomeServicesEditorModal from '../components/HomeServicesEditorModal';
+import ConfirmDialog from '../components/ConfirmDialog';
 import { getEvents, reset } from '../features/events/eventSlice';
 import { getMiscTexts } from '../features/texts/textSlice.js';
 import storyAdminService, {
@@ -52,6 +53,7 @@ function StoryPage({
   const [galleryFiles, setGalleryFiles] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState('');
   const [isSavingServices, setIsSavingServices] = useState(false);
   const [servicesHeading, setServicesHeading] = useState(cloneValue(siteSettings.homeServices.heading));
   const [serviceItems, setServiceItems] = useState(cloneValue(siteSettings.homeServices.items));
@@ -209,6 +211,22 @@ function StoryPage({
     setGalleryFiles([]);
   };
 
+  const openDeleteDialog = (eventId = editorForm._id) => {
+    if (!adminToken || !eventId) {
+      return;
+    }
+
+    setPendingDeleteId(eventId);
+  };
+
+  const closeDeleteDialog = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setPendingDeleteId('');
+  };
+
   const buildFormData = () => {
     const payload = new FormData();
     payload.append('year', String(editorForm.year));
@@ -278,10 +296,6 @@ function StoryPage({
       return;
     }
 
-    if (!window.confirm('Delete this story item?')) {
-      return;
-    }
-
     setIsDeleting(true);
 
     try {
@@ -289,6 +303,7 @@ function StoryPage({
       setAdminEvents(data);
       setDidLoadAdminEvents(true);
       setIsEditorOpen(false);
+      setPendingDeleteId('');
       setSingleImageFile(null);
       setGalleryFiles([]);
       toast.success('Story item deleted.');
@@ -377,7 +392,7 @@ function StoryPage({
               isEditable={Boolean(adminToken) && isEditMode}
               onEditEvent={openEditEditor}
               onAddPage={openCreateEditorForYear}
-              onDeleteEvent={deleteStoryEvent}
+              onDeleteEvent={openDeleteDialog}
               isMutating={isSaving || isDeleting}
             />
           ))
@@ -423,7 +438,7 @@ function StoryPage({
           galleryFiles={galleryFiles}
           setGalleryFiles={setGalleryFiles}
           onSave={saveStoryEvent}
-          onDelete={() => deleteStoryEvent(editorForm._id)}
+          onDelete={() => openDeleteDialog(editorForm._id)}
           onCancel={closeEditor}
           isSaving={isSaving}
           isDeleting={isDeleting}
@@ -432,6 +447,15 @@ function StoryPage({
           lockOrder={lockOrder}
         />
       ) : null}
+      <ConfirmDialog
+        open={Boolean(pendingDeleteId)}
+        title="Delete item"
+        message="Are you sure you want to delete this story item?"
+        confirmLabel="Delete"
+        isLoading={isDeleting}
+        onCancel={closeDeleteDialog}
+        onConfirm={() => deleteStoryEvent(pendingDeleteId)}
+      />
       {adminToken && isServicesEditorOpen ? (
         <HomeServicesEditorModal
           heading={{ value: servicesHeading, set: setServicesHeading }}

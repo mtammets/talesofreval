@@ -107,6 +107,7 @@ function StoryFeedEditorModal({
               <textarea
                 rows="7"
                 value={form.description}
+                placeholder="Empty line = new paragraph. Use [Link text](https://...) for links."
                 onChange={(event) => updateValue('description', event.target.value)}
               />
             </label>
@@ -115,6 +116,7 @@ function StoryFeedEditorModal({
               <textarea
                 rows="7"
                 value={form.description_estonian}
+                placeholder="Tuhirida = uus loik. Link: [Lingitekst](https://...)"
                 onChange={(event) =>
                   updateValue('description_estonian', event.target.value)
                 }

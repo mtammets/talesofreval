@@ -1,4 +1,5 @@
 import OurTeamCard from './style-components/OurTeamCard';
+import ContactsTeamCard from './style-components/ContactsTeamCard';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getStorytellers, reset } from '../features/storytellers/storytellerSlice';
@@ -52,19 +53,29 @@ function OurTeamList({ limit, showPaymentButton = false, items = null }) {
   const visibleStorytellers = limit ? roster.slice(0, limit) : roster;
 
   return (
-    <div className="our-team-grid">
-      {visibleStorytellers.map((storyteller) => (
-        <OurTeamCard
-          key={storyteller._id}
-          bgimage={storyteller.image?.src || storyteller.image}
-          title={storyteller.name}
-          email={storyteller.email || ""}
-          phone={storyteller.phone || ""}
-          links={storyteller.payment_links || []}
-          startPayment={startPayment}
-          showPaymentButton={showPaymentButton}
-        />
-      ))}
+    <div className={showPaymentButton ? "our-team-grid" : "our-team-grid contacts-team-grid"}>
+      {visibleStorytellers.map((storyteller) =>
+        showPaymentButton ? (
+          <OurTeamCard
+            key={storyteller._id}
+            bgimage={storyteller.image?.src || storyteller.image}
+            title={storyteller.name}
+            email={storyteller.email || ""}
+            phone={storyteller.phone || ""}
+            links={storyteller.payment_links || []}
+            startPayment={startPayment}
+            showPaymentButton={showPaymentButton}
+          />
+        ) : (
+          <ContactsTeamCard
+            key={storyteller._id}
+            bgimage={storyteller.image?.src || storyteller.image}
+            title={storyteller.name}
+            email={storyteller.email || ""}
+            phone={storyteller.phone || ""}
+          />
+        )
+      )}
 
       {paymentOpen && <PaymentCard name={name} links={links} closePaymentCard={() => setPaymentOpen(false)} />}
     </div>

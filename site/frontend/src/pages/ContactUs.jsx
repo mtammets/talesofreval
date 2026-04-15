@@ -67,8 +67,8 @@ function ContactUs({
   const [isSavingTeam, setIsSavingTeam] = useState(false);
   const [isSavingContact, setIsSavingContact] = useState(false);
   const [isSavingHero, setIsSavingHero] = useState(false);
-  const [contactTeamHeading, setContactTeamHeading] = useState(cloneValue(siteSettings.contactPage.teamHeading));
-  const [contactTeamMembers, setContactTeamMembers] = useState(cloneValue(siteSettings.contactPage.teamMembers));
+  const [contactTeamHeading, setContactTeamHeading] = useState(cloneValue(siteSettings.homeTeam.heading));
+  const [contactTeamMembers, setContactTeamMembers] = useState(cloneValue(siteSettings.homeTeam.members));
   const [contactTeamImageFiles, setContactTeamImageFiles] = useState({});
   const [contactForm, setContactForm] = useState(cloneValue(siteSettings.contactPage));
   const [contactHeroImageFile, setContactHeroImageFile] = useState(null);
@@ -89,8 +89,8 @@ function ContactUs({
   }, [dispatch]);
 
   useEffect(() => {
-    setContactTeamHeading(cloneValue(siteSettings.contactPage.teamHeading));
-    setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers));
+    setContactTeamHeading(cloneValue(siteSettings.homeTeam.heading));
+    setContactTeamMembers(cloneValue(siteSettings.homeTeam.members));
     setContactForm(cloneValue(siteSettings.contactPage));
   }, [siteSettings]);
 
@@ -162,7 +162,7 @@ function ContactUs({
       setSiteSettings(nextSettings);
       setContactTeamImageFiles({});
       setIsTeamEditorOpen(false);
-      toast.success('Contact team updated.');
+      toast.success('Team updated.');
     } catch (error) {
       handleAdminAuthError(error, 'Contact team update failed.');
     } finally {
@@ -250,8 +250,8 @@ function ContactUs({
       <div className="container contact-page-team">
         <ContactsTeam
           contactPage={true}
-          heading={siteSettings.contactPage.teamHeading}
-          items={siteSettings.contactPage.teamMembers}
+          heading={siteSettings.homeTeam.heading}
+          items={siteSettings.homeTeam.members}
           language={language}
           adminAction={
             adminToken && isEditMode ? (
@@ -346,12 +346,12 @@ function ContactUs({
           onCancel={() => {
             setIsTeamEditorOpen(false);
             setContactTeamImageFiles({});
-            setContactTeamHeading(cloneValue(siteSettings.contactPage.teamHeading));
-            setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers));
+            setContactTeamHeading(cloneValue(siteSettings.homeTeam.heading));
+            setContactTeamMembers(cloneValue(siteSettings.homeTeam.members));
           }}
           isSaving={isSavingTeam}
-          modalTitle="Edit contact team"
-          modalDescription="Update the visible team cards on the contact page."
+          modalTitle="Edit team"
+          modalDescription="Update the shared team cards used across the site."
         />
       ) : null}
 
