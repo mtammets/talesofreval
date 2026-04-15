@@ -96,6 +96,50 @@ const cleanMediaForType = (event, files, existing = {}) => {
   return next;
 };
 
+const reindexYearEvents = (events, candidate, excludedId = null) => {
+  const targetYear = Number(candidate.year);
+  const targetOrder = Math.max(1, Number(candidate.order) || 1);
+  const otherEvents = events.filter((event) => event._id !== excludedId && Number(event.year) !== targetYear);
+  const yearEvents = events
+    .filter((event) => event._id !== excludedId && Number(event.year) === targetYear)
+    .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+
+  const nextYearEvents = [];
+  let inserted = false;
+  let order = 1;
+
+  yearEvents.forEach((event) => {
+    if (!inserted && order === targetOrder) {
+      nextYearEvents.push({ ...candidate, order });
+      inserted = true;
+      order += 1;
+    }
+
+    nextYearEvents.push({ ...event, order });
+    order += 1;
+  });
+
+  if (!inserted) {
+    nextYearEvents.push({ ...candidate, order });
+  }
+
+  return [...otherEvents, ...nextYearEvents];
+};
+
+const reindexAllYears = (events) => {
+  const yearCounters = new Map();
+
+  return events
+    .slice()
+    .sort((a, b) => (a.year === b.year ? a.order - b.order : a.year - b.year))
+    .map((event) => {
+      const year = Number(event.year);
+      const nextOrder = (yearCounters.get(year) || 0) + 1;
+      yearCounters.set(year, nextOrder);
+      return { ...event, order: nextOrder };
+    });
+};
+
 router.get(
   '/',
   asyncHandler(async (req, res) => {
@@ -129,7 +173,7 @@ router.post(
       req.files
     );
 
-    const saved = await writeStoryEvents([...events, nextEvent]);
+    const saved = await writeStoryEvents(reindexYearEvents(events, nextEvent));
     res.status(201).json(saved);
   })
 );
@@ -150,9 +194,7 @@ router.put(
     const updated = cleanMediaForType(normalizePayload(req.body, existing), req.files, existing);
     updated._id = existing._id;
 
-    const saved = await writeStoryEvents(
-      events.map((event) => (event._id === existing._id ? updated : event))
-    );
+    const saved = await writeStoryEvents(reindexYearEvents(events, updated, existing._id));
 
     res.json(saved);
   })
@@ -170,7 +212,7 @@ router.delete(
       throw new Error('Story event not found.');
     }
 
-    const saved = await writeStoryEvents(filtered);
+    const saved = await writeStoryEvents(reindexAllYears(filtered));
     res.json(saved);
   })
 );

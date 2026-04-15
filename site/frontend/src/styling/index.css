@@ -4413,6 +4413,15 @@ button.year-event-switch.disabled{
   font-size: 15px;
 }
 
+.story-admin-form input:disabled,
+.story-admin-form textarea:disabled,
+.story-admin-form select:disabled{
+  background: #ece6dc;
+  color: rgba(32, 37, 51, 0.6);
+  border-color: rgba(32, 37, 51, 0.12);
+  cursor: not-allowed;
+}
+
 .story-admin-login-form button,
 .story-admin-actions button,
 .story-admin-topbar-actions button{
@@ -4636,8 +4645,6 @@ button.year-event-switch.disabled{
   border: 0;
   border-radius: 12px;
   padding: 10px 14px;
-  background: var(--cream);
-  color: var(--dark-blue);
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
@@ -4647,6 +4654,12 @@ button.year-event-switch.disabled{
 .admin-toolbar__button{
   background: rgba(255, 255, 255, 0.12);
   color: var(--cream);
+}
+
+.admin-toolbar__button--secondary,
+.admin-toolbar__link{
+  background: var(--cream);
+  color: var(--dark-blue);
 }
 
 .story-page-admin-toolbar{
@@ -4714,6 +4727,11 @@ button.year-event-switch.disabled{
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.story-year-admin-actions button.story-year-admin-actions__primary{
+  background: var(--salmon);
+  color: var(--dark-blue);
 }
 
 .story-empty-state{

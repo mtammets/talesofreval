@@ -3,8 +3,18 @@ import HeaderBar from "./HeaderBar";
 import logo from '../../img/logo.svg';
 import { useNavigate } from "react-router-dom";
 import baloon_icon from '../../img/baloon-icon.png';
+import { setStoredStoryAdminAuth } from '../../features/events/storyAdminService';
 
-function DesktopHeader({ virtual, ourServicesOpen, setOurServicesOpen, setShowBookNow, texts, misc_texts }) {
+function DesktopHeader({
+  virtual,
+  ourServicesOpen,
+  setOurServicesOpen,
+  setShowBookNow,
+  texts,
+  misc_texts,
+  adminToken,
+  setAdminToken,
+}) {
   const navigate = useNavigate();
   const [hideOnScroll, setHideOnScroll] = useState(false);
   const logoClickCount = useRef(0);
@@ -24,6 +34,13 @@ function DesktopHeader({ virtual, ourServicesOpen, setOurServicesOpen, setShowBo
 
     if (logoClickTimer.current) {
       window.clearTimeout(logoClickTimer.current);
+    }
+
+    if (adminToken && logoClickCount.current >= 2) {
+      logoClickCount.current = 0;
+      setStoredStoryAdminAuth('');
+      setAdminToken?.('');
+      return;
     }
 
     if (logoClickCount.current >= 3) {

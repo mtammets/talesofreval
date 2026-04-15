@@ -25,6 +25,7 @@ function ServicePage({
   setAdminToken,
   siteSettings = DEFAULT_SITE_SETTINGS,
   setSiteSettings,
+  isEditMode = false,
 }) {
   const dispatch = useDispatch();
   const { serviceType } = useParams();
@@ -220,7 +221,7 @@ function ServicePage({
           items={siteSettings.homeServices.items}
           language={language}
           adminAction={
-            adminToken ? (
+            adminToken && isEditMode ? (
               <button
                 type="button"
                 className="section-edit-button"

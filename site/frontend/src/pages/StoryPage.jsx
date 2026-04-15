@@ -45,6 +45,9 @@ function StoryPage({
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isServicesEditorOpen, setIsServicesEditorOpen] = useState(false);
   const [editorForm, setEditorForm] = useState(createEmptyStoryEventForm());
+  const [editorMode, setEditorMode] = useState('create');
+  const [lockYear, setLockYear] = useState(false);
+  const [lockOrder, setLockOrder] = useState(false);
   const [singleImageFile, setSingleImageFile] = useState(null);
   const [galleryFiles, setGalleryFiles] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -151,6 +154,29 @@ function StoryPage({
       : new Date().getFullYear();
 
     setEditorForm(createEmptyStoryEventForm(latestYear));
+    setEditorMode('create');
+    setLockYear(false);
+    setLockOrder(false);
+    setSingleImageFile(null);
+    setGalleryFiles([]);
+    setIsEditorOpen(true);
+  };
+
+  const openCreateEditorForYear = (currentEvent) => {
+    const yearEvents = displayEvents.filter(
+      (event) => Number(event.year) === Number(currentEvent?.year)
+    );
+    const currentIndex = yearEvents.findIndex((event) => event._id === currentEvent?._id);
+    const nextOrder = currentIndex >= 0 ? currentIndex + 2 : yearEvents.length + 1;
+
+    setEditorForm({
+      ...createEmptyStoryEventForm(Number(currentEvent?.year)),
+      year: Number(currentEvent?.year),
+      order: nextOrder,
+    });
+    setEditorMode('add-page');
+    setLockYear(true);
+    setLockOrder(true);
     setSingleImageFile(null);
     setGalleryFiles([]);
     setIsEditorOpen(true);
@@ -165,6 +191,9 @@ function StoryPage({
     }
 
     setEditorForm(mapStoryEventToForm(rawEvent));
+    setEditorMode('edit');
+    setLockYear(false);
+    setLockOrder(false);
     setSingleImageFile(null);
     setGalleryFiles([]);
     setIsEditorOpen(true);
@@ -173,6 +202,9 @@ function StoryPage({
   const closeEditor = () => {
     setIsEditorOpen(false);
     setEditorForm(createEmptyStoryEventForm());
+    setEditorMode('create');
+    setLockYear(false);
+    setLockOrder(false);
     setSingleImageFile(null);
     setGalleryFiles([]);
   };
@@ -321,7 +353,7 @@ function StoryPage({
         <h1>{ourStoryText}</h1>
       </div>
 
-      {adminToken ? (
+      {adminToken && isEditMode ? (
         <div className="container">
           <div className="story-page-admin-toolbar story-page-admin-toolbar--compact">
             <div className="story-page-admin-actions">
@@ -344,6 +376,7 @@ function StoryPage({
               language={language}
               isEditable={Boolean(adminToken) && isEditMode}
               onEditEvent={openEditEditor}
+              onAddPage={openCreateEditorForYear}
               onDeleteEvent={deleteStoryEvent}
               isMutating={isSaving || isDeleting}
             />
@@ -352,7 +385,7 @@ function StoryPage({
           <div className="story-empty-state">
             <h3>No content items yet</h3>
             <p>Add the first item to start building the timeline on this page.</p>
-            {adminToken ? (
+            {adminToken && isEditMode ? (
               <button type="button" onClick={openCreateEditor}>
                 Add first item
               </button>
@@ -368,7 +401,7 @@ function StoryPage({
           items={siteSettings.homeServices.items}
           language={language}
           adminAction={
-            adminToken ? (
+            adminToken && isEditMode ? (
               <button
                 type="button"
                 className="section-edit-button"
@@ -394,6 +427,9 @@ function StoryPage({
           onCancel={closeEditor}
           isSaving={isSaving}
           isDeleting={isDeleting}
+          editorMode={editorMode}
+          lockYear={lockYear}
+          lockOrder={lockOrder}
         />
       ) : null}
       {adminToken && isServicesEditorOpen ? (

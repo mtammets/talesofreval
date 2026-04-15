@@ -6,8 +6,18 @@ import MobileDropdown from './MobileDropdown';
 import { useNavigate } from 'react-router-dom';
 import baloon_icon from '../../img/baloon-icon.png';
 import { useState, useEffect, useRef } from 'react';
+import { setStoredStoryAdminAuth } from '../../features/events/storyAdminService';
 
-function MobileHeader({ virtual, ourServicesOpen, setOurServicesOpen, setShowBookNow, texts, misc_texts }) {
+function MobileHeader({
+  virtual,
+  ourServicesOpen,
+  setOurServicesOpen,
+  setShowBookNow,
+  texts,
+  misc_texts,
+  adminToken,
+  setAdminToken,
+}) {
 
   const navigate = useNavigate();
   const [hideOnScroll, setHideOnScroll] = useState(false);
@@ -28,6 +38,13 @@ function MobileHeader({ virtual, ourServicesOpen, setOurServicesOpen, setShowBoo
 
     if (logoClickTimer.current) {
       window.clearTimeout(logoClickTimer.current);
+    }
+
+    if (adminToken && logoClickCount.current >= 2) {
+      logoClickCount.current = 0;
+      setStoredStoryAdminAuth('');
+      setAdminToken?.('');
+      return;
     }
 
     if (logoClickCount.current >= 3) {

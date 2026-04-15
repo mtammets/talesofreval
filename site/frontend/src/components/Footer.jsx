@@ -19,6 +19,7 @@ function Footer({
   setAdminToken,
   siteSettings,
   setSiteSettings,
+  isEditMode = false,
 }) {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -109,7 +110,7 @@ function Footer({
   return (
     <div className="footer section padding-80-top">
       <div className="container">
-        {adminToken && location.pathname === '/' ? (
+        {adminToken && isEditMode && location.pathname === '/' ? (
           <div className="footer-admin-row">
             <button type="button" className="section-edit-button" onClick={() => setIsFooterEditorOpen(true)}>
               Edit

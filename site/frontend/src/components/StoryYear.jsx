@@ -8,6 +8,7 @@ function StoryYear({
   language = 'en',
   isEditable = false,
   onEditEvent,
+  onAddPage,
   onDeleteEvent,
   isMutating = false,
 }) {
@@ -111,6 +112,14 @@ function StoryYear({
                   >
                     Edit
                   </button>
+                <button
+                  type="button"
+                  className="story-year-admin-actions__primary"
+                  onClick={() => onAddPage?.(currentEvent)}
+                  disabled={isMutating}
+                >
+                  Add Page
+                </button>
                   <button
                     type="button"
                     onClick={() => onDeleteEvent?.(currentEvent._id)}

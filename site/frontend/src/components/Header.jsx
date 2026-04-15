@@ -9,7 +9,7 @@ import {
   hasTextEntries,
 } from '../content/fallbackContent';
 
-function Header({ setShowBookNow }) {
+function Header({ setShowBookNow, adminToken, setAdminToken }) {
   const [smallScreen, setSmallScreen] = useState(window.innerWidth < 1100);
   const [ourServicesOpen, setOurServicesOpen] = useState(false);
   const dispatch = useDispatch();
@@ -60,6 +60,8 @@ function Header({ setShowBookNow }) {
           texts={resolvedHeaderTexts}
           misc_texts={resolvedMiscTexts}
           setShowBookNow={setShowBookNow}
+          adminToken={adminToken}
+          setAdminToken={setAdminToken}
           ourServicesOpen={ourServicesOpen}
           setOurServicesOpen={setOurServicesOpen}
         />
@@ -69,6 +71,8 @@ function Header({ setShowBookNow }) {
           texts={resolvedHeaderTexts}
           misc_texts={resolvedMiscTexts}
           setShowBookNow={setShowBookNow}
+          adminToken={adminToken}
+          setAdminToken={setAdminToken}
           ourServicesOpen={ourServicesOpen}
           setOurServicesOpen={setOurServicesOpen}
         />

@@ -52,6 +52,7 @@ function ContactUs({
   setAdminToken,
   siteSettings = DEFAULT_SITE_SETTINGS,
   setSiteSettings,
+  isEditMode = false,
 }) {
   const dispatch = useDispatch();
   const language = localStorage.getItem('language') || 'en';
@@ -236,7 +237,7 @@ function ContactUs({
         <meta name="keywords" content="Contact Tales of Reval, Book a Tour in Tallinn, Inquire About Medieval Tours, Tour Booking Contact, Tallinn Tour Inquiries, Medieval Tour Customer Service, Private Tours in Tallinn, Team Events Tallinn, Unique Tallinn Experiences" />
       </Helmet>
       <div className="story-landing" style={{ backgroundImage: `url(${contactHeroBackground})` }}>
-        {adminToken ? (
+        {adminToken && isEditMode ? (
           <div className="story-landing-admin-actions">
             <button type="button" onClick={() => setIsHeroEditorOpen(true)}>
               Edit
@@ -253,7 +254,7 @@ function ContactUs({
           items={siteSettings.contactPage.teamMembers}
           language={language}
           adminAction={
-            adminToken ? (
+            adminToken && isEditMode ? (
               <button type="button" className="section-edit-button" onClick={() => setIsTeamEditorOpen(true)}>
                 Edit
               </button>
@@ -265,7 +266,7 @@ function ContactUs({
       <div className="contact-us-section">
         <div className="container">
           <div className="contact-section-admin-row">
-            {adminToken ? (
+            {adminToken && isEditMode ? (
               <button type="button" className="section-edit-button" onClick={() => setIsContactEditorOpen(true)}>
                 Edit
               </button>

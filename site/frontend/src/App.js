@@ -32,7 +32,7 @@ function AppShell() {
   const [showBookNow, setShowBookNow] = useState(false);
   const [showFreeBookNow, setShowFreeBookNow] = useState(false);
   const [siteSettings, setSiteSettings] = useState(DEFAULT_SITE_SETTINGS);
-  const [storyControlsVisible, setStoryControlsVisible] = useState(Boolean(getStoredStoryAdminAuth()));
+  const [editControlsVisible, setEditControlsVisible] = useState(Boolean(getStoredStoryAdminAuth()));
   const location = useLocation();
   const isAdminLogin = location.pathname === '/login';
 
@@ -59,12 +59,16 @@ function AppShell() {
 
   return (
     <>
-      <Header setShowBookNow={setShowBookNow} />
+      <Header
+        setShowBookNow={setShowBookNow}
+        adminToken={adminToken}
+        setAdminToken={setAdminToken}
+      />
       <AdminToolbar
         adminToken={adminToken}
         setAdminToken={setAdminToken}
-        storyControlsVisible={storyControlsVisible}
-        setStoryControlsVisible={setStoryControlsVisible}
+        editControlsVisible={editControlsVisible}
+        setEditControlsVisible={setEditControlsVisible}
       />
         <Suspense fallback={null}>
           {!isAdminLogin && showBookNow ? (
@@ -87,8 +91,8 @@ function AppShell() {
                   setAdminToken={setAdminToken}
                   siteSettings={siteSettings}
                   setSiteSettings={setSiteSettings}
-                  isEditMode={storyControlsVisible}
-                  setIsEditMode={setStoryControlsVisible}
+                  isEditMode={editControlsVisible}
+                  setIsEditMode={setEditControlsVisible}
                 />
               }
             />
@@ -114,6 +118,7 @@ function AppShell() {
                   setAdminToken={setAdminToken}
                   siteSettings={siteSettings}
                   setSiteSettings={setSiteSettings}
+                  isEditMode={editControlsVisible}
                 />
               }
             />
@@ -127,6 +132,7 @@ function AppShell() {
                   setAdminToken={setAdminToken}
                   siteSettings={siteSettings}
                   setSiteSettings={setSiteSettings}
+                  isEditMode={editControlsVisible}
                 />
               }
             />
@@ -138,6 +144,7 @@ function AppShell() {
                   setAdminToken={setAdminToken}
                   siteSettings={siteSettings}
                   setSiteSettings={setSiteSettings}
+                  isEditMode={editControlsVisible}
                 />
               }
             />
@@ -151,6 +158,7 @@ function AppShell() {
         setAdminToken={setAdminToken}
         siteSettings={siteSettings}
         setSiteSettings={setSiteSettings}
+        isEditMode={editControlsVisible}
       />
     </>
   );

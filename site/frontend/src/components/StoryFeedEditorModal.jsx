@@ -10,6 +10,9 @@ function StoryFeedEditorModal({
   onCancel,
   isSaving,
   isDeleting,
+  editorMode = 'create',
+  lockYear = false,
+  lockOrder = false,
 }) {
   const updateValue = (key, value) => {
     setForm((current) => ({
@@ -18,15 +21,27 @@ function StoryFeedEditorModal({
     }));
   };
 
+  const title =
+    form._id ? 'Edit item' : editorMode === 'add-page' ? 'Add page' : 'Add item';
+  const helperText =
+    editorMode === 'add-page'
+      ? 'This new page will be added right after the selected item.'
+      : editorMode === 'create'
+        ? 'Create a new item for the story timeline.'
+        : '';
+  const submitLabel = form._id
+    ? 'Save changes'
+    : editorMode === 'add-page'
+      ? 'Create page'
+      : 'Create item';
+
   return (
     <div className="story-editor-modal">
       <div className="story-editor-sheet">
         <div className="story-editor-header">
           <div>
-            <h2>{form._id ? 'Edit item' : 'Add item'}</h2>
-            <p>
-              Use a new year if you want to create a brand new timeline section on this page.
-            </p>
+            <h2>{title}</h2>
+            {helperText ? <p>{helperText}</p> : null}
           </div>
           <button type="button" className="story-editor-close" onClick={onCancel}>
             Close
@@ -40,6 +55,7 @@ function StoryFeedEditorModal({
               <input
                 type="number"
                 value={form.year}
+                disabled={lockYear}
                 onChange={(event) => updateValue('year', event.target.value)}
               />
             </label>
@@ -48,6 +64,7 @@ function StoryFeedEditorModal({
               <input
                 type="number"
                 value={form.order}
+                disabled={lockOrder}
                 onChange={(event) => updateValue('order', event.target.value)}
               />
             </label>
@@ -177,7 +194,7 @@ function StoryFeedEditorModal({
 
           <div className="story-admin-actions">
             <button type="submit" disabled={isSaving}>
-              {isSaving ? 'Saving…' : form._id ? 'Save changes' : 'Create item'}
+              {isSaving ? 'Saving…' : submitLabel}
             </button>
             {form._id ? (
               <button type="button" onClick={onDelete} disabled={isDeleting}>

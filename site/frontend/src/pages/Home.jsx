@@ -35,7 +35,13 @@ function SectionEditButton({ onClick, label = 'Edit' }) {
   );
 }
 
-function Home({ adminToken, setAdminToken, siteSettings = DEFAULT_SITE_SETTINGS, setSiteSettings }) {
+function Home({
+  adminToken,
+  setAdminToken,
+  siteSettings = DEFAULT_SITE_SETTINGS,
+  setSiteSettings,
+  isEditMode = false,
+}) {
   const dispatch = useDispatch();
   const language = localStorage.getItem('language') || 'en';
   const { home_texts, isError, message } = useSelector((state) => state.texts);
@@ -257,7 +263,7 @@ function Home({ adminToken, setAdminToken, siteSettings = DEFAULT_SITE_SETTINGS,
       <HomeLanding
         texts={heroTexts}
         backgroundImage={heroPreviewUrl || siteSettings.homeHero.image?.src}
-        isEditable={Boolean(adminToken)}
+        isEditable={Boolean(adminToken) && isEditMode}
         onEditBackground={() => setIsHeroEditorOpen(true)}
       />
 
@@ -269,7 +275,7 @@ function Home({ adminToken, setAdminToken, siteSettings = DEFAULT_SITE_SETTINGS,
           items={siteSettings.homeServices.items}
           language={language}
           adminAction={
-            adminToken ? (
+            adminToken && isEditMode ? (
               <SectionEditButton onClick={() => setIsServicesEditorOpen(true)} />
             ) : null
           }
@@ -280,7 +286,7 @@ function Home({ adminToken, setAdminToken, siteSettings = DEFAULT_SITE_SETTINGS,
           items={siteSettings.homeTeam.members}
           language={language}
           adminAction={
-            adminToken ? (
+            adminToken && isEditMode ? (
               <SectionEditButton onClick={() => setIsTeamEditorOpen(true)} />
             ) : null
           }
@@ -291,7 +297,7 @@ function Home({ adminToken, setAdminToken, siteSettings = DEFAULT_SITE_SETTINGS,
           content={siteSettings.homeReview}
           language={language}
           adminAction={
-            adminToken ? (
+            adminToken && isEditMode ? (
               <SectionEditButton onClick={() => setIsReviewEditorOpen(true)} />
             ) : null
           }
