@@ -5,16 +5,44 @@ import BookNow from '../style-components/BookNow';
 import MobileDropdown from './MobileDropdown';
 import { useNavigate } from 'react-router-dom';
 import baloon_icon from '../../img/baloon-icon.png';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 function MobileHeader({ virtual, ourServicesOpen, setOurServicesOpen, setShowBookNow, texts, misc_texts }) {
 
   const navigate = useNavigate();
   const [hideOnScroll, setHideOnScroll] = useState(false);
+  const logoClickCount = useRef(0);
+  const logoClickTimer = useRef(null);
 
   const goHome = () => {
+    const isHomePage = window.location.pathname === '/';
+
     setOurServicesOpen(false);
-    navigate("/");
+
+    if (!isHomePage) {
+      navigate("/");
+      return;
+    }
+
+    logoClickCount.current += 1;
+
+    if (logoClickTimer.current) {
+      window.clearTimeout(logoClickTimer.current);
+    }
+
+    if (logoClickCount.current >= 3) {
+      logoClickCount.current = 0;
+      navigate('/login', {
+        state: {
+          nextPath: window.location.pathname,
+        },
+      });
+      return;
+    }
+
+    logoClickTimer.current = window.setTimeout(() => {
+      logoClickCount.current = 0;
+    }, 900);
   };
 
   const handleBookNow = () => {
@@ -43,6 +71,9 @@ function MobileHeader({ virtual, ourServicesOpen, setOurServicesOpen, setShowBoo
     // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      if (logoClickTimer.current) {
+        window.clearTimeout(logoClickTimer.current);
+      }
     };
   }, []);
 

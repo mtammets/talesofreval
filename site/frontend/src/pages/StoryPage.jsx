@@ -1,80 +1,431 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Helmet } from 'react-helmet';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+
 import storybg from '../img/storybg.webp';
 import OurServices from '../components/OurServices';
 import StoryYear from '../components/StoryYear.jsx';
-import { useSelector, useDispatch } from 'react-redux';
-import { getEvents, reset } from '../features/events/eventSlice';
 import Spinner from '../components/Spinner';
+import StoryFeedEditorModal from '../components/StoryFeedEditorModal';
+import HomeServicesEditorModal from '../components/HomeServicesEditorModal';
+import { getEvents, reset } from '../features/events/eventSlice';
 import { getMiscTexts } from '../features/texts/textSlice.js';
-import { Helmet } from 'react-helmet';
-import { toast } from 'react-toastify';
+import storyAdminService, {
+  setStoredStoryAdminAuth,
+} from '../features/events/storyAdminService';
+import siteSettingsService from '../features/siteSettings/siteSettingsService';
+import {
+  applyStoryEventLanguage,
+  createEmptyStoryEventForm,
+  editorTextToHtml,
+  mapStoryEventToForm,
+} from '../features/events/storyAdminUtils';
+import { DEFAULT_SITE_SETTINGS } from '../content/siteSettingsDefaults';
 
-function StoryPage() {
+const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 
-    const dispatch = useDispatch();
+function StoryPage({
+  adminToken,
+  setAdminToken,
+  siteSettings = DEFAULT_SITE_SETTINGS,
+  setSiteSettings,
+}) {
+  const dispatch = useDispatch();
+  const language = localStorage.getItem('language') || 'en';
 
-    const { events, isLoading, isError, message } = useSelector(
-        (state) => state.events
-    );
+  const { events, isLoading, isError, message } = useSelector((state) => state.events);
+  const { misc_texts } = useSelector((state) => state.texts);
 
-    const { misc_texts } = useSelector(
-        (state) => state.texts
-    );
+  const [adminEvents, setAdminEvents] = useState([]);
+  const [didLoadAdminEvents, setDidLoadAdminEvents] = useState(false);
+  const [isAdminLoading, setIsAdminLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(Boolean(adminToken));
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isServicesEditorOpen, setIsServicesEditorOpen] = useState(false);
+  const [editorForm, setEditorForm] = useState(createEmptyStoryEventForm());
+  const [singleImageFile, setSingleImageFile] = useState(null);
+  const [galleryFiles, setGalleryFiles] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSavingServices, setIsSavingServices] = useState(false);
+  const [servicesHeading, setServicesHeading] = useState(cloneValue(siteSettings.homeServices.heading));
+  const [serviceItems, setServiceItems] = useState(cloneValue(siteSettings.homeServices.items));
+  const [serviceImageFiles, setServiceImageFiles] = useState({});
 
-    useEffect(() => {
-        if (isError) {
-            toast.error(message);
-        }
-
-        return () => {
-            dispatch(reset());
-        };
-    }, [isError, message, dispatch]);
-
-    useEffect(() => {
-        dispatch(getMiscTexts());
-    }, [dispatch]);
-
-    useEffect(() => {
-        dispatch(getEvents());
-    }, [dispatch]);
-
-    if (isLoading || !events || events.length === 0) {
-        return <Spinner />
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
     }
 
-    const ourStoryText = misc_texts && misc_texts["our-story"] ? misc_texts["our-story"].text : null;
+    return () => {
+      dispatch(reset());
+    };
+  }, [isError, message, dispatch]);
 
-    return (
-        <div className='story-page'>
-            <Helmet>
-                <title>Our Story - Tales of Reval</title>
-                <meta name="description" content="Explore the journey of Tales of Reval, from its inception to the present day, through immersive storytelling experiences and medieval themed events." />
-                <meta name="keywords" content="Medieval Themed Events, Tallinn Team Building Events, Private Medieval Events, Unique Event Hosting Tallinn, Corporate Events in Tallinn, Team Building Activities Tallinn, Special Events Tallinn, Medieval Feasts and Events, Customized Medieval Events, Tallinn Event Management" />
-            </Helmet>
-            <div className="story-landing" style={{ background: `url(${storybg})` }}>
-                <h1>{ourStoryText}</h1>
+  useEffect(() => {
+    dispatch(getMiscTexts());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(getEvents());
+  }, [dispatch]);
+
+  useEffect(() => {
+    setIsEditMode(Boolean(adminToken));
+  }, [adminToken]);
+
+  useEffect(() => {
+    setServicesHeading(cloneValue(siteSettings.homeServices.heading));
+    setServiceItems(cloneValue(siteSettings.homeServices.items));
+  }, [siteSettings]);
+
+  const handleAdminAuthError = (error) => {
+    if (error?.response?.status === 401) {
+      setStoredStoryAdminAuth('');
+      setAdminToken('');
+      setAdminEvents([]);
+      setDidLoadAdminEvents(false);
+      setIsEditMode(false);
+      setIsEditorOpen(false);
+      toast.error('Admin session expired. Please log in again.');
+      return;
+    }
+
+    toast.error(error?.response?.data?.message || error?.message || 'Story feed request failed.');
+  };
+
+  const loadAdminEvents = async (token = adminToken) => {
+    if (!token) {
+      setAdminEvents([]);
+      setDidLoadAdminEvents(false);
+      return;
+    }
+
+    setIsAdminLoading(true);
+    try {
+      const data = await storyAdminService.listStoryEvents(token);
+      setAdminEvents(data);
+      setDidLoadAdminEvents(true);
+    } catch (error) {
+      handleAdminAuthError(error);
+    } finally {
+      setIsAdminLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (adminToken) {
+      loadAdminEvents(adminToken);
+    } else {
+      setAdminEvents([]);
+      setDidLoadAdminEvents(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminToken]);
+
+  const displayEvents = useMemo(() => {
+    if (adminToken && didLoadAdminEvents) {
+      return adminEvents.map((event) => applyStoryEventLanguage(event, language));
+    }
+
+    return events || [];
+  }, [adminEvents, adminToken, didLoadAdminEvents, events, language]);
+
+  const adminEventMap = useMemo(
+    () => new Map(adminEvents.map((event) => [event._id, event])),
+    [adminEvents]
+  );
+
+  const groupedYears = useMemo(
+    () =>
+      [...new Set(displayEvents.map((event) => event.year))]
+        .sort((a, b) => a - b)
+        .map((year) => ({
+          year,
+          events: displayEvents.filter((event) => event.year === year),
+        })),
+    [displayEvents]
+  );
+
+  const openCreateEditor = () => {
+    const latestYear = displayEvents.length
+      ? Math.max(...displayEvents.map((event) => event.year))
+      : new Date().getFullYear();
+
+    setEditorForm(createEmptyStoryEventForm(latestYear));
+    setSingleImageFile(null);
+    setGalleryFiles([]);
+    setIsEditorOpen(true);
+  };
+
+  const openEditEditor = (eventId) => {
+    const rawEvent = adminEventMap.get(eventId);
+
+    if (!rawEvent) {
+      toast.error('Story item not found.');
+      return;
+    }
+
+    setEditorForm(mapStoryEventToForm(rawEvent));
+    setSingleImageFile(null);
+    setGalleryFiles([]);
+    setIsEditorOpen(true);
+  };
+
+  const closeEditor = () => {
+    setIsEditorOpen(false);
+    setEditorForm(createEmptyStoryEventForm());
+    setSingleImageFile(null);
+    setGalleryFiles([]);
+  };
+
+  const buildFormData = () => {
+    const payload = new FormData();
+    payload.append('year', String(editorForm.year));
+    payload.append('order', String(editorForm.order));
+    payload.append('mediaType', String(editorForm.mediaType));
+    payload.append('title', editorForm.title);
+    payload.append('title_estonian', editorForm.title_estonian);
+    payload.append('description', editorTextToHtml(editorForm.description));
+    payload.append('description_estonian', editorTextToHtml(editorForm.description_estonian));
+    payload.append('video', editorForm.video);
+
+    if (singleImageFile) {
+      payload.append('imageFile', singleImageFile);
+    }
+
+    galleryFiles.forEach((file) => payload.append('galleryFiles', file));
+
+    return payload;
+  };
+
+  const saveStoryEvent = async (event) => {
+    event.preventDefault();
+
+    if (!adminToken) {
+      toast.error('Log in to edit the story feed.');
+      return;
+    }
+
+    if (!editorForm.title.trim() || !editorForm.title_estonian.trim()) {
+      toast.error('Both English and Estonian titles are required.');
+      return;
+    }
+
+    if (!editorForm.description.trim() || !editorForm.description_estonian.trim()) {
+      toast.error('Both English and Estonian descriptions are required.');
+      return;
+    }
+
+    if (Number(editorForm.mediaType) === 2 && !editorForm.video.trim()) {
+      toast.error('Video URL is required for video entries.');
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      const payload = buildFormData();
+      const data = editorForm._id
+        ? await storyAdminService.updateStoryEvent(adminToken, editorForm._id, payload)
+        : await storyAdminService.createStoryEvent(adminToken, payload);
+
+      setAdminEvents(data);
+      setDidLoadAdminEvents(true);
+      setIsEditorOpen(false);
+      setSingleImageFile(null);
+      setGalleryFiles([]);
+      toast.success(editorForm._id ? 'Story item updated.' : 'Story item created.');
+    } catch (error) {
+      handleAdminAuthError(error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const deleteStoryEvent = async (eventId = editorForm._id) => {
+    if (!adminToken || !eventId) {
+      return;
+    }
+
+    if (!window.confirm('Delete this story item?')) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      const data = await storyAdminService.deleteStoryEvent(adminToken, eventId);
+      setAdminEvents(data);
+      setDidLoadAdminEvents(true);
+      setIsEditorOpen(false);
+      setSingleImageFile(null);
+      setGalleryFiles([]);
+      toast.success('Story item deleted.');
+    } catch (error) {
+      handleAdminAuthError(error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const saveServices = async (event) => {
+    event.preventDefault();
+    setIsSavingServices(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('heading', JSON.stringify(servicesHeading));
+      formData.append('items', JSON.stringify(serviceItems));
+      Object.entries(serviceImageFiles).forEach(([index, file]) => {
+        if (file) {
+          formData.append(`serviceImage_${index}`, file);
+        }
+      });
+
+      const nextSettings = await siteSettingsService.updateServicesSiteSettings(adminToken, formData);
+      setSiteSettings(nextSettings);
+      setServiceImageFiles({});
+      setIsServicesEditorOpen(false);
+      toast.success('Services updated.');
+    } catch (error) {
+      handleAdminAuthError(error);
+    } finally {
+      setIsSavingServices(false);
+    }
+  };
+
+  const isPageLoading =
+    (isLoading && (!events || events.length === 0)) ||
+    (adminToken && isAdminLoading && !didLoadAdminEvents && (!events || events.length === 0));
+
+  if (isPageLoading) {
+    return <Spinner />;
+  }
+
+  const ourStoryText = misc_texts && misc_texts['our-story'] ? misc_texts['our-story'].text : null;
+
+  return (
+    <div className="story-page">
+      <Helmet>
+        <title>Our Story - Tales of Reval</title>
+        <meta
+          name="description"
+          content="Explore the journey of Tales of Reval, from its inception to the present day, through immersive storytelling experiences and medieval themed events."
+        />
+        <meta
+          name="keywords"
+          content="Medieval Themed Events, Tallinn Team Building Events, Private Medieval Events, Unique Event Hosting Tallinn, Corporate Events in Tallinn, Team Building Activities Tallinn, Special Events Tallinn, Medieval Feasts and Events, Customized Medieval Events, Tallinn Event Management"
+        />
+      </Helmet>
+
+      <div className="story-landing" style={{ background: `url(${storybg})` }}>
+        <h1>{ourStoryText}</h1>
+      </div>
+
+      {adminToken ? (
+        <div className="container">
+          <div className="story-page-admin-toolbar">
+            <div>
+              <h2>Edit mode</h2>
+              <p>
+                You are viewing the live page. This section can be edited here.
+              </p>
             </div>
-
-            <div className="container">
-                <div className="tagline padding-40-top padding-40-bottom">
-                    {/* <h4 className="cardo">{introText}</h4> */}
-                </div>
-
-                {events.filter(event => event.year === 2018).length > 0 && <StoryYear events={events.filter(event => event.year === 2018)} />}
-                {events.filter(event => event.year === 2019).length > 0 && <StoryYear events={events.filter(event => event.year === 2019)} />}
-                {events.filter(event => event.year === 2020).length > 0 && <StoryYear events={events.filter(event => event.year === 2020)} />}
-                {events.filter(event => event.year === 2021).length > 0 && <StoryYear events={events.filter(event => event.year === 2021)} />}
-                {events.filter(event => event.year === 2022).length > 0 && <StoryYear events={events.filter(event => event.year === 2022)} />}
-                {events.filter(event => event.year === 2023).length > 0 && <StoryYear events={events.filter(event => event.year === 2023)} />}
-                {events.filter(event => event.year === 2024).length > 0 && <StoryYear events={events.filter(event => event.year === 2024)} />}
+            <div className="story-page-admin-actions">
+              <button type="button" onClick={() => setIsEditMode((current) => !current)}>
+                {isEditMode ? 'Hide controls' : 'Show controls'}
+              </button>
+              <button type="button" onClick={openCreateEditor}>
+                Add item
+              </button>
             </div>
-
-            <div className="container">
-                <OurServices texts={misc_texts} />
-            </div>
+          </div>
         </div>
-    );
+      ) : null}
+
+      <div className="container">
+        <div className="tagline padding-40-top padding-40-bottom"></div>
+
+        {groupedYears.length ? (
+          groupedYears.map(({ year, events: yearEvents }) => (
+            <StoryYear
+              key={year}
+              events={yearEvents}
+              language={language}
+              isEditable={Boolean(adminToken) && isEditMode}
+              onEditEvent={openEditEditor}
+              onDeleteEvent={deleteStoryEvent}
+              isMutating={isSaving || isDeleting}
+            />
+          ))
+        ) : (
+          <div className="story-empty-state">
+            <h3>No content items yet</h3>
+            <p>Add the first item to start building the timeline on this page.</p>
+            {adminToken ? (
+              <button type="button" onClick={openCreateEditor}>
+                Add first item
+              </button>
+            ) : null}
+          </div>
+        )}
+      </div>
+
+      <div className="container">
+        <OurServices
+          texts={misc_texts}
+          heading={siteSettings.homeServices.heading}
+          items={siteSettings.homeServices.items}
+          language={language}
+          adminAction={
+            adminToken ? (
+              <button
+                type="button"
+                className="section-edit-button"
+                onClick={() => setIsServicesEditorOpen(true)}
+              >
+                Edit
+              </button>
+            ) : null
+          }
+        />
+      </div>
+
+      {adminToken && isEditorOpen ? (
+        <StoryFeedEditorModal
+          form={editorForm}
+          setForm={setEditorForm}
+          singleImageFile={singleImageFile}
+          setSingleImageFile={setSingleImageFile}
+          galleryFiles={galleryFiles}
+          setGalleryFiles={setGalleryFiles}
+          onSave={saveStoryEvent}
+          onDelete={() => deleteStoryEvent(editorForm._id)}
+          onCancel={closeEditor}
+          isSaving={isSaving}
+          isDeleting={isDeleting}
+        />
+      ) : null}
+      {adminToken && isServicesEditorOpen ? (
+        <HomeServicesEditorModal
+          heading={{ value: servicesHeading, set: setServicesHeading }}
+          items={{ value: serviceItems, set: setServiceItems }}
+          imageFiles={serviceImageFiles}
+          setImageFiles={setServiceImageFiles}
+          onSave={saveServices}
+          onCancel={() => {
+            setIsServicesEditorOpen(false);
+            setServiceImageFiles({});
+            setServicesHeading(cloneValue(siteSettings.homeServices.heading));
+            setServiceItems(cloneValue(siteSettings.homeServices.items));
+          }}
+          isSaving={isSavingServices}
+        />
+      ) : null}
+    </div>
+  );
 }
 
 export default StoryPage;

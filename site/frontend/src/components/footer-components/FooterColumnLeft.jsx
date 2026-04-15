@@ -1,10 +1,11 @@
 import React, { lazy, Suspense, useRef } from 'react';
 import ButtonPrimary from '../style-components/ButtonPrimary';
 import footerMap from '../../img/footer-map.svg';
+import { getLocalizedSiteText } from '../../content/siteSettingsDefaults';
 
 const GoogleMapReact = lazy(() => import('google-map-react'));
 
-function FooterColumnLeft({ texts }) {
+function FooterColumnLeft({ texts, content = null }) {
   const markerRef = useRef(null);
   const markerPosition = {
     lat: 59.436575996574305,
@@ -28,14 +29,30 @@ function FooterColumnLeft({ texts }) {
   };
 
   // Placeholder texts
-  const joinFreeTourText = texts && texts["join-our-free-tour:"] ? texts["join-our-free-tour:"].text : '';
-  const footerFirstTimeText = texts && texts["footer-first-time"] ? texts["footer-first-time"].text : '';
-  const footerSecondTimeText = texts && texts["footer-second-time"] ? texts["footer-second-time"].text : '';
-  const languageText = texts && texts["language-:-english"] ? texts["language-:-english"].text.split(':') : ["", ""];
-  const durationText = texts && texts["duration:-90-minutes"] ? texts["duration:-90-minutes"].text.split(':') : ["", ""];
-  const distanceText = texts && texts["distance:-1.2-km"] ? texts["distance:-1.2-km"].text.split(':') : ["", ""];
-  const startingPointText = texts && texts["starting-point:-niguliste-2"] ? texts["starting-point:-niguliste-2"].text.split(':') : ["", ""];
-  const openMapText = texts && texts["open-map"] ? texts["open-map"].text : '';
+  const joinFreeTourText = content?.freeTourHeading
+    ? getLocalizedSiteText(content.freeTourHeading, localStorage.getItem('language') || 'en')
+    : texts && texts["join-our-free-tour:"] ? texts["join-our-free-tour:"].text : '';
+  const footerFirstTimeText = content?.firstTime
+    ? getLocalizedSiteText(content.firstTime, localStorage.getItem('language') || 'en')
+    : texts && texts["footer-first-time"] ? texts["footer-first-time"].text : '';
+  const footerSecondTimeText = content?.secondTime
+    ? getLocalizedSiteText(content.secondTime, localStorage.getItem('language') || 'en')
+    : texts && texts["footer-second-time"] ? texts["footer-second-time"].text : '';
+  const languageText = content?.languageLine
+    ? getLocalizedSiteText(content.languageLine, localStorage.getItem('language') || 'en').split(':')
+    : texts && texts["language-:-english"] ? texts["language-:-english"].text.split(':') : ["", ""];
+  const durationText = content?.durationLine
+    ? getLocalizedSiteText(content.durationLine, localStorage.getItem('language') || 'en').split(':')
+    : texts && texts["duration:-90-minutes"] ? texts["duration:-90-minutes"].text.split(':') : ["", ""];
+  const distanceText = content?.distanceLine
+    ? getLocalizedSiteText(content.distanceLine, localStorage.getItem('language') || 'en').split(':')
+    : texts && texts["distance:-1.2-km"] ? texts["distance:-1.2-km"].text.split(':') : ["", ""];
+  const startingPointText = content?.startingPointLine
+    ? getLocalizedSiteText(content.startingPointLine, localStorage.getItem('language') || 'en').split(':')
+    : texts && texts["starting-point:-niguliste-2"] ? texts["starting-point:-niguliste-2"].text.split(':') : ["", ""];
+  const openMapText = content?.openMapLabel
+    ? getLocalizedSiteText(content.openMapLabel, localStorage.getItem('language') || 'en')
+    : texts && texts["open-map"] ? texts["open-map"].text : '';
 
   const isSnap = navigator.userAgent === 'ReactSnap';
   const fallbackMap = (
@@ -78,7 +95,7 @@ function FooterColumnLeft({ texts }) {
           fallbackMap
         )}
         <div className="footer-map-actions">
-          <ButtonPrimary text={openMapText} icon="ArrowRightUp" link="https://maps.app.goo.gl/bVono2RWfCPvSp5x5" />
+          <ButtonPrimary text={openMapText} icon="ArrowRightUp" link={content?.openMapUrl || "https://maps.app.goo.gl/bVono2RWfCPvSp5x5"} />
         </div>
       </div>
   );

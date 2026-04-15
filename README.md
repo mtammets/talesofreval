@@ -79,6 +79,8 @@ Backend:
   - `POST /email`
   - `POST /email/contact`
   - `POST /email/free-tour`
+  - `GET /api/story-events`
+  - story feed admin CRUD endpoint'e `/api/story-events/admin` all
 
 E-mailide saatmine:
 - kasutab `nodemailer` seadistust `host: localhost`, `port: 25`
@@ -91,6 +93,16 @@ Lokaalne päris e-maili test:
 - kui `SMTP_HOST` puudub, jääb vaikimisi Zone-stiilis `localhost:25` režiim
 - `MAIL_TO` määrab, kuhu sinu saidi vormiteavitused lähevad
 - `MAIL_FROM` määrab, millise saatja aadressiga kiri välja läheb
+
+Story feed admin:
+- URL: `/login`
+- pärast sisselogimist näeb admin päris saiti ning saab `Our story` sündmusi otse `/story` lehel lisada, muuta ja kustutada
+- sisselogimine käib Basic Auth stiilis kasutajanime ja parooliga, mis tulevad `site/backend/.env` failist
+- minimaalsed võtmed:
+  - `ADMIN_USERNAME`
+  - `ADMIN_PASSWORD`
+- admin salvestab `Our story` sündmused faili `site/backend/data/story-events.json`
+- üleslaetud story pildid salvestuvad kausta `site/backend/uploads/story/`
 
 ## Homme edasi
 

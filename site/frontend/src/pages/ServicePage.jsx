@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import { getService, reset } from '../features/services/serviceSlice';
@@ -9,18 +10,36 @@ import Spinner from '../components/Spinner';
 import ServicePageCards from '../components/ServicePageCards';
 import BookNow from '../components/style-components/BookNow';
 import OurServices from '../components/OurServices';
+import HomeServicesEditorModal from '../components/HomeServicesEditorModal';
 import { toast } from 'react-toastify';
 import dmc_file from '../img/dmc_file.pdf';
+import siteSettingsService from '../features/siteSettings/siteSettingsService';
+import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
+import { DEFAULT_SITE_SETTINGS } from '../content/siteSettingsDefaults';
 
-function ServicePage({ setShowBookNow }) {
+const cloneValue = (value) => JSON.parse(JSON.stringify(value));
+
+function ServicePage({
+  setShowBookNow,
+  adminToken,
+  setAdminToken,
+  siteSettings = DEFAULT_SITE_SETTINGS,
+  setSiteSettings,
+}) {
   const dispatch = useDispatch();
   const { serviceType } = useParams();
+  const language = localStorage.getItem('language') || 'en';
 
   const { service, isLoading, isError, message } = useSelector(
     (state) => state.services
   );
 
   const { misc_texts, home_texts } = useSelector((state) => state.texts);
+  const [isServicesEditorOpen, setIsServicesEditorOpen] = useState(false);
+  const [isSavingServices, setIsSavingServices] = useState(false);
+  const [servicesHeading, setServicesHeading] = useState(cloneValue(siteSettings.homeServices.heading));
+  const [serviceItems, setServiceItems] = useState(cloneValue(siteSettings.homeServices.items));
+  const [serviceImageFiles, setServiceImageFiles] = useState({});
 
   useEffect(() => {
     if (isError) {
@@ -37,6 +56,48 @@ function ServicePage({ setShowBookNow }) {
     dispatch(getHomeTexts());
     dispatch(getService(serviceType));
   }, [dispatch, serviceType]);
+
+  useEffect(() => {
+    setServicesHeading(cloneValue(siteSettings.homeServices.heading));
+    setServiceItems(cloneValue(siteSettings.homeServices.items));
+  }, [siteSettings]);
+
+  const handleAdminAuthError = (error) => {
+    if (error?.response?.status === 401) {
+      setStoredStoryAdminAuth('');
+      setAdminToken('');
+      toast.error('Admin session expired. Please log in again.');
+      return;
+    }
+
+    toast.error(error?.response?.data?.message || error?.message || 'Services update failed.');
+  };
+
+  const saveServices = async (event) => {
+    event.preventDefault();
+    setIsSavingServices(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('heading', JSON.stringify(servicesHeading));
+      formData.append('items', JSON.stringify(serviceItems));
+      Object.entries(serviceImageFiles).forEach(([index, file]) => {
+        if (file) {
+          formData.append(`serviceImage_${index}`, file);
+        }
+      });
+
+      const nextSettings = await siteSettingsService.updateServicesSiteSettings(adminToken, formData);
+      setSiteSettings(nextSettings);
+      setServiceImageFiles({});
+      setIsServicesEditorOpen(false);
+      toast.success('Services updated.');
+    } catch (error) {
+      handleAdminAuthError(error);
+    } finally {
+      setIsSavingServices(false);
+    }
+  };
 
   if (isLoading || !service) {
     return <Spinner />;
@@ -153,8 +214,40 @@ function ServicePage({ setShowBookNow }) {
       )}
 
       <div className="container">
-        <OurServices texts={misc_texts} />
+        <OurServices
+          texts={misc_texts}
+          heading={siteSettings.homeServices.heading}
+          items={siteSettings.homeServices.items}
+          language={language}
+          adminAction={
+            adminToken ? (
+              <button
+                type="button"
+                className="section-edit-button"
+                onClick={() => setIsServicesEditorOpen(true)}
+              >
+                Edit
+              </button>
+            ) : null
+          }
+        />
       </div>
+      {adminToken && isServicesEditorOpen ? (
+        <HomeServicesEditorModal
+          heading={{ value: servicesHeading, set: setServicesHeading }}
+          items={{ value: serviceItems, set: setServiceItems }}
+          imageFiles={serviceImageFiles}
+          setImageFiles={setServiceImageFiles}
+          onSave={saveServices}
+          onCancel={() => {
+            setIsServicesEditorOpen(false);
+            setServiceImageFiles({});
+            setServicesHeading(cloneValue(siteSettings.homeServices.heading));
+            setServiceItems(cloneValue(siteSettings.homeServices.items));
+          }}
+          isSaving={isSavingServices}
+        />
+      ) : null}
     </div>
   );
 }

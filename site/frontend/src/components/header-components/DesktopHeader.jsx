@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import HeaderBar from "./HeaderBar";
 import logo from '../../img/logo.svg';
 import { useNavigate } from "react-router-dom";
@@ -7,10 +7,38 @@ import baloon_icon from '../../img/baloon-icon.png';
 function DesktopHeader({ virtual, ourServicesOpen, setOurServicesOpen, setShowBookNow, texts, misc_texts }) {
   const navigate = useNavigate();
   const [hideOnScroll, setHideOnScroll] = useState(false);
+  const logoClickCount = useRef(0);
+  const logoClickTimer = useRef(null);
 
   const navhome = () => {
+    const isHomePage = window.location.pathname === '/';
+
     setOurServicesOpen(false);
-    navigate("/");
+
+    if (!isHomePage) {
+      navigate("/");
+      return;
+    }
+
+    logoClickCount.current += 1;
+
+    if (logoClickTimer.current) {
+      window.clearTimeout(logoClickTimer.current);
+    }
+
+    if (logoClickCount.current >= 3) {
+      logoClickCount.current = 0;
+      navigate('/login', {
+        state: {
+          nextPath: window.location.pathname,
+        },
+      });
+      return;
+    }
+
+    logoClickTimer.current = window.setTimeout(() => {
+      logoClickCount.current = 0;
+    }, 900);
   };
 
   useEffect(() => {
@@ -27,6 +55,9 @@ function DesktopHeader({ virtual, ourServicesOpen, setOurServicesOpen, setShowBo
     // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      if (logoClickTimer.current) {
+        window.clearTimeout(logoClickTimer.current);
+      }
     };
   }, []);
 

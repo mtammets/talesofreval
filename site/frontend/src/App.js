@@ -1,11 +1,15 @@
-import { lazy, Suspense, useState } from 'react';
-import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { BrowserRouter as Router, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
+import AdminToolbar from './components/AdminToolbar';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Spinner from './components/Spinner';
 import Footer from './components/Footer';
+import { getStoredStoryAdminAuth } from './features/events/storyAdminService';
+import { DEFAULT_SITE_SETTINGS } from './content/siteSettingsDefaults';
+import siteSettingsService from './features/siteSettings/siteSettingsService';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -14,6 +18,7 @@ const ServicePage = lazy(() => import('./pages/ServicePage'));
 const StoryPage = lazy(() => import('./pages/StoryPage'));
 const ContactUs = lazy(() => import('./pages/ContactUs'));
 const VirtualTour = lazy(() => import('./pages/VirtualTour'));
+const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage'));
 
 const BookNowPopup = lazy(() => import('./components/BookNowPopup'));
 const FreeBookNow = lazy(() => import('./components/FreeBookNow'));
@@ -22,19 +27,44 @@ function RouteFallback() {
   return <Spinner />;
 }
 
-function App() {
+function AppShell() {
+  const [adminToken, setAdminToken] = useState(getStoredStoryAdminAuth());
   const [showBookNow, setShowBookNow] = useState(false);
   const [showFreeBookNow, setShowFreeBookNow] = useState(false);
+  const [siteSettings, setSiteSettings] = useState(DEFAULT_SITE_SETTINGS);
+  const location = useLocation();
+  const isAdminLogin = location.pathname === '/login';
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadSiteSettings = async () => {
+      try {
+        const settings = await siteSettingsService.getSiteSettings();
+        if (isMounted) {
+          setSiteSettings(settings);
+        }
+      } catch (error) {
+        console.warn('Site settings fallback active:', error?.message || error);
+      }
+    };
+
+    loadSiteSettings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <>
-      <Router>
-        <Header setShowBookNow={setShowBookNow} />
+      <Header setShowBookNow={setShowBookNow} />
+      <AdminToolbar adminToken={adminToken} setAdminToken={setAdminToken} />
         <Suspense fallback={null}>
-          {showBookNow ? (
+          {!isAdminLogin && showBookNow ? (
             <BookNowPopup showBookNow={showBookNow} setShowBookNow={setShowBookNow} />
           ) : null}
-          {showFreeBookNow ? (
+          {!isAdminLogin && showFreeBookNow ? (
             <FreeBookNow
               showBookNow={showFreeBookNow}
               setShowBookNow={setShowFreeBookNow}
@@ -43,19 +73,76 @@ function App() {
         </Suspense>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
-            <Route path="/story" element={<StoryPage />} />
+            <Route
+              path="/story"
+              element={
+                <StoryPage
+                  adminToken={adminToken}
+                  setAdminToken={setAdminToken}
+                  siteSettings={siteSettings}
+                  setSiteSettings={setSiteSettings}
+                />
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <>
+                  <Home
+                    adminToken={adminToken}
+                    setAdminToken={setAdminToken}
+                    siteSettings={siteSettings}
+                    setSiteSettings={setSiteSettings}
+                  />
+                  <AdminLoginPage adminToken={adminToken} setAdminToken={setAdminToken} />
+                </>
+              }
+            />
             <Route path="/contacts" element={<ContactUs />} />
             <Route path="/styles" element={<StyleGuide />} />
             <Route
               path="/service/:serviceType"
-              element={<ServicePage setShowBookNow={setShowBookNow} />}
+              element={
+                <ServicePage
+                  setShowBookNow={setShowBookNow}
+                  adminToken={adminToken}
+                  setAdminToken={setAdminToken}
+                  siteSettings={siteSettings}
+                  setSiteSettings={setSiteSettings}
+                />
+              }
             />
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={
+                <Home
+                  adminToken={adminToken}
+                  setAdminToken={setAdminToken}
+                  siteSettings={siteSettings}
+                  setSiteSettings={setSiteSettings}
+                />
+              }
+            />
             <Route path="/virtual" element={<VirtualTour />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Suspense>
-        <Footer setShowFreeBookNow={setShowFreeBookNow} />
+      <Footer
+        setShowFreeBookNow={setShowFreeBookNow}
+        adminToken={adminToken}
+        setAdminToken={setAdminToken}
+        siteSettings={siteSettings}
+        setSiteSettings={setSiteSettings}
+      />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <>
+      <Router>
+        <AppShell />
       </Router>
       <ToastContainer />
     </>

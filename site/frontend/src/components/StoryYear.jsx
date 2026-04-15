@@ -3,7 +3,14 @@ import { FaRegCircle, FaCircle } from "react-icons/fa";
 import { ArrowLeft } from '../icons/ArrowLeft.tsx';
 import { ArrowRight } from '../icons/ArrowRight.tsx';
 
-function StoryYear({ events }) {
+function StoryYear({
+  events,
+  language = 'en',
+  isEditable = false,
+  onEditEvent,
+  onDeleteEvent,
+  isMutating = false,
+}) {
   const [index, setIndex] = useState(0);
   const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth <= 1100);
 
@@ -45,7 +52,15 @@ function StoryYear({ events }) {
   }
 
   const currentEvent = events[index];
-  const { year, mediaType, image, images, video, title, description } = currentEvent;
+  const { year, mediaType, image, images, video } = currentEvent;
+  const title =
+    language === 'ee'
+      ? currentEvent.title_estonian || currentEvent.title
+      : currentEvent.title;
+  const description =
+    language === 'ee'
+      ? currentEvent.description_estonian || currentEvent.description
+      : currentEvent.description;
 
   return (
     <div className="story-year padding-40-bottom">
@@ -87,6 +102,24 @@ function StoryYear({ events }) {
             <div className="year-info-content">
               <h5 className="padding-20-bottom">{title}</h5>
               <div dangerouslySetInnerHTML={{ __html: description }} />
+              {isEditable ? (
+                <div className="story-year-admin-actions">
+                  <button
+                    type="button"
+                    onClick={() => onEditEvent?.(currentEvent._id)}
+                    disabled={isMutating}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDeleteEvent?.(currentEvent._id)}
+                    disabled={isMutating}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ) : null}
             </div>
             <div className="controls">
               <button className={`year-event-switch ${index === 0 ? 'disabled' : ''}`} onClick={prevEvent}>

@@ -5,29 +5,7 @@ import pulmad from '../img/pulmad.webp';
 import quick from '../img/quick.webp';
 import team from '../img/team.webp';
 import ServiceCard from './style-components/ServiceCard';
-
-const SERVICE_COPY = {
-  team: {
-    description:
-      'Interactive medieval team events in Tallinn that bring guests together through humor, storytelling and live performance.'
-  },
-  private: {
-    description:
-      'Private guided experiences and immersive performances tailored for families, partners, delegations and special guests.'
-  },
-  quick: {
-    description:
-      'A short-format Tallinn experience for visitors with limited time who still want a memorable medieval story.'
-  },
-  destination: {
-    description:
-      'Destination management support for curated Tallinn programmes, hosted experiences and group itineraries.'
-  },
-  wedding: {
-    description:
-      'Fantasy wedding concepts and themed celebrations with hosts, performers and a distinctive medieval atmosphere.'
-  }
-};
+import { getLocalizedSiteText, resolveSiteImage } from '../content/siteSettingsDefaults';
 
 const FIGMA_SERVICE_TITLES = {
   team: 'Team events',
@@ -37,7 +15,7 @@ const FIGMA_SERVICE_TITLES = {
   wedding: 'Fantasy Weddings'
 };
 
-function ServicesList({ texts, compact = false }) {
+function ServicesList({ texts, compact = false, itemsOverride = null, language = 'en' }) {
   const [smallScreen, setSmallScreen] = useState(window.innerWidth < 1100 && window.innerWidth > 768);
 
   useEffect(() => {
@@ -57,43 +35,55 @@ function ServicesList({ texts, compact = false }) {
   const quickTourText = texts && texts["\"we-only-have-30-minutes!\""] ? texts["\"we-only-have-30-minutes!\""].text : "";
   const destinationManagementText = texts && texts["destination-management"] ? texts["destination-management"].text : "";
   const fantasyWeddingsText = texts && texts["fantasy-weddings"] ? texts["fantasy-weddings"].text : "";
-  const serviceItems = [
+  const fallbackItems = [
     {
       key: 'team',
       link: 'team',
       image: team,
       title: compact ? FIGMA_SERVICE_TITLES.team : teamEventsText,
-      description: compact ? null : SERVICE_COPY.team.description
+      description: null
     },
     {
       key: 'private',
       link: 'private',
       image: private_tour,
       title: compact ? FIGMA_SERVICE_TITLES.private : privateTourText,
-      description: compact ? null : SERVICE_COPY.private.description
+      description: null
     },
     {
       key: 'quick',
       link: 'quick',
       image: quick,
       title: compact ? FIGMA_SERVICE_TITLES.quick : quickTourText,
-      description: compact ? null : SERVICE_COPY.quick.description
+      description: null
     },
     {
       key: 'destination',
       link: 'destination',
       image: destination,
       title: compact ? FIGMA_SERVICE_TITLES.destination : destinationManagementText,
-      description: compact ? null : SERVICE_COPY.destination.description
+      description: null
     },
     {
       key: 'wedding',
       link: 'wedding',
       image: pulmad,
       title: compact ? FIGMA_SERVICE_TITLES.wedding : fantasyWeddingsText,
-      description: compact ? null : SERVICE_COPY.wedding.description
+      description: null
     }
   ];
+
+  const serviceItems = Array.isArray(itemsOverride) && itemsOverride.length
+    ? itemsOverride.map((item, index) => ({
+        key: item.key || fallbackItems[index]?.key || `service-${index + 1}`,
+        link: item.link || fallbackItems[index]?.link || `service-${index + 1}`,
+        image: resolveSiteImage(item.image, item.imageKey) || fallbackItems[index]?.image,
+        title: getLocalizedSiteText(item.title, language, fallbackItems[index]?.title || ''),
+        description: compact
+          ? null
+          : getLocalizedSiteText(item.description, language, fallbackItems[index]?.description || ''),
+      }))
+    : fallbackItems;
 
   return (
     <>

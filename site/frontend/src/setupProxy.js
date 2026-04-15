@@ -1,6 +1,6 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const apiPaths = ['/email'];
+const apiPaths = ['/email', '/api', '/uploads'];
 
 module.exports = function setupProxy(app) {
   apiPaths.forEach((path) => {

@@ -4,8 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getStorytellers, reset } from '../features/storytellers/storytellerSlice';
 import PaymentCard from './PaymentCard';
 import { FALLBACK_STORYTELLERS } from '../content/fallbackContent';
+import { resolveSiteImage } from '../content/siteSettingsDefaults';
 
-function OurTeamList({ limit, showPaymentButton = false }) {
+function OurTeamList({ limit, showPaymentButton = false, items = null }) {
   const dispatch = useDispatch();
   const { storytellers, isError, message } = useSelector((state) => state.storytellers);
   const [paymentOpen, setPaymentOpen] = useState(false);
@@ -13,12 +14,16 @@ function OurTeamList({ limit, showPaymentButton = false }) {
   const [name, setName] = useState('');
 
   useEffect(() => {
+    if (items?.length) {
+      return undefined;
+    }
+
     dispatch(getStorytellers());
 
     return () => {
       dispatch(reset());
     };
-  }, [dispatch]);
+  }, [dispatch, items]);
 
   useEffect(() => {
     if (isError && message) {
@@ -32,7 +37,18 @@ function OurTeamList({ limit, showPaymentButton = false }) {
     setPaymentOpen(true);
   };
 
-  const roster = storytellers.length ? storytellers : FALLBACK_STORYTELLERS;
+  const roster = items?.length
+    ? items.map((member) => ({
+        _id: member.key,
+        name: member.name,
+        email: member.email,
+        phone: member.phone,
+        payment_links: [],
+        image: resolveSiteImage(member.image, member.imageKey),
+      }))
+    : storytellers.length
+      ? storytellers
+      : FALLBACK_STORYTELLERS;
   const visibleStorytellers = limit ? roster.slice(0, limit) : roster;
 
   return (

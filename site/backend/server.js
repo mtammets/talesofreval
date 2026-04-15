@@ -9,11 +9,17 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 const emailRoutes = require('./routes/emailRoutes');
+const storyEventsRoutes = require('./routes/storyEventsRoutes');
+const siteSettingsRoutes = require('./routes/siteSettingsRoutes');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/email', emailRoutes);
+app.use('/uploads/story', express.static(path.join(__dirname, 'uploads', 'story')));
+app.use('/uploads/site', express.static(path.join(__dirname, 'uploads', 'site')));
+app.use('/api/story-events', storyEventsRoutes);
+app.use('/api/site-settings', siteSettingsRoutes);
 
 app.get('/sitemap.xml', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'sitemap.xml'));

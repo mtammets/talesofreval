@@ -1,0 +1,74 @@
+[
+  {
+    "_id": "fallback-event-2019-1",
+    "year": 2019,
+    "order": 1,
+    "mediaType": 0,
+    "image": {
+      "src": "/uploads/story/may2019.webp",
+      "name": "may2019.webp",
+      "width": 1200,
+      "height": 760
+    },
+    "images": [],
+    "video": "",
+    "title": "The first live city stories",
+    "title_estonian": "Esimesed elavad linnalood",
+    "description": "<p>Tales of Reval began shaping immersive medieval storytelling walks in Tallinn, combining humour, characters and local history into a format that felt personal and theatrical.</p>",
+    "description_estonian": "<p>Tales of Reval alustas kaasavate keskaegsete jutustustuurede kujundamist Tallinnas, sidudes huumori, tegelased ja kohaliku ajaloo isiklikuks ning teatraalseks kogemuseks.</p>"
+  },
+  {
+    "_id": "fallback-event-2019-2",
+    "year": 2019,
+    "order": 2,
+    "mediaType": 0,
+    "image": {
+      "src": "/uploads/story/june2019.webp",
+      "name": "june2019.webp",
+      "width": 1200,
+      "height": 760
+    },
+    "images": [],
+    "video": "",
+    "title": "Performers joined the format",
+    "title_estonian": "Esinejad liitusid formaadiga",
+    "description": "<p>The concept expanded from guided walks into richer live experiences, where hosts and performers helped bring medieval Tallinn to life for guests and private groups.</p>",
+    "description_estonian": "<p>Kontseptsioon laienes giidituuridelt rikkalikumateks live-elamusteks, kus hostid ja esinejad aitasid keskaegse Tallinna kulaliste ja privaatgruppide jaoks ellu aratada.</p>"
+  },
+  {
+    "_id": "fallback-event-2019-3",
+    "year": 2019,
+    "order": 3,
+    "mediaType": 0,
+    "image": {
+      "src": "/uploads/story/november2019.webp",
+      "name": "november2019.webp",
+      "width": 1200,
+      "height": 760
+    },
+    "images": [],
+    "video": "",
+    "title": "A recognisable visual world emerged",
+    "title_estonian": "Tekkis ara tuntav visuaalne maailm",
+    "description": "<p>By the end of the year, the project had a stronger visual language, clearer service structure and a more distinctive approach to hosted medieval experiences.</p>",
+    "description_estonian": "<p>Aasta lopuks oli projektil tugevam visuaalne keel, selgem teenuseloogika ja eristuvam lahenemine korraldatud keskaegsetele elamustele.</p>"
+  },
+  {
+    "_id": "81f6ddb2-072f-4e1a-bf2a-10a53a853cb9",
+    "year": 2020,
+    "order": 2,
+    "mediaType": 0,
+    "image": {
+      "src": "/uploads/story/1776230668296-0b2c72c9-d077-4282-b20d-9961d9289357.png",
+      "name": "2020.png",
+      "width": 1200,
+      "height": 760
+    },
+    "images": [],
+    "video": "",
+    "title": "January",
+    "title_estonian": "Jaanuar",
+    "description": "<p>Opened with a huge surprise and very wide smiles on all of our faces, as our lovely guests on TripAdvisor had voted Tales of Reval to be the #2 thing to do in Tallinn. Considering that the first place was dedicated to the entirety of the Old Town, this was an exceptional honor. The high praise also came with our very first awards:</p><p>The Traveller’s choice of 2020 title on TripAdvisor, and the Travel and Hospitality Award of 2020 in the category of Best tour in Estonia.</p><p>New authentic costumes on our backs, rewards rolling in, and Tallinn preparing for the biggest tourism season the town had ever seen - needless to say we were hyped and ready.   Had we only known…</p>",
+    "description_estonian": "<p>Avasime selle aja suure üllatuse ja väga laiade naeratustega, sest meie armsad külalised TripAdvisoris olid hääletanud Tales of Revali Tallinna tegevuste seas teisele kohale. Arvestades, et esikoht kuulus tervele vanalinnale, oli see meie jaoks erakordne au. Selle suure tunnustusega kaasnesid ka meie esimesed auhinnad:</p><p>TripAdvisori Traveller’s Choice 2020 tiitel ning Travel and Hospitality Award 2020 kategoorias Eesti parim tuur.</p><p>Seljas uued autentsed kostüümid, auhinnad saabumas ja Tallinn valmistumas suurimaks turismihooajaks, mida linn eales näinud oli — pole vist vaja öeldagi, et olime elevil ja valmis.</p><p>Kui me vaid oleks teadnud…</p><p>Kui soovid, võin teha sellest ka veidi loomulikuma ja voolavama turundusteksti eesti keeles.</p>"
+  }
+]
