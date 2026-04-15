@@ -1,23 +1,77 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMiscTexts, getFooterTexts, reset } from '../features/texts/textSlice';
+import { getMiscTexts, reset } from '../features/texts/textSlice';
 import { sendContactMessage } from '../features/email/emailSlice';
 import { toast } from 'react-toastify';
 import bgcontact from '../img/bgcontact.webp';
-import OurTeam from '../components/OurTeam';
 import ContactsTeam from '../components/ContactsTeam.jsx';
 import ButtonPrimary from '../components/style-components/ButtonPrimary.jsx';
 import Spinner from '../components/Spinner';
 import { Helmet } from 'react-helmet';
+import HomeTeamEditorModal from '../components/HomeTeamEditorModal';
+import ContactSectionEditorModal from '../components/ContactSectionEditorModal';
+import ContactHeroEditorModal from '../components/ContactHeroEditorModal';
+import siteSettingsService from '../features/siteSettings/siteSettingsService';
+import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
+import { DEFAULT_SITE_SETTINGS, getLocalizedSiteText, resolveSiteImage } from '../content/siteSettingsDefaults';
 
-function ContactUs() {
+const cloneValue = (value) => JSON.parse(JSON.stringify(value));
+const buildContactPageFormData = (heading, members, contact, imageFiles = {}, heroImageFile = null) => {
+  const formData = new FormData();
+
+  formData.append('teamHeading', JSON.stringify(heading));
+  formData.append('teamMembers', JSON.stringify(members));
+  formData.append('formTitle', JSON.stringify(contact.formTitle));
+  formData.append('nameLabel', JSON.stringify(contact.nameLabel));
+  formData.append('emailLabel', JSON.stringify(contact.emailLabel));
+  formData.append('messageLabel', JSON.stringify(contact.messageLabel));
+  formData.append('submitLabel', JSON.stringify(contact.submitLabel));
+  formData.append('address', JSON.stringify(contact.address));
+  formData.append('companyName', contact.companyName || '');
+  formData.append('companyReg', contact.companyReg || '');
+  formData.append('bankLine1', contact.bankLine1 || '');
+  formData.append('bankLine2', contact.bankLine2 || '');
+  formData.append('email', contact.email || '');
+  formData.append('phone', contact.phone || '');
+
+  Object.entries(imageFiles).forEach(([index, file]) => {
+    if (file) {
+      formData.append(`contactTeamImage_${index}`, file);
+    }
+  });
+
+  if (heroImageFile) {
+    formData.append('contactHeroImage', heroImageFile);
+  }
+
+  return formData;
+};
+
+function ContactUs({
+  adminToken,
+  setAdminToken,
+  siteSettings = DEFAULT_SITE_SETTINGS,
+  setSiteSettings,
+}) {
   const dispatch = useDispatch();
-  const { misc_texts, footer_texts, isLoading, isError, message } = useSelector((state) => state.texts);
+  const language = localStorage.getItem('language') || 'en';
+  const { misc_texts, isLoading, isError, message } = useSelector((state) => state.texts);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [messageContent, setMessageContent] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [isTeamEditorOpen, setIsTeamEditorOpen] = useState(false);
+  const [isContactEditorOpen, setIsContactEditorOpen] = useState(false);
+  const [isHeroEditorOpen, setIsHeroEditorOpen] = useState(false);
+  const [isSavingTeam, setIsSavingTeam] = useState(false);
+  const [isSavingContact, setIsSavingContact] = useState(false);
+  const [isSavingHero, setIsSavingHero] = useState(false);
+  const [contactTeamHeading, setContactTeamHeading] = useState(cloneValue(siteSettings.contactPage.teamHeading));
+  const [contactTeamMembers, setContactTeamMembers] = useState(cloneValue(siteSettings.contactPage.teamMembers));
+  const [contactTeamImageFiles, setContactTeamImageFiles] = useState({});
+  const [contactForm, setContactForm] = useState(cloneValue(siteSettings.contactPage));
+  const [contactHeroImageFile, setContactHeroImageFile] = useState(null);
+  const [contactHeroPreviewUrl, setContactHeroPreviewUrl] = useState('');
 
   useEffect(() => {
     if (isError) {
@@ -31,8 +85,38 @@ function ContactUs() {
 
   useEffect(() => {
     dispatch(getMiscTexts());
-    dispatch(getFooterTexts());
   }, [dispatch]);
+
+  useEffect(() => {
+    setContactTeamHeading(cloneValue(siteSettings.contactPage.teamHeading));
+    setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers));
+    setContactForm(cloneValue(siteSettings.contactPage));
+  }, [siteSettings]);
+
+  useEffect(() => {
+    if (!contactHeroImageFile) {
+      setContactHeroPreviewUrl('');
+      return undefined;
+    }
+
+    const nextUrl = URL.createObjectURL(contactHeroImageFile);
+    setContactHeroPreviewUrl(nextUrl);
+
+    return () => {
+      URL.revokeObjectURL(nextUrl);
+    };
+  }, [contactHeroImageFile]);
+
+  const handleAdminAuthError = (error, fallbackMessage) => {
+    if (error?.response?.status === 401) {
+      setStoredStoryAdminAuth('');
+      setAdminToken('');
+      toast.error('Admin session expired. Please log in again.');
+      return;
+    }
+
+    toast.error(error?.response?.data?.message || error?.message || fallbackMessage);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -56,10 +140,76 @@ function ContactUs() {
     const data = { name, email, message: messageContent };
 
     dispatch(sendContactMessage(data));
-    setSubmitted(true);
     setName('');
     setEmail('');
     setMessageContent('');
+  };
+
+  const saveContactTeam = async (event) => {
+    event.preventDefault();
+    setIsSavingTeam(true);
+
+    try {
+      const formData = buildContactPageFormData(
+        contactTeamHeading,
+        contactTeamMembers,
+        contactForm,
+        contactTeamImageFiles
+      );
+
+      const nextSettings = await siteSettingsService.updateContactPageSiteSettings(adminToken, formData);
+      setSiteSettings(nextSettings);
+      setContactTeamImageFiles({});
+      setIsTeamEditorOpen(false);
+      toast.success('Contact team updated.');
+    } catch (error) {
+      handleAdminAuthError(error, 'Contact team update failed.');
+    } finally {
+      setIsSavingTeam(false);
+    }
+  };
+
+  const saveContactSection = async (event) => {
+    event.preventDefault();
+    setIsSavingContact(true);
+
+    try {
+      const formData = buildContactPageFormData(contactTeamHeading, contactTeamMembers, contactForm);
+
+      const nextSettings = await siteSettingsService.updateContactPageSiteSettings(adminToken, formData);
+      setSiteSettings(nextSettings);
+      setIsContactEditorOpen(false);
+      toast.success('Contact section updated.');
+    } catch (error) {
+      handleAdminAuthError(error, 'Contact section update failed.');
+    } finally {
+      setIsSavingContact(false);
+    }
+  };
+
+  const saveContactHero = async (event) => {
+    event.preventDefault();
+    setIsSavingHero(true);
+
+    try {
+      const formData = buildContactPageFormData(
+        contactTeamHeading,
+        contactTeamMembers,
+        contactForm,
+        {},
+        contactHeroImageFile
+      );
+
+      const nextSettings = await siteSettingsService.updateContactPageSiteSettings(adminToken, formData);
+      setSiteSettings(nextSettings);
+      setContactHeroImageFile(null);
+      setIsHeroEditorOpen(false);
+      toast.success('Contact background updated.');
+    } catch (error) {
+      handleAdminAuthError(error, 'Contact background update failed.');
+    } finally {
+      setIsSavingHero(false);
+    }
   };
 
   if (isLoading) {
@@ -67,13 +217,16 @@ function ContactUs() {
   }
 
   const contactUsText = misc_texts?.["contact-us"]?.text || '';
-  const sayHelloText = misc_texts?.["say-hello!"]?.text || '';
-  const nameLabel = misc_texts?.["name"]?.text || 'Name';
-  const emailLabel = misc_texts?.["e-mail"]?.text || 'E-mail';
-  const writeSomethingText = misc_texts?.["write-something"]?.text || 'Write something';
-  const sendText = misc_texts?.["send"]?.text || 'Send';
-  const addressLine1 = misc_texts?.["address-line-1"]?.text || '';
-  const addressLine2 = misc_texts?.["address-line-2"]?.text || '';
+  const sayHelloText = getLocalizedSiteText(siteSettings.contactPage.formTitle, language, misc_texts?.["say-hello!"]?.text || '');
+  const nameLabel = getLocalizedSiteText(siteSettings.contactPage.nameLabel, language, 'Name*');
+  const emailLabel = getLocalizedSiteText(siteSettings.contactPage.emailLabel, language, 'E-mail*');
+  const writeSomethingText = getLocalizedSiteText(siteSettings.contactPage.messageLabel, language, 'Write something');
+  const sendText = getLocalizedSiteText(siteSettings.contactPage.submitLabel, language, 'Send');
+  const addressText = getLocalizedSiteText(siteSettings.contactPage.address, language, '');
+  const contactHeroBackground =
+    contactHeroPreviewUrl ||
+    resolveSiteImage(siteSettings.contactPage.image, siteSettings.contactPage.imageKey) ||
+    bgcontact;
 
   return (
     <div className='story-page'>
@@ -82,78 +235,153 @@ function ContactUs() {
         <meta name="description" content="Get in touch with Tales of Reval for inquiries about our medieval tours, private tours, team events, and more. Contact us today to book your unique Tallinn experience." />
         <meta name="keywords" content="Contact Tales of Reval, Book a Tour in Tallinn, Inquire About Medieval Tours, Tour Booking Contact, Tallinn Tour Inquiries, Medieval Tour Customer Service, Private Tours in Tallinn, Team Events Tallinn, Unique Tallinn Experiences" />
       </Helmet>
-      <div className="story-landing" style={{ background: `url(${bgcontact})` }}>
+      <div className="story-landing" style={{ backgroundImage: `url(${contactHeroBackground})` }}>
+        {adminToken ? (
+          <div className="story-landing-admin-actions">
+            <button type="button" onClick={() => setIsHeroEditorOpen(true)}>
+              Edit
+            </button>
+          </div>
+        ) : null}
         <h1>{contactUsText}</h1>
       </div>
 
-      <div className="container">
-        <ContactsTeam contactPage={true} />
+      <div className="container contact-page-team">
+        <ContactsTeam
+          contactPage={true}
+          heading={siteSettings.contactPage.teamHeading}
+          items={siteSettings.contactPage.teamMembers}
+          language={language}
+          adminAction={
+            adminToken ? (
+              <button type="button" className="section-edit-button" onClick={() => setIsTeamEditorOpen(true)}>
+                Edit
+              </button>
+            ) : null
+          }
+        />
       </div>
 
       <div className="contact-us-section">
-        <div className="contact-cols">
-          <div className="contact-col">
-            <div className="input-form-card contact-us">
-              <h3 className='cardo'>{sayHelloText}</h3>
-              <form onSubmit={handleSubmit}>
-                <div className="form-group padding-20-top">
-                  <label htmlFor="name">{nameLabel}*</label>
-                  <input
-                    name='name'
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="email">{emailLabel}*</label>
-                  <input
-                    name='email'
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="message">{writeSomethingText}</label>
-                  <textarea
-                    name="message"
-                    value={messageContent}
-                    onChange={(e) => setMessageContent(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="submit">
-                  <ButtonPrimary
-                    icon="ArrowRight"
-                    text={sendText}
-                  />
-                </div>
-              </form>
-            </div>
+        <div className="container">
+          <div className="contact-section-admin-row">
+            {adminToken ? (
+              <button type="button" className="section-edit-button" onClick={() => setIsContactEditorOpen(true)}>
+                Edit
+              </button>
+            ) : null}
           </div>
-          <div className="contact-col">
-            <div className="contact-us-info">
-              <p className="bold">OÜ Satsang</p>
-              <p className='padding-20-top'>Reg no. 14443936</p>
-              <p className='padding-20-top'>
-                {addressLine1}<br />
-                {addressLine2}
-              </p>
-              <p className='padding-20-top'>EE220020202020202 <br />LHV Pank AS</p>
-              <p className='padding-20-top'>
-                <a className="underline" href="mailto:info@talesofreval.ee">info@talesofreval.ee</a> <br />
-              </p>
-              <p className='padding-5-top'>
-                <a className="underline" href="tel:+37255555555">+372 5560 4421</a>
-              </p>
+          <div className="contact-cols">
+            <div className="contact-col contact-col-form">
+              <div className="input-form-card contact-us">
+                <h3 className='cardo'>{sayHelloText}</h3>
+                <form onSubmit={handleSubmit}>
+                  <div className="form-group padding-20-top">
+                    <label htmlFor="name">{nameLabel}</label>
+                    <input
+                      name='name'
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="email">{emailLabel}</label>
+                    <input
+                      name='email'
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="message">{writeSomethingText}</label>
+                    <textarea
+                      name="message"
+                      value={messageContent}
+                      onChange={(e) => setMessageContent(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="submit contact-submit">
+                    <ButtonPrimary
+                      icon="ArrowRight"
+                      text={sendText}
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div className="contact-col contact-col-info">
+              <div className="contact-us-info">
+                <p className="bold">{siteSettings.contactPage.companyName}</p>
+                <p className='padding-20-top'>{siteSettings.contactPage.companyReg}</p>
+                <p className='padding-20-top contact-address'>{addressText}</p>
+                <p className='padding-20-top'>
+                  {siteSettings.contactPage.bankLine1} <br />{siteSettings.contactPage.bankLine2}
+                </p>
+                <p className='padding-20-top'>
+                  <a className="underline" href={`mailto:${siteSettings.contactPage.email}`}>{siteSettings.contactPage.email}</a> <br />
+                </p>
+                <p className='padding-5-top'>
+                  <a className="underline" href={`tel:${siteSettings.contactPage.phone}`}>{siteSettings.contactPage.phone}</a>
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {adminToken && isTeamEditorOpen ? (
+        <HomeTeamEditorModal
+          heading={{ value: contactTeamHeading, set: setContactTeamHeading }}
+          members={{ value: contactTeamMembers, set: setContactTeamMembers }}
+          imageFiles={contactTeamImageFiles}
+          setImageFiles={setContactTeamImageFiles}
+          onSave={saveContactTeam}
+          onCancel={() => {
+            setIsTeamEditorOpen(false);
+            setContactTeamImageFiles({});
+            setContactTeamHeading(cloneValue(siteSettings.contactPage.teamHeading));
+            setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers));
+          }}
+          isSaving={isSavingTeam}
+          modalTitle="Edit contact team"
+          modalDescription="Update the visible team cards on the contact page."
+        />
+      ) : null}
+
+      {adminToken && isContactEditorOpen ? (
+        <ContactSectionEditorModal
+          contact={contactForm}
+          setContact={setContactForm}
+          onSave={saveContactSection}
+          onCancel={() => {
+            setIsContactEditorOpen(false);
+            setContactForm(cloneValue(siteSettings.contactPage));
+          }}
+          isSaving={isSavingContact}
+        />
+      ) : null}
+
+      {adminToken && isHeroEditorOpen ? (
+        <ContactHeroEditorModal
+          currentImage={siteSettings.contactPage.image}
+          currentImageUrl={resolveSiteImage(siteSettings.contactPage.image, siteSettings.contactPage.imageKey)}
+          selectedFile={contactHeroImageFile}
+          setSelectedFile={setContactHeroImageFile}
+          previewUrl={contactHeroPreviewUrl}
+          onSave={saveContactHero}
+          onCancel={() => {
+            setIsHeroEditorOpen(false);
+            setContactHeroImageFile(null);
+          }}
+          isSaving={isSavingHero}
+        />
+      ) : null}
     </div>
   );
 }

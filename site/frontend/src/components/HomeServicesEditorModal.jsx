@@ -1,3 +1,5 @@
+import { resolveSiteImage } from '../content/siteSettingsDefaults';
+
 function HomeServicesEditorModal({
   heading,
   items,
@@ -131,6 +133,17 @@ function HomeServicesEditorModal({
                   accept="image/*"
                   onChange={(event) => setItemFile(index, event.target.files?.[0] || null)}
                 />
+                {resolveSiteImage(item.image, item.imageKey) ? (
+                  <div className="editor-inline-preview">
+                    <span className="story-admin-help">Current image</span>
+                    <div
+                      className="editor-inline-preview__image"
+                      style={{
+                        backgroundImage: `url(${resolveSiteImage(item.image, item.imageKey)})`,
+                      }}
+                    />
+                  </div>
+                ) : null}
                 {imageFiles[index] ? (
                   <span className="story-admin-help">Selected: {imageFiles[index].name}</span>
                 ) : null}

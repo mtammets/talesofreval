@@ -6,6 +6,12 @@ const express = require('express');
 const app = express();
 app.use(cors());
 dotenv.config();
+const {
+  ensureRuntimeStorageReady,
+  runtimeSiteUploadsDir,
+  runtimeStoryUploadsDir,
+} = require('./lib/storagePaths');
+ensureRuntimeStorageReady();
 
 const port = process.env.PORT || 3000;
 const emailRoutes = require('./routes/emailRoutes');
@@ -16,8 +22,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/email', emailRoutes);
-app.use('/uploads/story', express.static(path.join(__dirname, 'uploads', 'story')));
-app.use('/uploads/site', express.static(path.join(__dirname, 'uploads', 'site')));
+app.use('/uploads/story', express.static(runtimeStoryUploadsDir));
+app.use('/uploads/site', express.static(runtimeSiteUploadsDir));
 app.use('/api/story-events', storyEventsRoutes);
 app.use('/api/site-settings', siteSettingsRoutes);
 

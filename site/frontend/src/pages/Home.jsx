@@ -20,6 +20,7 @@ import {
 import {
   DEFAULT_SITE_SETTINGS,
   getLocalizedSiteText,
+  resolveSiteImage,
 } from '../content/siteSettingsDefaults';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
@@ -300,6 +301,7 @@ function Home({ adminToken, setAdminToken, siteSettings = DEFAULT_SITE_SETTINGS,
       {adminToken && isHeroEditorOpen ? (
         <HomeHeroEditorModal
           currentImage={siteSettings.homeHero.image}
+          currentImageUrl={resolveSiteImage(siteSettings.homeHero.image, siteSettings.homeHero.imageKey)}
           selectedFile={heroImageFile}
           setSelectedFile={setHeroImageFile}
           previewUrl={heroPreviewUrl}

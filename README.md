@@ -104,6 +104,22 @@ Story feed admin:
 - admin salvestab `Our story` sündmused faili `site/backend/data/story-events.json`
 - üleslaetud story pildid salvestuvad kausta `site/backend/uploads/story/`
 
+Püsiv salvestus Zone'is:
+- vaikimisi salvestab backend lokaalis failid repo sisse:
+  - `site/backend/data/site-settings.json`
+  - `site/backend/data/story-events.json`
+  - `site/backend/uploads/site/`
+  - `site/backend/uploads/story/`
+- productionis on mõistlik panna `.env` faili:
+  - `APP_STORAGE_DIR=/data01/virt72693/domeenid/www.talesofreval.ee/app-storage`
+- siis salvestuvad kõik edit-mode muudatused repo-välisesse püsikausta:
+  - `app-storage/data/site-settings.json`
+  - `app-storage/data/story-events.json`
+  - `app-storage/uploads/site/`
+  - `app-storage/uploads/story/`
+- esimese käivituse ajal kopeerib backend vaikimisi JSON algandmed sinna automaatselt
+- nii ei kirjuta järgmine `git pull` ega deploy edititud sisu üle
+
 ## Homme edasi
 
 Järgmine loogiline samm:

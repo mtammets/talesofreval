@@ -1,3 +1,5 @@
+import { resolveSiteImage } from '../content/siteSettingsDefaults';
+
 function HomeTeamEditorModal({
   heading,
   members,
@@ -6,6 +8,8 @@ function HomeTeamEditorModal({
   onSave,
   onCancel,
   isSaving,
+  modalTitle = 'Edit team',
+  modalDescription = 'Update the homepage team heading and visible cards.',
 }) {
   const updateHeading = (language, value) => {
     heading.set((current) => ({
@@ -39,8 +43,8 @@ function HomeTeamEditorModal({
       <div className="story-editor-sheet">
         <div className="story-editor-header">
           <div>
-            <h2>Edit team</h2>
-            <p>Update the homepage team heading and visible cards.</p>
+            <h2>{modalTitle}</h2>
+            <p>{modalDescription}</p>
           </div>
           <button type="button" className="story-editor-close" onClick={onCancel}>
             Close
@@ -103,6 +107,17 @@ function HomeTeamEditorModal({
                     accept="image/*"
                     onChange={(event) => setMemberFile(index, event.target.files?.[0] || null)}
                   />
+                  {resolveSiteImage(member.image, member.imageKey) ? (
+                    <div className="editor-inline-preview">
+                      <span className="story-admin-help">Current image</span>
+                      <div
+                        className="editor-inline-preview__image"
+                        style={{
+                          backgroundImage: `url(${resolveSiteImage(member.image, member.imageKey)})`,
+                        }}
+                      />
+                    </div>
+                  ) : null}
                   {imageFiles[index] ? (
                     <span className="story-admin-help">Selected: {imageFiles[index].name}</span>
                   ) : null}

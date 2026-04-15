@@ -7,6 +7,7 @@ import weddingImage from '../img/pulmad.webp';
 import person1 from '../img/person1.webp';
 import person2 from '../img/person2.webp';
 import person3 from '../img/person3.webp';
+import bgcontact from '../img/bgcontact.webp';
 import gpsGameImage from '../img/gps-game.webp';
 
 export const SITE_IMAGE_ASSETS = {
@@ -19,6 +20,11 @@ export const SITE_IMAGE_ASSETS = {
   teamMember1: person1,
   teamMember2: person2,
   teamMember3: person3,
+  contactMember1: person1,
+  contactMember2: person2,
+  contactMember3: person3,
+  contactMember4: person1,
+  contactBg: bgcontact,
   gpsGame: gpsGameImage,
 };
 
@@ -129,6 +135,60 @@ export const DEFAULT_SITE_SETTINGS = {
       ee: 'See oli täiesti imeline. Giid oli väga huvitav, entusiastlik ja humoorikas ning tundis Tallinna ajalugu suurepäraselt. Kogu pere nautis seda väga ja soovitame soojalt!',
     },
     reviewer: { en: 'Tripadvisor review', ee: 'Tripadvisori arvustus' },
+  },
+  contactPage: {
+    imageKey: 'contactBg',
+    image: null,
+    teamHeading: { en: 'Our team', ee: 'Meie tiim' },
+    teamMembers: [
+      {
+        key: 'contact-member-1',
+        name: 'Marek Tammets',
+        email: 'info@talesofreval.ee',
+        phone: '+372 5560 4421',
+        imageKey: 'contactMember1',
+        image: null,
+      },
+      {
+        key: 'contact-member-2',
+        name: 'Tales of Reval Team',
+        email: 'info@talesofreval.ee',
+        phone: '+372 5560 4421',
+        imageKey: 'contactMember2',
+        image: null,
+      },
+      {
+        key: 'contact-member-3',
+        name: 'Guest Experience Host',
+        email: 'info@talesofreval.ee',
+        phone: '+372 5560 4421',
+        imageKey: 'contactMember3',
+        image: null,
+      },
+      {
+        key: 'contact-member-4',
+        name: 'Tales of Reval Host',
+        email: 'info@talesofreval.ee',
+        phone: '+372 5560 4421',
+        imageKey: 'contactMember4',
+        image: null,
+      },
+    ],
+    formTitle: { en: 'Say hello!', ee: 'Ütle tere!' },
+    nameLabel: { en: 'Name*', ee: 'Nimi*' },
+    emailLabel: { en: 'E-mail*', ee: 'E-post*' },
+    messageLabel: { en: 'Write something', ee: 'Kirjuta midagi' },
+    submitLabel: { en: 'Send', ee: 'Saada' },
+    companyName: 'OÜ TalesOfReval',
+    companyReg: 'Reg. no. 8834738257',
+    address: {
+      en: 'Tallinna 1, Tallinn,\nHarjumaa, Estonia',
+      ee: 'Tallinna 1, Tallinn,\nHarjumaa, Eesti',
+    },
+    bankLine1: 'EE220020202020202',
+    bankLine2: 'LHV Pank AS',
+    email: 'info@talesofreval.ee',
+    phone: '+372 5555 5555',
   },
   footer: {
     freeTourHeading: { en: 'Join our free tour', ee: 'Liitu meie tasuta tuuriga' },

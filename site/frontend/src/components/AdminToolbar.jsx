@@ -3,7 +3,12 @@ import { toast } from 'react-toastify';
 
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
 
-function AdminToolbar({ adminToken, setAdminToken }) {
+function AdminToolbar({
+  adminToken,
+  setAdminToken,
+  storyControlsVisible,
+  setStoryControlsVisible,
+}) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -29,6 +34,15 @@ function AdminToolbar({ adminToken, setAdminToken }) {
           <Link to="/story" className="admin-toolbar__link">
             Open editable section
           </Link>
+        ) : null}
+        {location.pathname === '/story' ? (
+          <button
+            type="button"
+            className="admin-toolbar__button"
+            onClick={() => setStoryControlsVisible?.((current) => !current)}
+          >
+            {storyControlsVisible ? 'Hide controls' : 'Show controls'}
+          </button>
         ) : null}
         <button type="button" className="admin-toolbar__button" onClick={logout}>
           Log out

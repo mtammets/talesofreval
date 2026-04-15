@@ -139,6 +139,76 @@
       "ee": "Tripadvisori arvustus"
     }
   },
+  "contactPage": {
+    "teamHeading": {
+      "en": "Our team",
+      "ee": "Meie tiim"
+    },
+    "teamMembers": [
+      {
+        "key": "contact-member-1",
+        "name": "Tales of Reval Team",
+        "email": "info@talesofreval.ee",
+        "phone": "+372 5560 4421",
+        "imageKey": "contactMember1",
+        "image": null
+      },
+      {
+        "key": "contact-member-2",
+        "name": "Tales of Reval Team",
+        "email": "info@talesofreval.ee",
+        "phone": "+372 5560 4421",
+        "imageKey": "contactMember2",
+        "image": null
+      },
+      {
+        "key": "contact-member-3",
+        "name": "Guest Experience Host",
+        "email": "info@talesofreval.ee",
+        "phone": "+372 5560 4421",
+        "imageKey": "contactMember3",
+        "image": null
+      },
+      {
+        "key": "contact-member-4",
+        "name": "Tales of Reval Host",
+        "email": "info@talesofreval.ee",
+        "phone": "+372 5560 4421",
+        "imageKey": "contactMember4",
+        "image": null
+      }
+    ],
+    "formTitle": {
+      "en": "Say hello!",
+      "ee": "Ütle tere!"
+    },
+    "nameLabel": {
+      "en": "Name*",
+      "ee": "Nimi*"
+    },
+    "emailLabel": {
+      "en": "E-mail*",
+      "ee": "E-post*"
+    },
+    "messageLabel": {
+      "en": "Write something",
+      "ee": "Kirjuta midagi"
+    },
+    "submitLabel": {
+      "en": "Send",
+      "ee": "Saada"
+    },
+    "companyName": "OÜ TalesOfReval",
+    "companyReg": "Reg. no. 8834738257",
+    "address": {
+      "en": "Tallinna 1, Tallinn,\nHarjumaa, Estonia",
+      "ee": "Tallinna 1, Tallinn,\nHarjumaa, Eesti"
+    },
+    "bankLine1": "EE220020202020202",
+    "bankLine2": "LHV Pank AS",
+    "email": "info@talesofreval.ee",
+    "phone": "+372 5555 5555"
+  },
   "footer": {
     "freeTourHeading": {
       "en": "Join our free tour",

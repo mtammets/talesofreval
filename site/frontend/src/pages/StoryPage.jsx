@@ -30,6 +30,8 @@ function StoryPage({
   setAdminToken,
   siteSettings = DEFAULT_SITE_SETTINGS,
   setSiteSettings,
+  isEditMode,
+  setIsEditMode,
 }) {
   const dispatch = useDispatch();
   const language = localStorage.getItem('language') || 'en';
@@ -40,7 +42,6 @@ function StoryPage({
   const [adminEvents, setAdminEvents] = useState([]);
   const [didLoadAdminEvents, setDidLoadAdminEvents] = useState(false);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(Boolean(adminToken));
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isServicesEditorOpen, setIsServicesEditorOpen] = useState(false);
   const [editorForm, setEditorForm] = useState(createEmptyStoryEventForm());
@@ -70,10 +71,6 @@ function StoryPage({
   useEffect(() => {
     dispatch(getEvents());
   }, [dispatch]);
-
-  useEffect(() => {
-    setIsEditMode(Boolean(adminToken));
-  }, [adminToken]);
 
   useEffect(() => {
     setServicesHeading(cloneValue(siteSettings.homeServices.heading));
@@ -326,19 +323,10 @@ function StoryPage({
 
       {adminToken ? (
         <div className="container">
-          <div className="story-page-admin-toolbar">
-            <div>
-              <h2>Edit mode</h2>
-              <p>
-                You are viewing the live page. This section can be edited here.
-              </p>
-            </div>
+          <div className="story-page-admin-toolbar story-page-admin-toolbar--compact">
             <div className="story-page-admin-actions">
-              <button type="button" onClick={() => setIsEditMode((current) => !current)}>
-                {isEditMode ? 'Hide controls' : 'Show controls'}
-              </button>
               <button type="button" onClick={openCreateEditor}>
-                Add item
+                Add New
               </button>
             </div>
           </div>

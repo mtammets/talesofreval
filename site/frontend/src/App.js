@@ -32,6 +32,7 @@ function AppShell() {
   const [showBookNow, setShowBookNow] = useState(false);
   const [showFreeBookNow, setShowFreeBookNow] = useState(false);
   const [siteSettings, setSiteSettings] = useState(DEFAULT_SITE_SETTINGS);
+  const [storyControlsVisible, setStoryControlsVisible] = useState(Boolean(getStoredStoryAdminAuth()));
   const location = useLocation();
   const isAdminLogin = location.pathname === '/login';
 
@@ -59,7 +60,12 @@ function AppShell() {
   return (
     <>
       <Header setShowBookNow={setShowBookNow} />
-      <AdminToolbar adminToken={adminToken} setAdminToken={setAdminToken} />
+      <AdminToolbar
+        adminToken={adminToken}
+        setAdminToken={setAdminToken}
+        storyControlsVisible={storyControlsVisible}
+        setStoryControlsVisible={setStoryControlsVisible}
+      />
         <Suspense fallback={null}>
           {!isAdminLogin && showBookNow ? (
             <BookNowPopup showBookNow={showBookNow} setShowBookNow={setShowBookNow} />
@@ -81,6 +87,8 @@ function AppShell() {
                   setAdminToken={setAdminToken}
                   siteSettings={siteSettings}
                   setSiteSettings={setSiteSettings}
+                  isEditMode={storyControlsVisible}
+                  setIsEditMode={setStoryControlsVisible}
                 />
               }
             />
@@ -98,7 +106,17 @@ function AppShell() {
                 </>
               }
             />
-            <Route path="/contacts" element={<ContactUs />} />
+            <Route
+              path="/contacts"
+              element={
+                <ContactUs
+                  adminToken={adminToken}
+                  setAdminToken={setAdminToken}
+                  siteSettings={siteSettings}
+                  setSiteSettings={setSiteSettings}
+                />
+              }
+            />
             <Route path="/styles" element={<StyleGuide />} />
             <Route
               path="/service/:serviceType"

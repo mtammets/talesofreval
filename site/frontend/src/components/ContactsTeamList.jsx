@@ -3,18 +3,23 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getStorytellers, reset } from '../features/storytellers/storytellerSlice';
 import { FALLBACK_STORYTELLERS } from '../content/fallbackContent';
+import { resolveSiteImage } from '../content/siteSettingsDefaults';
 
-function ContactsTeamList() {
+function ContactsTeamList({ items = null }) {
   const dispatch = useDispatch();
   const { storytellers, isError, message } = useSelector((state) => state.storytellers);
 
   useEffect(() => {
+    if (items?.length) {
+      return undefined;
+    }
+
     dispatch(getStorytellers());
 
     return () => {
       dispatch(reset());
     };
-  }, [dispatch]);
+  }, [dispatch, items]);
 
   useEffect(() => {
     if (isError && message) {
@@ -22,7 +27,17 @@ function ContactsTeamList() {
     }
   }, [isError, message]);
 
-  const roster = storytellers.length ? storytellers : FALLBACK_STORYTELLERS;
+  const roster = items?.length
+    ? items.map((member, index) => ({
+        _id: member.key || `contact-member-${index + 1}`,
+        name: member.name,
+        email: member.email,
+        phone: member.phone,
+        image: { src: resolveSiteImage(member.image, member.imageKey) },
+      }))
+    : storytellers.length
+      ? storytellers
+      : FALLBACK_STORYTELLERS;
 
   return (
     <div className="contacts-team-grid">

@@ -116,6 +116,15 @@ function StoryFeedEditorModal({
               {form.image?.src ? (
                 <span className="story-admin-help">Current: {form.image.src}</span>
               ) : null}
+              {form.image?.src ? (
+                <div className="editor-inline-preview">
+                  <span className="story-admin-help">Current image</span>
+                  <div
+                    className="editor-inline-preview__image"
+                    style={{ backgroundImage: `url(${form.image.src})` }}
+                  />
+                </div>
+              ) : null}
             </label>
           ) : null}
 
@@ -132,6 +141,17 @@ function StoryFeedEditorModal({
                 <span className="story-admin-help">
                   Current gallery: {form.images.length} image(s)
                 </span>
+              ) : null}
+              {form.images?.length ? (
+                <div className="editor-inline-gallery">
+                  {form.images.map((image, index) => (
+                    <div
+                      key={image.src || index}
+                      className="editor-inline-gallery__image"
+                      style={{ backgroundImage: `url(${image.src})` }}
+                    />
+                  ))}
+                </div>
               ) : null}
             </label>
           ) : null}

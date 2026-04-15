@@ -1,7 +1,7 @@
 const fs = require('fs/promises');
-const path = require('path');
+const { runtimeSiteSettingsFile } = require('./storagePaths');
 
-const DATA_FILE = path.join(__dirname, '..', 'data', 'site-settings.json');
+const DATA_FILE = runtimeSiteSettingsFile;
 
 const localized = (value = {}, fallbackEn = '', fallbackEe = '') => ({
   en: value.en || fallbackEn,
@@ -64,6 +64,26 @@ const normalizeSiteSettings = (settings = {}) => ({
     heading: localized(settings.homeReview?.heading),
     text: localized(settings.homeReview?.text),
     reviewer: localized(settings.homeReview?.reviewer),
+  },
+  contactPage: {
+    imageKey: settings.contactPage?.imageKey || 'contactBg',
+    image: settings.contactPage?.image ? imageShape(settings.contactPage.image) : null,
+    teamHeading: localized(settings.contactPage?.teamHeading),
+    teamMembers: Array.isArray(settings.contactPage?.teamMembers)
+      ? settings.contactPage.teamMembers.map(normalizeTeamMember)
+      : [],
+    formTitle: localized(settings.contactPage?.formTitle),
+    nameLabel: localized(settings.contactPage?.nameLabel),
+    emailLabel: localized(settings.contactPage?.emailLabel),
+    messageLabel: localized(settings.contactPage?.messageLabel),
+    submitLabel: localized(settings.contactPage?.submitLabel),
+    companyName: settings.contactPage?.companyName || '',
+    companyReg: settings.contactPage?.companyReg || '',
+    address: localized(settings.contactPage?.address),
+    bankLine1: settings.contactPage?.bankLine1 || '',
+    bankLine2: settings.contactPage?.bankLine2 || '',
+    email: settings.contactPage?.email || '',
+    phone: settings.contactPage?.phone || '',
   },
   footer: {
     freeTourHeading: localized(settings.footer?.freeTourHeading),

@@ -1,3 +1,5 @@
+import { resolveSiteImage } from '../content/siteSettingsDefaults';
+
 function HomeFooterEditorModal({
   footer,
   setFooter,
@@ -169,6 +171,17 @@ function HomeFooterEditorModal({
           <label>
             GPS image
             <input type="file" accept="image/*" onChange={(event) => setGpsImageFile(event.target.files?.[0] || null)} />
+            {resolveSiteImage(footer.gpsImage, footer.gpsImageKey) ? (
+              <div className="editor-inline-preview">
+                <span className="story-admin-help">Current image</span>
+                <div
+                  className="editor-inline-preview__image"
+                  style={{
+                    backgroundImage: `url(${resolveSiteImage(footer.gpsImage, footer.gpsImageKey)})`,
+                  }}
+                />
+              </div>
+            ) : null}
             {gpsImageFile ? <span className="story-admin-help">Selected: {gpsImageFile.name}</span> : null}
           </label>
           <div className="story-admin-grid two">

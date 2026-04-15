@@ -38,6 +38,11 @@ export const updateReviewSiteSettings = async (token, formData) => {
   return response.data;
 };
 
+export const updateContactPageSiteSettings = async (token, formData) => {
+  const response = await axios.put(`${API_URL}/admin/contact-page`, formData, authHeaders(token));
+  return response.data;
+};
+
 export const updateFooterSiteSettings = async (token, formData) => {
   const response = await axios.put(`${API_URL}/admin/footer`, formData, authHeaders(token));
   return response.data;
@@ -50,6 +55,7 @@ const siteSettingsService = {
   updateServicesSiteSettings,
   updateTeamSiteSettings,
   updateReviewSiteSettings,
+  updateContactPageSiteSettings,
   updateFooterSiteSettings,
 };
 

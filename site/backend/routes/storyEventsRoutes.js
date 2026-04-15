@@ -7,10 +7,11 @@ const multer = require('multer');
 
 const adminAuth = require('../middleware/adminAuth');
 const { getPublicStoryEvents, readStoryEvents, writeStoryEvents } = require('../lib/storyEventsStore');
+const { runtimeStoryUploadsDir } = require('../lib/storagePaths');
 
 const router = express.Router();
 
-const storyUploadsDir = path.join(__dirname, '..', 'uploads', 'story');
+const storyUploadsDir = runtimeStoryUploadsDir;
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, storyUploadsDir),

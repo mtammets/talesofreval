@@ -6,6 +6,7 @@ function HomeHeroEditorModal({
   subtitle,
   setSubtitle,
   currentImage,
+  currentImageUrl,
   selectedFile,
   setSelectedFile,
   previewUrl,
@@ -116,7 +117,7 @@ function HomeHeroEditorModal({
             <div
               className="hero-editor-preview__image"
               style={{
-                backgroundImage: `url(${previewUrl || currentImage?.src || ''})`,
+                backgroundImage: `url(${previewUrl || currentImageUrl || currentImage?.src || ''})`,
               }}
             />
           </div>

@@ -1,7 +1,7 @@
 const fs = require('fs/promises');
-const path = require('path');
+const { runtimeStoryEventsFile } = require('./storagePaths');
 
-const DATA_FILE = path.join(__dirname, '..', 'data', 'story-events.json');
+const DATA_FILE = runtimeStoryEventsFile;
 
 const defaultImageShape = (image = {}) => ({
   src: image.src || '',
