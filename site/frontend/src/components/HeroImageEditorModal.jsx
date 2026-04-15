@@ -1,4 +1,6 @@
-function ContactHeroEditorModal({
+function HeroImageEditorModal({
+  title = 'Change background image',
+  description = 'Upload a new background image.',
   currentImage,
   currentImageUrl,
   selectedFile,
@@ -13,8 +15,8 @@ function ContactHeroEditorModal({
       <div className="story-editor-sheet">
         <div className="story-editor-header">
           <div>
-            <h2>Change background image</h2>
-            <p>Upload a new background image for the contact page.</p>
+            <h2>{title}</h2>
+            <p>{description}</p>
           </div>
           <button type="button" className="story-editor-close" onClick={onCancel}>
             Close
@@ -61,4 +63,4 @@ function ContactHeroEditorModal({
   );
 }
 
-export default ContactHeroEditorModal;
+export default HeroImageEditorModal;

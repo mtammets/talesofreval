@@ -10,7 +10,8 @@ import Spinner from '../components/Spinner';
 import { Helmet } from 'react-helmet';
 import HomeTeamEditorModal from '../components/HomeTeamEditorModal';
 import ContactSectionEditorModal from '../components/ContactSectionEditorModal';
-import ContactHeroEditorModal from '../components/ContactHeroEditorModal';
+import HeroImageEditorModal from '../components/HeroImageEditorModal';
+import PageHero from '../components/PageHero';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
 import { DEFAULT_SITE_SETTINGS, getLocalizedSiteText, resolveSiteImage } from '../content/siteSettingsDefaults';
@@ -236,16 +237,14 @@ function ContactUs({
         <meta name="description" content="Get in touch with Tales of Reval for inquiries about our medieval tours, private tours, team events, and more. Contact us today to book your unique Tallinn experience." />
         <meta name="keywords" content="Contact Tales of Reval, Book a Tour in Tallinn, Inquire About Medieval Tours, Tour Booking Contact, Tallinn Tour Inquiries, Medieval Tour Customer Service, Private Tours in Tallinn, Team Events Tallinn, Unique Tallinn Experiences" />
       </Helmet>
-      <div className="story-landing" style={{ backgroundImage: `url(${contactHeroBackground})` }}>
-        {adminToken && isEditMode ? (
-          <div className="story-landing-admin-actions">
-            <button type="button" onClick={() => setIsHeroEditorOpen(true)}>
-              Edit
-            </button>
-          </div>
-        ) : null}
+      <PageHero
+        mediaClassName="story-landing"
+        backgroundImage={contactHeroBackground}
+        isEditable={Boolean(adminToken) && isEditMode}
+        onEditBackground={() => setIsHeroEditorOpen(true)}
+      >
         <h1>{contactUsText}</h1>
-      </div>
+      </PageHero>
 
       <div className="container contact-page-team">
         <ContactsTeam
@@ -369,7 +368,9 @@ function ContactUs({
       ) : null}
 
       {adminToken && isHeroEditorOpen ? (
-        <ContactHeroEditorModal
+        <HeroImageEditorModal
+          title="Change background image"
+          description="Upload a new background image for the contact page."
           currentImage={siteSettings.contactPage.image}
           currentImageUrl={resolveSiteImage(siteSettings.contactPage.image, siteSettings.contactPage.imageKey)}
           selectedFile={contactHeroImageFile}

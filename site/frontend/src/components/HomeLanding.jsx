@@ -1,4 +1,4 @@
-import homebg from '../img/home-bg.webp';
+import PageHero from './PageHero';
 
 function HomeLanding({ texts, backgroundImage, isEditable = false, onEditBackground }) {
   const overlayStyles = {
@@ -17,32 +17,26 @@ function HomeLanding({ texts, backgroundImage, isEditable = false, onEditBackgro
   const imaginationVoiceText = texts["imagination-voice"] ? texts["imagination-voice"].text : null;
 
   return (
-    <div className="home-landing">
-      <div
-        className="home-landing-media"
-        style={{ backgroundImage: `url(${backgroundImage || homebg})` }}
-      >
-        <div className="home-landing-overlay" style={overlayStyles} />
-        <div className="container home-landing-content">
-          {isEditable ? (
-            <div className="home-landing-admin-actions">
-              <button type="button" onClick={onEditBackground}>
-                Edit
-              </button>
-            </div>
-          ) : null}
-          <div className="home-landing-copy">
-            <h1 className="home-landing-title">
-              {storytellingText} <br />
-              {reinventedText}
-            </h1>
-            <p className="home-landing-text">
-              {imaginationVoiceText}
-            </p>
-          </div>
+    <PageHero
+      className="home-landing"
+      mediaClassName="home-landing-media"
+      backgroundImage={backgroundImage}
+      isEditable={isEditable}
+      onEditBackground={onEditBackground}
+      overlay={<div className="home-landing-overlay" style={overlayStyles} />}
+    >
+      <div className="container home-landing-content">
+        <div className="home-landing-copy">
+          <h1 className="home-landing-title">
+            {storytellingText} <br />
+            {reinventedText}
+          </h1>
+          <p className="home-landing-text">
+            {imaginationVoiceText}
+          </p>
         </div>
       </div>
-    </div>
+    </PageHero>
   );
 }
 

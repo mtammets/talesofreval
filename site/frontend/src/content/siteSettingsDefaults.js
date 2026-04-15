@@ -8,6 +8,7 @@ import person1 from '../img/person1.webp';
 import person2 from '../img/person2.webp';
 import person3 from '../img/person3.webp';
 import bgcontact from '../img/bgcontact.webp';
+import storyBgImage from '../img/storybg.webp';
 import gpsGameImage from '../img/gps-game.webp';
 
 export const SITE_IMAGE_ASSETS = {
@@ -25,6 +26,7 @@ export const SITE_IMAGE_ASSETS = {
   contactMember3: person3,
   contactMember4: person1,
   contactBg: bgcontact,
+  storyBg: storyBgImage,
   gpsGame: gpsGameImage,
 };
 
@@ -37,6 +39,10 @@ export const DEFAULT_SITE_SETTINGS = {
       ee: 'Lase oma kujutlusvõimel hääl leida!',
     },
     imageKey: 'homeBg',
+    image: null,
+  },
+  storyPage: {
+    imageKey: 'storyBg',
     image: null,
   },
   homeServices: {

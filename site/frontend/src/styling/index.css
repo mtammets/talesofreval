@@ -1428,22 +1428,6 @@ p.line-height-spaced{
   max-width: 588px;
 }
 
-.home-landing-admin-actions{
-  display: flex;
-  justify-content: flex-end;
-}
-
-.home-landing-admin-actions button{
-  border: 0;
-  border-radius: 12px;
-  padding: 12px 16px;
-  background: rgba(244, 239, 232, 0.92);
-  color: #202533;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
-}
-
 .home-landing-title{
   font-family: "Cardo", serif;
   font-size: 54px;
@@ -2145,14 +2129,14 @@ p.line-height-spaced{
   line-height: 4.5rem;
 }
 
-.story-landing-admin-actions{
+.page-hero__admin-actions{
   position: absolute;
   top: 24px;
   right: 24px;
   z-index: 2;
 }
 
-.story-landing-admin-actions button{
+.page-hero__admin-actions button{
   border: 0;
   border-radius: 12px;
   padding: 12px 16px;

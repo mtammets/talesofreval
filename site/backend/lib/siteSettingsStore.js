@@ -48,6 +48,10 @@ const normalizeSiteSettings = (settings = {}) => ({
     imageKey: settings.homeHero?.imageKey || '',
     image: settings.homeHero?.image ? imageShape(settings.homeHero.image) : null,
   },
+  storyPage: {
+    imageKey: settings.storyPage?.imageKey || 'storyBg',
+    image: settings.storyPage?.image ? imageShape(settings.storyPage.image) : null,
+  },
   homeServices: {
     heading: localized(settings.homeServices?.heading),
     items: Array.isArray(settings.homeServices?.items)

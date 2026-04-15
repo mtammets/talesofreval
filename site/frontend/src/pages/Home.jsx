@@ -262,7 +262,7 @@ function Home({
 
       <HomeLanding
         texts={heroTexts}
-        backgroundImage={heroPreviewUrl || siteSettings.homeHero.image?.src}
+        backgroundImage={heroPreviewUrl || resolveSiteImage(siteSettings.homeHero.image, siteSettings.homeHero.imageKey)}
         isEditable={Boolean(adminToken) && isEditMode}
         onEditBackground={() => setIsHeroEditorOpen(true)}
       />

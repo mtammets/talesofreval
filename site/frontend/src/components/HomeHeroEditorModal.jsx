@@ -123,7 +123,7 @@ function HomeHeroEditorModal({
           </div>
 
           <div className="story-admin-actions">
-            <button type="submit" disabled={isSaving || !selectedFile}>
+            <button type="submit" disabled={isSaving}>
               {isSaving ? 'Saving…' : 'Save changes'}
             </button>
             <button type="button" onClick={onCancel}>

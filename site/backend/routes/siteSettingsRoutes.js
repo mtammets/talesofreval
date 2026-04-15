@@ -105,6 +105,27 @@ router.put(
 );
 
 router.put(
+  '/admin/story-hero',
+  adminAuth,
+  heroUpload,
+  asyncHandler(async (req, res) => {
+    const settings = await readSiteSettings();
+    const imageFile = req.files?.imageFile?.[0];
+
+    const nextSettings = {
+      ...settings,
+      storyPage: {
+        ...settings.storyPage,
+        image: imageFile ? toImageShape(imageFile) : settings.storyPage.image,
+      },
+    };
+
+    const saved = await writeSiteSettings(nextSettings);
+    res.json(saved);
+  })
+);
+
+router.put(
   '/admin/services',
   adminAuth,
   servicesUpload,

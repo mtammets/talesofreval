@@ -3,13 +3,14 @@ import { Helmet } from 'react-helmet';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 
-import storybg from '../img/storybg.webp';
 import OurServices from '../components/OurServices';
 import StoryYear from '../components/StoryYear.jsx';
 import Spinner from '../components/Spinner';
 import StoryFeedEditorModal from '../components/StoryFeedEditorModal';
 import HomeServicesEditorModal from '../components/HomeServicesEditorModal';
+import HeroImageEditorModal from '../components/HeroImageEditorModal';
 import ConfirmDialog from '../components/ConfirmDialog';
+import PageHero from '../components/PageHero';
 import { getEvents, reset } from '../features/events/eventSlice';
 import { getMiscTexts } from '../features/texts/textSlice.js';
 import storyAdminService, {
@@ -22,7 +23,7 @@ import {
   editorTextToHtml,
   mapStoryEventToForm,
 } from '../features/events/storyAdminUtils';
-import { DEFAULT_SITE_SETTINGS } from '../content/siteSettingsDefaults';
+import { DEFAULT_SITE_SETTINGS, resolveSiteImage } from '../content/siteSettingsDefaults';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 
@@ -49,11 +50,15 @@ function StoryPage({
   const [editorMode, setEditorMode] = useState('create');
   const [lockYear, setLockYear] = useState(false);
   const [lockOrder, setLockOrder] = useState(false);
+  const [isHeroEditorOpen, setIsHeroEditorOpen] = useState(false);
   const [singleImageFile, setSingleImageFile] = useState(null);
   const [galleryFiles, setGalleryFiles] = useState([]);
+  const [storyHeroImageFile, setStoryHeroImageFile] = useState(null);
+  const [storyHeroPreviewUrl, setStoryHeroPreviewUrl] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState('');
+  const [isSavingHero, setIsSavingHero] = useState(false);
   const [isSavingServices, setIsSavingServices] = useState(false);
   const [servicesHeading, setServicesHeading] = useState(cloneValue(siteSettings.homeServices.heading));
   const [serviceItems, setServiceItems] = useState(cloneValue(siteSettings.homeServices.items));
@@ -81,6 +86,20 @@ function StoryPage({
     setServicesHeading(cloneValue(siteSettings.homeServices.heading));
     setServiceItems(cloneValue(siteSettings.homeServices.items));
   }, [siteSettings]);
+
+  useEffect(() => {
+    if (!storyHeroImageFile) {
+      setStoryHeroPreviewUrl('');
+      return undefined;
+    }
+
+    const nextUrl = URL.createObjectURL(storyHeroImageFile);
+    setStoryHeroPreviewUrl(nextUrl);
+
+    return () => {
+      URL.revokeObjectURL(nextUrl);
+    };
+  }, [storyHeroImageFile]);
 
   const handleAdminAuthError = (error) => {
     if (error?.response?.status === 401) {
@@ -340,6 +359,28 @@ function StoryPage({
     }
   };
 
+  const saveStoryHero = async (event) => {
+    event.preventDefault();
+    setIsSavingHero(true);
+
+    try {
+      const formData = new FormData();
+      if (storyHeroImageFile) {
+        formData.append('imageFile', storyHeroImageFile);
+      }
+
+      const nextSettings = await siteSettingsService.updateStoryHeroSiteSettings(adminToken, formData);
+      setSiteSettings(nextSettings);
+      setStoryHeroImageFile(null);
+      setIsHeroEditorOpen(false);
+      toast.success('Story background updated.');
+    } catch (error) {
+      handleAdminAuthError(error);
+    } finally {
+      setIsSavingHero(false);
+    }
+  };
+
   const isPageLoading =
     (isLoading && (!events || events.length === 0)) ||
     (adminToken && isAdminLoading && !didLoadAdminEvents && (!events || events.length === 0));
@@ -349,6 +390,9 @@ function StoryPage({
   }
 
   const ourStoryText = misc_texts && misc_texts['our-story'] ? misc_texts['our-story'].text : null;
+  const storyHeroBackground =
+    storyHeroPreviewUrl ||
+    resolveSiteImage(siteSettings.storyPage.image, siteSettings.storyPage.imageKey);
 
   return (
     <div className="story-page">
@@ -364,9 +408,14 @@ function StoryPage({
         />
       </Helmet>
 
-      <div className="story-landing" style={{ background: `url(${storybg})` }}>
+      <PageHero
+        mediaClassName="story-landing"
+        backgroundImage={storyHeroBackground}
+        isEditable={Boolean(adminToken) && isEditMode}
+        onEditBackground={() => setIsHeroEditorOpen(true)}
+      >
         <h1>{ourStoryText}</h1>
-      </div>
+      </PageHero>
 
       {adminToken && isEditMode ? (
         <div className="container">
@@ -456,6 +505,23 @@ function StoryPage({
         onCancel={closeDeleteDialog}
         onConfirm={() => deleteStoryEvent(pendingDeleteId)}
       />
+      {adminToken && isHeroEditorOpen ? (
+        <HeroImageEditorModal
+          title="Change background image"
+          description="Upload a new background image for the story page."
+          currentImage={siteSettings.storyPage.image}
+          currentImageUrl={resolveSiteImage(siteSettings.storyPage.image, siteSettings.storyPage.imageKey)}
+          selectedFile={storyHeroImageFile}
+          setSelectedFile={setStoryHeroImageFile}
+          previewUrl={storyHeroPreviewUrl}
+          onSave={saveStoryHero}
+          onCancel={() => {
+            setIsHeroEditorOpen(false);
+            setStoryHeroImageFile(null);
+          }}
+          isSaving={isSavingHero}
+        />
+      ) : null}
       {adminToken && isServicesEditorOpen ? (
         <HomeServicesEditorModal
           heading={{ value: servicesHeading, set: setServicesHeading }}

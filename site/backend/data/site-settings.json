@@ -15,6 +15,10 @@
     "imageKey": "homeBg",
     "image": null
   },
+  "storyPage": {
+    "imageKey": "storyBg",
+    "image": null
+  },
   "homeServices": {
     "heading": {
       "en": "Our services",

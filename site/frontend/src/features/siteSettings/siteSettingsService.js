@@ -23,6 +23,11 @@ export const updateHeroSiteSettings = async (token, formData) => {
   return response.data;
 };
 
+export const updateStoryHeroSiteSettings = async (token, formData) => {
+  const response = await axios.put(`${API_URL}/admin/story-hero`, formData, authHeaders(token));
+  return response.data;
+};
+
 export const updateServicesSiteSettings = async (token, formData) => {
   const response = await axios.put(`${API_URL}/admin/services`, formData, authHeaders(token));
   return response.data;
@@ -52,6 +57,7 @@ const siteSettingsService = {
   getSiteSettings,
   getAdminSiteSettings,
   updateHeroSiteSettings,
+  updateStoryHeroSiteSettings,
   updateServicesSiteSettings,
   updateTeamSiteSettings,
   updateReviewSiteSettings,
