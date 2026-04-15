@@ -1,4 +1,3 @@
-const path = require('path');
 const crypto = require('crypto');
 
 const express = require('express');
@@ -8,22 +7,14 @@ const multer = require('multer');
 const adminAuth = require('../middleware/adminAuth');
 const { getPublicStoryEvents, readStoryEvents, writeStoryEvents } = require('../lib/storyEventsStore');
 const { runtimeStoryUploadsDir } = require('../lib/storagePaths');
+const { IMAGE_PRESETS, processUploadedImage } = require('../lib/uploadedImageProcessor');
 
 const router = express.Router();
 
 const storyUploadsDir = runtimeStoryUploadsDir;
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, storyUploadsDir),
-  filename: (_req, file, cb) => {
-    const extension = path.extname(file.originalname || '').toLowerCase();
-    const safeExtension = extension || '.bin';
-    cb(null, `${Date.now()}-${crypto.randomUUID()}${safeExtension}`);
-  },
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   fileFilter: (_req, file, cb) => {
     if (file.mimetype && file.mimetype.startsWith('image/')) {
       cb(null, true);
@@ -41,13 +32,6 @@ const uploadFields = upload.fields([
   { name: 'imageFile', maxCount: 1 },
   { name: 'galleryFiles', maxCount: 8 },
 ]);
-
-const toImageShape = (file) => ({
-  src: `/uploads/story/${file.filename}`,
-  name: file.originalname,
-  width: 1200,
-  height: 760,
-});
 
 const normalizePayload = (body, existing = {}) => {
   const year = Number(body.year);
@@ -68,18 +52,34 @@ const normalizePayload = (body, existing = {}) => {
   };
 };
 
-const cleanMediaForType = (event, files, existing = {}) => {
+const cleanMediaForType = async (event, files, existing = {}) => {
   const next = { ...event };
   const singleFile = files?.imageFile?.[0];
   const galleryFiles = files?.galleryFiles || [];
 
   if (next.mediaType === 0) {
-    next.image = singleFile ? toImageShape(singleFile) : existing.image || next.image || null;
+    next.image = singleFile
+      ? await processUploadedImage({
+          file: singleFile,
+          outputDir: storyUploadsDir,
+          publicPathPrefix: '/uploads/story',
+          preset: IMAGE_PRESETS.storyMedia,
+        })
+      : existing.image || next.image || null;
     next.images = [];
     next.video = '';
   } else if (next.mediaType === 1) {
     next.images = galleryFiles.length
-      ? galleryFiles.map(toImageShape)
+      ? await Promise.all(
+          galleryFiles.map((file) =>
+            processUploadedImage({
+              file,
+              outputDir: storyUploadsDir,
+              publicPathPrefix: '/uploads/story',
+              preset: IMAGE_PRESETS.storyMedia,
+            })
+          )
+        )
       : existing.images || next.images || [];
     next.image = null;
     next.video = '';
@@ -88,7 +88,14 @@ const cleanMediaForType = (event, files, existing = {}) => {
     next.images = [];
   } else {
     next.mediaType = 0;
-    next.image = singleFile ? toImageShape(singleFile) : existing.image || null;
+    next.image = singleFile
+      ? await processUploadedImage({
+          file: singleFile,
+          outputDir: storyUploadsDir,
+          publicPathPrefix: '/uploads/story',
+          preset: IMAGE_PRESETS.storyMedia,
+        })
+      : existing.image || null;
     next.images = [];
     next.video = '';
   }
@@ -165,7 +172,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const events = await readStoryEvents();
     const base = normalizePayload(req.body);
-    const nextEvent = cleanMediaForType(
+    const nextEvent = await cleanMediaForType(
       {
         ...base,
         _id: crypto.randomUUID(),
@@ -191,7 +198,7 @@ router.put(
       throw new Error('Story event not found.');
     }
 
-    const updated = cleanMediaForType(normalizePayload(req.body, existing), req.files, existing);
+    const updated = await cleanMediaForType(normalizePayload(req.body, existing), req.files, existing);
     updated._id = existing._id;
 
     const saved = await writeStoryEvents(reindexYearEvents(events, updated, existing._id));

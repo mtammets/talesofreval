@@ -8,6 +8,8 @@ const defaultImageShape = (image = {}) => ({
   name: image.name || '',
   width: Number(image.width) || 1200,
   height: Number(image.height) || 760,
+  format: image.format || '',
+  pixelRatio: Number(image.pixelRatio) || 1,
 });
 
 const normalizeEventShape = (event) => ({

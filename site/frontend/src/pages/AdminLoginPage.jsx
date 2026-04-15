@@ -41,7 +41,7 @@ function AdminLoginPage({ adminToken, setAdminToken }) {
       setStoredStoryAdminAuth(token);
       setAdminToken(token);
       setPassword('');
-      toast.success('Admin mode enabled.');
+      toast.success('Edit mode enabled.');
       navigate(nextPath, { replace: true });
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed.');

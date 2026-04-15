@@ -13,6 +13,8 @@ const imageShape = (image = {}, fallbackWidth = 1440, fallbackHeight = 700) => (
   name: image.name || '',
   width: Number(image.width) || fallbackWidth,
   height: Number(image.height) || fallbackHeight,
+  format: image.format || '',
+  pixelRatio: Number(image.pixelRatio) || 1,
 });
 
 const normalizeServiceItem = (item = {}, index = 0) => ({

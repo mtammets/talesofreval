@@ -1,6 +1,3 @@
-const path = require('path');
-const crypto = require('crypto');
-
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 const multer = require('multer');
@@ -8,22 +5,14 @@ const multer = require('multer');
 const adminAuth = require('../middleware/adminAuth');
 const { readSiteSettings, writeSiteSettings } = require('../lib/siteSettingsStore');
 const { runtimeSiteUploadsDir } = require('../lib/storagePaths');
+const { IMAGE_PRESETS, processUploadedImage } = require('../lib/uploadedImageProcessor');
 
 const router = express.Router();
 
 const siteUploadsDir = runtimeSiteUploadsDir;
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, siteUploadsDir),
-  filename: (_req, file, cb) => {
-    const extension = path.extname(file.originalname || '').toLowerCase();
-    const safeExtension = extension || '.bin';
-    cb(null, `${Date.now()}-${crypto.randomUUID()}${safeExtension}`);
-  },
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   fileFilter: (_req, file, cb) => {
     if (file.mimetype && file.mimetype.startsWith('image/')) {
       cb(null, true);
@@ -43,13 +32,6 @@ const teamUpload = upload.any();
 const reviewUpload = upload.none();
 const contactUpload = upload.any();
 const footerUpload = upload.fields([{ name: 'gpsImageFile', maxCount: 1 }]);
-
-const toImageShape = (file, width = 1440, height = 700) => ({
-  src: `/uploads/site/${file.filename}`,
-  name: file.originalname,
-  width,
-  height,
-});
 
 const parseJsonField = (value, fallback) => {
   if (!value) {
@@ -87,6 +69,14 @@ router.put(
   asyncHandler(async (req, res) => {
     const settings = await readSiteSettings();
     const imageFile = req.files?.imageFile?.[0];
+    const processedHeroImage = imageFile
+      ? await processUploadedImage({
+          file: imageFile,
+          outputDir: siteUploadsDir,
+          publicPathPrefix: '/uploads/site',
+          preset: IMAGE_PRESETS.hero,
+        })
+      : null;
 
     const nextSettings = {
       ...settings,
@@ -95,7 +85,7 @@ router.put(
         titleLine1: parseJsonField(req.body.titleLine1, settings.homeHero.titleLine1),
         titleLine2: parseJsonField(req.body.titleLine2, settings.homeHero.titleLine2),
         subtitle: parseJsonField(req.body.subtitle, settings.homeHero.subtitle),
-        image: imageFile ? toImageShape(imageFile) : settings.homeHero.image,
+        image: processedHeroImage || settings.homeHero.image,
       },
     };
 
@@ -111,12 +101,20 @@ router.put(
   asyncHandler(async (req, res) => {
     const settings = await readSiteSettings();
     const imageFile = req.files?.imageFile?.[0];
+    const processedHeroImage = imageFile
+      ? await processUploadedImage({
+          file: imageFile,
+          outputDir: siteUploadsDir,
+          publicPathPrefix: '/uploads/site',
+          preset: IMAGE_PRESETS.hero,
+        })
+      : null;
 
     const nextSettings = {
       ...settings,
       storyPage: {
         ...settings.storyPage,
-        image: imageFile ? toImageShape(imageFile) : settings.storyPage.image,
+        image: processedHeroImage || settings.storyPage.image,
       },
     };
 
@@ -135,13 +133,26 @@ router.put(
     const heading = parseJsonField(req.body.heading, settings.homeServices.heading);
 
     const fileMap = new Map((req.files || []).map((file) => [file.fieldname, file]));
+    const processedImages = await Promise.all(
+      items.map(async (_item, index) => {
+        const file = fileMap.get(`serviceImage_${index}`);
+        if (!file) {
+          return null;
+        }
+
+        return processUploadedImage({
+          file,
+          outputDir: siteUploadsDir,
+          publicPathPrefix: '/uploads/site',
+          preset: IMAGE_PRESETS.serviceCard,
+        });
+      })
+    );
 
     const nextItems = items.map((item, index) => ({
       ...settings.homeServices.items[index],
       ...item,
-      image: fileMap.get(`serviceImage_${index}`)
-        ? toImageShape(fileMap.get(`serviceImage_${index}`), 640, 520)
-        : item.image || settings.homeServices.items[index]?.image || null,
+      image: processedImages[index] || item.image || settings.homeServices.items[index]?.image || null,
     }));
 
     const nextSettings = {
@@ -168,13 +179,26 @@ router.put(
     const heading = parseJsonField(req.body.heading, settings.homeTeam.heading);
 
     const fileMap = new Map((req.files || []).map((file) => [file.fieldname, file]));
+    const processedImages = await Promise.all(
+      members.map(async (_member, index) => {
+        const file = fileMap.get(`teamImage_${index}`);
+        if (!file) {
+          return null;
+        }
+
+        return processUploadedImage({
+          file,
+          outputDir: siteUploadsDir,
+          publicPathPrefix: '/uploads/site',
+          preset: IMAGE_PRESETS.teamMember,
+        });
+      })
+    );
 
     const nextMembers = members.map((member, index) => ({
       ...settings.homeTeam.members[index],
       ...member,
-      image: fileMap.get(`teamImage_${index}`)
-        ? toImageShape(fileMap.get(`teamImage_${index}`), 520, 520)
-        : member.image || settings.homeTeam.members[index]?.image || null,
+      image: processedImages[index] || member.image || settings.homeTeam.members[index]?.image || null,
     }));
 
     const nextSettings = {
@@ -227,13 +251,34 @@ router.put(
     const teamHeading = parseJsonField(req.body.teamHeading, settings.contactPage.teamHeading);
     const teamMembers = parseJsonField(req.body.teamMembers, settings.contactPage.teamMembers);
     const fileMap = new Map((req.files || []).map((file) => [file.fieldname, file]));
+    const processedTeamImages = await Promise.all(
+      teamMembers.map(async (_member, index) => {
+        const file = fileMap.get(`contactTeamImage_${index}`);
+        if (!file) {
+          return null;
+        }
+
+        return processUploadedImage({
+          file,
+          outputDir: siteUploadsDir,
+          publicPathPrefix: '/uploads/site',
+          preset: IMAGE_PRESETS.contactTeamMember,
+        });
+      })
+    );
+    const processedHeroImage = fileMap.get('contactHeroImage')
+      ? await processUploadedImage({
+          file: fileMap.get('contactHeroImage'),
+          outputDir: siteUploadsDir,
+          publicPathPrefix: '/uploads/site',
+          preset: IMAGE_PRESETS.hero,
+        })
+      : null;
 
     const nextTeamMembers = teamMembers.map((member, index) => ({
       ...settings.contactPage.teamMembers[index],
       ...member,
-      image: fileMap.get(`contactTeamImage_${index}`)
-        ? toImageShape(fileMap.get(`contactTeamImage_${index}`), 520, 420)
-        : member.image || settings.contactPage.teamMembers[index]?.image || null,
+      image: processedTeamImages[index] || member.image || settings.contactPage.teamMembers[index]?.image || null,
     }));
 
     const nextSettings = {
@@ -245,9 +290,7 @@ router.put(
       },
       contactPage: {
         ...settings.contactPage,
-        image: fileMap.get('contactHeroImage')
-          ? toImageShape(fileMap.get('contactHeroImage'))
-          : settings.contactPage.image,
+        image: processedHeroImage || settings.contactPage.image,
         teamHeading,
         teamMembers: nextTeamMembers,
         formTitle: parseJsonField(req.body.formTitle, settings.contactPage.formTitle),
@@ -277,6 +320,14 @@ router.put(
   asyncHandler(async (req, res) => {
     const settings = await readSiteSettings();
     const imageFile = req.files?.gpsImageFile?.[0];
+    const processedGpsImage = imageFile
+      ? await processUploadedImage({
+          file: imageFile,
+          outputDir: siteUploadsDir,
+          publicPathPrefix: '/uploads/site',
+          preset: IMAGE_PRESETS.footerGps,
+        })
+      : null;
 
     const nextSettings = {
       ...settings,
@@ -298,7 +349,7 @@ router.put(
         gpsCopy: parseJsonField(req.body.gpsCopy, settings.footer.gpsCopy),
         gpsButtonLabel: parseJsonField(req.body.gpsButtonLabel, settings.footer.gpsButtonLabel),
         gpsUrl: req.body.gpsUrl || settings.footer.gpsUrl,
-        gpsImage: imageFile ? toImageShape(imageFile, 800, 560) : settings.footer.gpsImage,
+        gpsImage: processedGpsImage || settings.footer.gpsImage,
         followUsHeading: parseJsonField(req.body.followUsHeading, settings.footer.followUsHeading),
         contactHeading: parseJsonField(req.body.contactHeading, settings.footer.contactHeading),
         companyName: req.body.companyName || settings.footer.companyName,
