@@ -24,18 +24,18 @@ function StoryFeedEditorModal({
   };
 
   const title =
-    form._id ? 'Edit item' : editorMode === 'add-page' ? 'Add page' : 'Add item';
+    form._id ? 'Edit item' : editorMode === 'add-page' ? 'Add page' : 'Add year';
   const helperText =
     editorMode === 'add-page'
       ? 'This new page will be added right after the selected item.'
       : editorMode === 'create'
-        ? 'Create a new item for the story timeline.'
+        ? ''
         : '';
   const submitLabel = form._id
     ? 'Save changes'
     : editorMode === 'add-page'
       ? 'Create page'
-      : 'Create item';
+      : 'Create year';
 
   return (
     <AdminModalShell

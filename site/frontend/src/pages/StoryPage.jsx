@@ -422,7 +422,7 @@ function StoryPage({
           <div className="story-page-admin-toolbar story-page-admin-toolbar--compact">
             <div className="story-page-admin-actions">
               <button type="button" onClick={openCreateEditor}>
-                Add New
+                Add year
               </button>
             </div>
           </div>

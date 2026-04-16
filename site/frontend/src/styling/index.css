@@ -1342,12 +1342,52 @@ p.line-height-spaced{
   line-height: 1.5;
 }
 
-.google-maps.footer-map{
+.google-maps.footer-map,
+.footer-map-card{
   width: 100%;
   height: 212px;
   margin: 22px 0 0;
   background: #d8d8d8;
   overflow: hidden;
+}
+
+.footer-map-card{
+  position: relative;
+  border: 1px solid rgba(230, 221, 215, 0.16);
+  background: #dfe4e1;
+  box-shadow: 0 18px 36px rgba(9, 12, 20, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.footer-map-card:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 22px 40px rgba(9, 12, 20, 0.24);
+}
+
+.footer-map-card::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(32, 37, 51, 0.02), rgba(32, 37, 51, 0.08));
+  pointer-events: none;
+}
+
+.footer-map-embed{
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.footer-map-card__link{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.footer-map-card__link:focus-visible{
+  outline: 3px solid rgba(193, 208, 205, 0.9);
+  outline-offset: -4px;
 }
 
 .footer-map-fallback{
@@ -4330,7 +4370,8 @@ button.year-event-switch.disabled{
     max-width: 420px;
   }
 
-  .google-maps.footer-map{
+  .google-maps.footer-map,
+  .footer-map-card{
     width: 100%;
     max-width: 384px;
   }
@@ -4482,7 +4523,8 @@ button.year-event-switch.disabled{
     font-size: 14px;
   }
 
-  .google-maps.footer-map{
+  .google-maps.footer-map,
+  .footer-map-card{
     height: 220px;
   }
 
@@ -5045,6 +5087,10 @@ button.year-event-switch.disabled{
   justify-content: flex-end;
   align-items: center;
   min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .story-page-admin-toolbar h2{
@@ -5114,25 +5160,28 @@ button.year-event-switch.disabled{
 }
 
 .story-editor-modal{
+  --story-modal-gap: clamp(16px, 3vw, 28px);
   position: fixed;
   inset: 0;
   z-index: 10020;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(16px, 3vw, 28px);
+  padding: var(--story-modal-gap);
   background:
     radial-gradient(circle at top right, rgba(223, 138, 139, 0.16), transparent 34%),
     rgba(14, 18, 28, 0.7);
   backdrop-filter: blur(18px);
   overscroll-behavior: contain;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .story-editor-sheet{
   width: min(960px, 100%);
-  max-height: calc(100dvh - 24px);
+  max-height: calc(100dvh - (var(--story-modal-gap) * 2));
   min-width: 0;
+  margin: auto;
   color: #202533;
   border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.42);
@@ -5159,7 +5208,7 @@ button.year-event-switch.disabled{
 
 .story-editor-body{
   min-height: 0;
-  max-height: calc(100dvh - 24px);
+  max-height: calc(100dvh - (var(--story-modal-gap) * 2));
   min-width: 0;
   display: grid;
   gap: 20px;
@@ -5168,6 +5217,7 @@ button.year-event-switch.disabled{
   overscroll-behavior-x: none;
   touch-action: pan-y;
   padding: clamp(20px, 3.2vw, 30px);
+  padding-bottom: clamp(28px, 4vw, 40px);
 }
 
 .story-editor-kicker{
@@ -5256,7 +5306,7 @@ button.year-event-switch.disabled{
 
 .story-admin-actions{
   position: sticky;
-  bottom: 0;
+  bottom: 20px;
   z-index: 2;
   width: 100%;
   min-width: 0;
@@ -5346,14 +5396,15 @@ button.year-event-switch.disabled{
 
   .story-editor-modal,
   .story-admin-login-page{
+    --story-modal-gap: 12px;
     align-items: flex-end;
-    padding: 12px;
+    padding: var(--story-modal-gap);
   }
 
   .story-editor-sheet,
   .story-admin-login-card{
     width: 100%;
-    max-height: calc(100dvh - 12px);
+    max-height: calc(100dvh - (var(--story-modal-gap) * 2));
     border-radius: 24px;
   }
 
@@ -5366,6 +5417,11 @@ button.year-event-switch.disabled{
 
   .story-editor-body{
     padding: 18px;
+    padding-bottom: 28px;
+  }
+
+  .story-admin-actions{
+    bottom: 12px;
   }
 }
 
