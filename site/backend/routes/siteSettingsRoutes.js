@@ -32,6 +32,8 @@ const teamUpload = upload.any();
 const reviewUpload = upload.none();
 const contactUpload = upload.any();
 const footerUpload = upload.fields([{ name: 'gpsImageFile', maxCount: 1 }]);
+const servicePageContentUpload = upload.any();
+const servicePageKeys = new Set(['team', 'private', 'quick', 'destination', 'wedding']);
 
 const parseJsonField = (value, fallback) => {
   if (!value) {
@@ -115,6 +117,120 @@ router.put(
       storyPage: {
         ...settings.storyPage,
         image: processedHeroImage || settings.storyPage.image,
+      },
+    };
+
+    const saved = await writeSiteSettings(nextSettings);
+    res.json(saved);
+  })
+);
+
+router.put(
+  '/admin/service-page-hero/:serviceKey',
+  adminAuth,
+  heroUpload,
+  asyncHandler(async (req, res) => {
+    const { serviceKey } = req.params;
+
+    if (!servicePageKeys.has(serviceKey)) {
+      res.status(400);
+      throw new Error('Unknown service page hero.');
+    }
+
+    const settings = await readSiteSettings();
+    const imageFile = req.files?.imageFile?.[0];
+    const processedHeroImage = imageFile
+      ? await processUploadedImage({
+          file: imageFile,
+          outputDir: siteUploadsDir,
+          publicPathPrefix: '/uploads/site',
+          preset: IMAGE_PRESETS.hero,
+        })
+      : null;
+
+    const nextSettings = {
+      ...settings,
+      servicePageHeroes: {
+        ...settings.servicePageHeroes,
+        [serviceKey]: {
+          ...settings.servicePageHeroes?.[serviceKey],
+          image: processedHeroImage || settings.servicePageHeroes?.[serviceKey]?.image || null,
+        },
+      },
+    };
+
+    const saved = await writeSiteSettings(nextSettings);
+    res.json(saved);
+  })
+);
+
+router.put(
+  '/admin/service-page-content/:serviceKey',
+  adminAuth,
+  servicePageContentUpload,
+  asyncHandler(async (req, res) => {
+    const { serviceKey } = req.params;
+
+    if (!servicePageKeys.has(serviceKey)) {
+      res.status(400);
+      throw new Error('Unknown service page content.');
+    }
+
+    const settings = await readSiteSettings();
+    const currentContent = settings.servicePageContent?.[serviceKey] || {};
+    const parsedCards = parseJsonField(req.body.cards, currentContent.cards);
+    const cards = Array.isArray(parsedCards) ? parsedCards : [];
+    const fileMap = new Map((req.files || []).map((file) => [file.fieldname, file]));
+    const processedCardImages = await Promise.all(
+      cards.map(async (_card, index) => {
+        const file = fileMap.get(`cardImage_${index}`);
+        if (!file) {
+          return null;
+        }
+
+        return processUploadedImage({
+          file,
+          outputDir: siteUploadsDir,
+          publicPathPrefix: '/uploads/site',
+          preset: IMAGE_PRESETS.serviceCard,
+        });
+      })
+    );
+    const nextCards = cards.map((card, index) => ({
+      ...currentContent.cards?.[index],
+      ...card,
+      image:
+        processedCardImages[index] ||
+        card.image ||
+        currentContent.cards?.[index]?.image ||
+        null,
+    }));
+
+    const nextSettings = {
+      ...settings,
+      servicePageContent: {
+        ...settings.servicePageContent,
+        [serviceKey]: {
+          ...currentContent,
+          isCustomized: true,
+          title: parseJsonField(req.body.title, currentContent.title),
+          intro: parseJsonField(req.body.intro, currentContent.intro),
+          cards: nextCards,
+          review: parseJsonField(req.body.review, currentContent.review),
+          reviewAuthor: parseJsonField(req.body.reviewAuthor, currentContent.reviewAuthor),
+          destinationHeading: parseJsonField(
+            req.body.destinationHeading,
+            currentContent.destinationHeading
+          ),
+          destinationDescription: parseJsonField(
+            req.body.destinationDescription,
+            currentContent.destinationDescription
+          ),
+          destinationButtonLabel: parseJsonField(
+            req.body.destinationButtonLabel,
+            currentContent.destinationButtonLabel
+          ),
+        },
       },
     };
 

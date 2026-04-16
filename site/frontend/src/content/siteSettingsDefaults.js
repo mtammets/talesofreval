@@ -4,6 +4,26 @@ import privateImage from '../img/private.webp';
 import quickImage from '../img/quick.webp';
 import destinationImage from '../img/destination.webp';
 import weddingImage from '../img/pulmad.webp';
+import teamHeroImage from '../img/team-background.webp';
+import privateHeroImage from '../img/privatebg.webp';
+import quickHeroImage from '../img/quickbg.webp';
+import destinationHeroImage from '../img/destinationbg.webp';
+import weddingHeroImage from '../img/weddingbg.webp';
+import teamSectionImage1 from '../img/team-teamwork.webp';
+import teamSectionImage2 from '../img/team-connections.webp';
+import teamSectionImage3 from '../img/team-experiences.webp';
+import privateSectionImage1 from '../img/private-story.webp';
+import privateSectionImage2 from '../img/private-deliver.webp';
+import privateSectionImage3 from '../img/private-revelation.webp';
+import quickSectionImage1 from '../img/quick-minutes.webp';
+import quickSectionImage2 from '../img/quick-heart.webp';
+import quickSectionImage3 from '../img/quick-imagine.webp';
+import destinationSectionImage1 from '../img/destination-adventures.webp';
+import destinationSectionImage2 from '../img/destination-await.webp';
+import destinationSectionImage3 from '../img/destination-shows.webp';
+import weddingSectionImage1 from '../img/weddings-fantasy.webp';
+import weddingSectionImage2 from '../img/weddings-hosts.webp';
+import weddingSectionImage3 from '../img/weddings-champions.webp';
 import person1 from '../img/person1.webp';
 import person2 from '../img/person2.webp';
 import person3 from '../img/person3.webp';
@@ -18,6 +38,26 @@ export const SITE_IMAGE_ASSETS = {
   serviceQuick: quickImage,
   serviceDestination: destinationImage,
   serviceWedding: weddingImage,
+  serviceTeamHero: teamHeroImage,
+  servicePrivateHero: privateHeroImage,
+  serviceQuickHero: quickHeroImage,
+  serviceDestinationHero: destinationHeroImage,
+  serviceWeddingHero: weddingHeroImage,
+  serviceTeamSection1: teamSectionImage1,
+  serviceTeamSection2: teamSectionImage2,
+  serviceTeamSection3: teamSectionImage3,
+  servicePrivateSection1: privateSectionImage1,
+  servicePrivateSection2: privateSectionImage2,
+  servicePrivateSection3: privateSectionImage3,
+  serviceQuickSection1: quickSectionImage1,
+  serviceQuickSection2: quickSectionImage2,
+  serviceQuickSection3: quickSectionImage3,
+  serviceDestinationSection1: destinationSectionImage1,
+  serviceDestinationSection2: destinationSectionImage2,
+  serviceDestinationSection3: destinationSectionImage3,
+  serviceWeddingSection1: weddingSectionImage1,
+  serviceWeddingSection2: weddingSectionImage2,
+  serviceWeddingSection3: weddingSectionImage3,
   teamMember1: person1,
   teamMember2: person2,
   teamMember3: person3,
@@ -44,6 +84,28 @@ export const DEFAULT_SITE_SETTINGS = {
   storyPage: {
     imageKey: 'storyBg',
     image: null,
+  },
+  servicePageHeroes: {
+    team: {
+      imageKey: 'serviceTeamHero',
+      image: null,
+    },
+    private: {
+      imageKey: 'servicePrivateHero',
+      image: null,
+    },
+    quick: {
+      imageKey: 'serviceQuickHero',
+      image: null,
+    },
+    destination: {
+      imageKey: 'serviceDestinationHero',
+      image: null,
+    },
+    wedding: {
+      imageKey: 'serviceWeddingHero',
+      image: null,
+    },
   },
   homeServices: {
     heading: { en: 'Our services', ee: 'Meie teenused' },

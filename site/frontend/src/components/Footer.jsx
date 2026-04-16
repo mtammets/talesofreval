@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
 import { getFooterTexts, reset } from '../features/texts/textSlice';
 import FooterColumnLeft from './footer-components/FooterColumnLeft.jsx';
 import FooterColumnMiddle from './footer-components/FooterColumnMiddle.jsx';
@@ -22,7 +21,6 @@ function Footer({
   isEditMode = false,
 }) {
   const dispatch = useDispatch();
-  const location = useLocation();
   const { footer_texts, isError, message } = useSelector((state) => state.texts);
   const [isFooterEditorOpen, setIsFooterEditorOpen] = useState(false);
   const [footerForm, setFooterForm] = useState(cloneValue(siteSettings?.footer || {}));
@@ -110,7 +108,7 @@ function Footer({
   return (
     <div className="footer section padding-80-top">
       <div className="container">
-        {adminToken && isEditMode && location.pathname === '/' ? (
+        {adminToken && isEditMode ? (
           <div className="footer-admin-row">
             <button type="button" className="section-edit-button" onClick={() => setIsFooterEditorOpen(true)}>
               Edit

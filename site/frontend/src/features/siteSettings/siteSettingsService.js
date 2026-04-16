@@ -42,6 +42,32 @@ export const updateStoryHeroSiteSettings = async (tokenOrFormData, maybeFormData
   return response.data;
 };
 
+export const updateServicePageHeroSiteSettings = async (
+  serviceKey,
+  tokenOrFormData,
+  maybeFormData
+) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/service-page-hero/${serviceKey}`,
+    data: resolvePayload(tokenOrFormData, maybeFormData),
+  });
+  return response.data;
+};
+
+export const updateServicePageContentSiteSettings = async (
+  serviceKey,
+  tokenOrFormData,
+  maybeFormData
+) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/service-page-content/${serviceKey}`,
+    data: resolvePayload(tokenOrFormData, maybeFormData),
+  });
+  return response.data;
+};
+
 export const updateServicesSiteSettings = async (tokenOrFormData, maybeFormData) => {
   const response = await adminRequest({
     method: 'put',
@@ -92,6 +118,8 @@ const siteSettingsService = {
   getAdminSiteSettings,
   updateHeroSiteSettings,
   updateStoryHeroSiteSettings,
+  updateServicePageHeroSiteSettings,
+  updateServicePageContentSiteSettings,
   updateServicesSiteSettings,
   updateTeamSiteSettings,
   updateReviewSiteSettings,

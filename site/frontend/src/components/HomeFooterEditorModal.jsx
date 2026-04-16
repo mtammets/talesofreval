@@ -41,7 +41,7 @@ function HomeFooterEditorModal({
     <AdminModalShell
       eyebrow="Footer system"
       title="Edit footer"
-      description="Update the homepage footer content and links."
+      description="Update the site footer content and links."
       onClose={onCancel}
       wide
     >

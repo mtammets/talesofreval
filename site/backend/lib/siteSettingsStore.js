@@ -17,6 +17,14 @@ const imageShape = (image = {}, fallbackWidth = 1440, fallbackHeight = 700) => (
   pixelRatio: Number(image.pixelRatio) || 1,
 });
 
+const DEFAULT_SERVICE_PAGE_HERO_KEYS = {
+  team: 'serviceTeamHero',
+  private: 'servicePrivateHero',
+  quick: 'serviceQuickHero',
+  destination: 'serviceDestinationHero',
+  wedding: 'serviceWeddingHero',
+};
+
 const normalizeServiceItem = (item = {}, index = 0) => ({
   key: item.key || `service-${index + 1}`,
   link: item.link || item.key || `service-${index + 1}`,
@@ -24,6 +32,34 @@ const normalizeServiceItem = (item = {}, index = 0) => ({
   description: localized(item.description),
   imageKey: item.imageKey || '',
   image: item.image ? imageShape(item.image, 640, 520) : null,
+});
+
+const normalizeServicePageHero = (hero = {}, serviceKey = '') => ({
+  imageKey: hero.imageKey || DEFAULT_SERVICE_PAGE_HERO_KEYS[serviceKey] || '',
+  image: hero.image ? imageShape(hero.image) : null,
+});
+
+const normalizeServicePageCard = (card = {}, index = 0, serviceKey = '') => ({
+  key: card.key || `${serviceKey}-card-${index + 1}`,
+  imageKey: card.imageKey || '',
+  image: card.image ? imageShape(card.image, 640, 520) : null,
+  layout: card.layout === 'image-right' ? 'image-right' : 'image-left',
+  title: localized(card.title),
+  body: localized(card.body),
+});
+
+const normalizeServicePageContent = (content = {}, serviceKey = '') => ({
+  isCustomized: content.isCustomized === true,
+  title: localized(content.title),
+  intro: localized(content.intro),
+  cards: Array.isArray(content.cards)
+    ? content.cards.map((card, index) => normalizeServicePageCard(card, index, serviceKey))
+    : [],
+  review: localized(content.review),
+  reviewAuthor: localized(content.reviewAuthor),
+  destinationHeading: localized(content.destinationHeading),
+  destinationDescription: localized(content.destinationDescription),
+  destinationButtonLabel: localized(content.destinationButtonLabel),
 });
 
 const normalizeTeamMember = (member = {}, index = 0) => ({
@@ -54,6 +90,20 @@ const normalizeSiteSettings = (settings = {}) => ({
     imageKey: settings.storyPage?.imageKey || 'storyBg',
     image: settings.storyPage?.image ? imageShape(settings.storyPage.image) : null,
   },
+  servicePageHeroes: Object.keys(DEFAULT_SERVICE_PAGE_HERO_KEYS).reduce((accumulator, serviceKey) => {
+    accumulator[serviceKey] = normalizeServicePageHero(
+      settings.servicePageHeroes?.[serviceKey],
+      serviceKey
+    );
+    return accumulator;
+  }, {}),
+  servicePageContent: Object.keys(DEFAULT_SERVICE_PAGE_HERO_KEYS).reduce((accumulator, serviceKey) => {
+    accumulator[serviceKey] = normalizeServicePageContent(
+      settings.servicePageContent?.[serviceKey],
+      serviceKey
+    );
+    return accumulator;
+  }, {}),
   homeServices: {
     heading: localized(settings.homeServices?.heading),
     items: Array.isArray(settings.homeServices?.items)
