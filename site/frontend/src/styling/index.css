@@ -2058,6 +2058,30 @@ p.line-height-spaced{
   cursor: pointer;
 }
 
+.mobile-book-now .book-now-button{
+  font-weight: 650;
+  gap: 10px;
+}
+
+.mobile-book-now .book-now-button .button-text{
+  font-size: 17px;
+  line-height: 1;
+  color: var(--dark-blue);
+}
+
+.mobile-book-now .book-now-button .button-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dark-blue) !important;
+}
+
+.mobile-book-now .book-now-button .button-icon svg{
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-bottom: 0 !important;
+}
+
 .mobile-book-now:hover{
   background: var(--darker-salmon);
 }
@@ -2093,6 +2117,30 @@ p.line-height-spaced{
   background: var(--salmon);
   height: 65px;
   cursor: pointer;
+}
+
+.mobile-book-now-container .book-now-button{
+  font-weight: 650;
+  gap: 10px;
+}
+
+.mobile-book-now-container .book-now-button .button-text{
+  font-size: 17px;
+  line-height: 1;
+  color: var(--dark-blue);
+}
+
+.mobile-book-now-container .book-now-button .button-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dark-blue) !important;
+}
+
+.mobile-book-now-container .book-now-button .button-icon svg{
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-bottom: 0 !important;
 }
 
 .mobile-book-now-container:hover{

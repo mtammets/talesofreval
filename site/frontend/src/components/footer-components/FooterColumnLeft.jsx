@@ -1,15 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ButtonPrimary from '../style-components/ButtonPrimary';
 import { getLocalizedSiteText } from '../../content/siteSettingsDefaults';
 
+const MOBILE_BREAKPOINT = 768;
+
 function FooterColumnLeft({ texts, content = null }) {
   const language = localStorage.getItem('language') || 'en';
+  const [isMobileScreen, setIsMobileScreen] = useState(window.innerWidth < MOBILE_BREAKPOINT);
   const markerPosition = {
     lat: 59.436575996574305,
     lng: 24.74391712620674,
   };
   const mapLink = content?.openMapUrl || 'https://maps.app.goo.gl/bVono2RWfCPvSp5x5';
   const mapPreviewSrc = `https://www.google.com/maps?q=${markerPosition.lat},${markerPosition.lng}&z=16&output=embed`;
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileScreen(window.innerWidth < MOBILE_BREAKPOINT);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const joinFreeTourText = content?.freeTourHeading
     ? getLocalizedSiteText(content.freeTourHeading, language)
@@ -49,23 +64,25 @@ function FooterColumnLeft({ texts, content = null }) {
           <li>{distanceText[0]}: <span className="bold">{distanceText[1]}</span></li>
           <li>{startingPointText[0]}: <span className="bold">{startingPointText[1]}</span></li>
         </ul>
-        <div className="footer-map-card">
-          <iframe
-            className="footer-map-embed"
-            title="Map showing the Tales of Reval meeting point"
-            src={mapPreviewSrc}
-            loading="lazy"
-            tabIndex="-1"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-          <a
-            className="footer-map-card__link"
-            href={mapLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={openMapText || 'Open map'}
-          />
-        </div>
+        {isMobileScreen ? null : (
+          <div className="footer-map-card">
+            <iframe
+              className="footer-map-embed"
+              title="Map showing the Tales of Reval meeting point"
+              src={mapPreviewSrc}
+              loading="lazy"
+              tabIndex="-1"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+            <a
+              className="footer-map-card__link"
+              href={mapLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={openMapText || 'Open map'}
+            />
+          </div>
+        )}
         <div className="footer-map-actions">
           <ButtonPrimary text={openMapText} icon="ArrowRightUp" link={mapLink} />
         </div>
