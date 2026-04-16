@@ -5,7 +5,6 @@ import { sendContactMessage } from '../features/email/emailSlice';
 import { toast } from 'react-toastify';
 import bgcontact from '../img/bgcontact.webp';
 import ContactsTeam from '../components/ContactsTeam.jsx';
-import ButtonPrimary from '../components/style-components/ButtonPrimary.jsx';
 import Spinner from '../components/Spinner';
 import { Helmet } from 'react-helmet';
 import HomeTeamEditorModal from '../components/HomeTeamEditorModal';
@@ -15,6 +14,7 @@ import PageHero from '../components/PageHero';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
 import { DEFAULT_SITE_SETTINGS, getLocalizedSiteText, resolveSiteImage } from '../content/siteSettingsDefaults';
+import { ArrowRight } from '../icons/ArrowRight.tsx';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 const buildContactPageFormData = (heading, members, contact, imageFiles = {}, heroImageFile = null) => {
@@ -218,7 +218,7 @@ function ContactUs({
     return <Spinner />;
   }
 
-  const contactUsText = misc_texts?.["contact-us"]?.text || '';
+  const contactUsText = misc_texts?.["contact-us"]?.text || 'Contact us';
   const sayHelloText = getLocalizedSiteText(siteSettings.contactPage.formTitle, language, misc_texts?.["say-hello!"]?.text || '');
   const nameLabel = getLocalizedSiteText(siteSettings.contactPage.nameLabel, language, 'Name*');
   const emailLabel = getLocalizedSiteText(siteSettings.contactPage.emailLabel, language, 'E-mail*');
@@ -231,13 +231,14 @@ function ContactUs({
     bgcontact;
 
   return (
-    <div className='story-page'>
+    <div className='story-page contact-page'>
       <Helmet>
         <title>Contact Us - Tales of Reval</title>
         <meta name="description" content="Get in touch with Tales of Reval for inquiries about our medieval tours, private tours, team events, and more. Contact us today to book your unique Tallinn experience." />
         <meta name="keywords" content="Contact Tales of Reval, Book a Tour in Tallinn, Inquire About Medieval Tours, Tour Booking Contact, Tallinn Tour Inquiries, Medieval Tour Customer Service, Private Tours in Tallinn, Team Events Tallinn, Unique Tallinn Experiences" />
       </Helmet>
       <PageHero
+        className="contact-page-hero"
         mediaClassName="story-landing"
         backgroundImage={contactHeroBackground}
         isEditable={Boolean(adminToken) && isEditMode}
@@ -276,7 +277,7 @@ function ContactUs({
               <div className="input-form-card contact-us">
                 <h3 className='cardo'>{sayHelloText}</h3>
                 <form onSubmit={handleSubmit}>
-                  <div className="form-group padding-20-top">
+                  <div className="form-group">
                     <label htmlFor="name">{nameLabel}</label>
                     <input
                       name='name'
@@ -307,28 +308,33 @@ function ContactUs({
                   </div>
 
                   <div className="submit contact-submit">
-                    <ButtonPrimary
-                      icon="ArrowRight"
-                      text={sendText}
-                    />
+                    <button type="submit" className="button-primary contact-submit-button">
+                      <span className="button-text">{sendText}</span>
+                      <span className="icon-span-right">
+                        <ArrowRight />
+                      </span>
+                    </button>
                   </div>
                 </form>
               </div>
             </div>
             <div className="contact-col contact-col-info">
               <div className="contact-us-info">
-                <p className="bold">{siteSettings.contactPage.companyName}</p>
-                <p className='padding-20-top'>{siteSettings.contactPage.companyReg}</p>
-                <p className='padding-20-top contact-address'>{addressText}</p>
-                <p className='padding-20-top'>
-                  {siteSettings.contactPage.bankLine1} <br />{siteSettings.contactPage.bankLine2}
-                </p>
-                <p className='padding-20-top'>
-                  <a className="underline" href={`mailto:${siteSettings.contactPage.email}`}>{siteSettings.contactPage.email}</a> <br />
-                </p>
-                <p className='padding-5-top'>
-                  <a className="underline" href={`tel:${siteSettings.contactPage.phone}`}>{siteSettings.contactPage.phone}</a>
-                </p>
+                <div className="contact-us-info-group">
+                  <p className="bold">{siteSettings.contactPage.companyName}</p>
+                  <span className="contact-us-info-spacer" aria-hidden="true" />
+                  <p>{siteSettings.contactPage.companyReg}</p>
+                  <span className="contact-us-info-spacer" aria-hidden="true" />
+                  <p className="contact-address">{addressText}</p>
+                </div>
+                <div className="contact-us-info-group">
+                  <p>{siteSettings.contactPage.bankLine1}</p>
+                  <p>{siteSettings.contactPage.bankLine2}</p>
+                </div>
+                <div className="contact-us-info-group contact-us-info-links">
+                  <a href={`mailto:${siteSettings.contactPage.email}`}>{siteSettings.contactPage.email}</a>
+                  <a href={`tel:${siteSettings.contactPage.phone}`}>{siteSettings.contactPage.phone}</a>
+                </div>
               </div>
             </div>
           </div>

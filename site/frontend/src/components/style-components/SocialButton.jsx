@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { TripAdvisor } from "../../icons/TripAdvisor.tsx";
 import { AirBnB } from "../../icons/AirBnB.tsx";
 import { Facebook } from "../../icons/Facebook.tsx";
@@ -6,33 +5,22 @@ import { Instagram } from "../../icons/Instagram.tsx";
 import { ArrowRightUp } from "../../icons/ArrowRightUp.tsx";
 
 function SocialButton({text, icon, link}) {
-  const [mobile, setMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setMobile(window.innerWidth < 768);
-    }
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const socialIcon = {
+    TripAdvisor: <TripAdvisor size="1.2rem" />,
+    AirBnB: <AirBnB size="1.2rem" />,
+    Facebook: <Facebook size="1.2rem" />,
+    Instagram: <Instagram size="1.2rem" />,
+  }[icon];
 
   return (
     <a className="button-social" href={link} target="_blank" rel="noopener noreferrer">
       <div className="icon-and-text">
-        {icon === 'TripAdvisor' && <span className="icon-span-left"><TripAdvisor size={mobile ? "1.5rem" : "1.15rem"}/></span>}
-        {icon === 'AirBnB' && <span className="icon-span-left"><AirBnB size={mobile ? "1.5rem" : "1.15rem"}/></span>}
-        {icon === 'Facebook' && <span className="icon-span-left"><Facebook size={mobile ? "1.5rem" : "1.15rem"}/></span>}
-        {icon === 'Instagram' && <span className="icon-span-left"><Instagram size={mobile ? "1.5rem" : "1.15rem"}/></span>}
-        {!mobile && <span>{text}</span>}
+        <span className="icon-span-left">{socialIcon}</span>
+        <span className="button-social__label">{text}</span>
       </div>
-      {!mobile && (
-        <div className="icon-arrow">
-          <span className="icon-span-right-far">
-            <ArrowRightUp size="1rem" />
-          </span>
-        </div>
-      )}
+      <div className="icon-arrow" aria-hidden="true">
+        <ArrowRightUp size="1rem" />
+      </div>
     </a>
   )
 }

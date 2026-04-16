@@ -1,6 +1,3 @@
-export const encodeBasicToken = (username, password) =>
-  window.btoa(`${username}:${password}`);
-
 const decodeHtml = (text = '') =>
   text
     .replace(/&nbsp;/g, ' ')

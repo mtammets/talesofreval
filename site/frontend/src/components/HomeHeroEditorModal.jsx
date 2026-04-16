@@ -1,3 +1,5 @@
+import AdminModalShell from './AdminModalShell';
+
 function HomeHeroEditorModal({
   titleLine1,
   setTitleLine1,
@@ -15,18 +17,12 @@ function HomeHeroEditorModal({
   isSaving,
 }) {
   return (
-    <div className="story-editor-modal">
-      <div className="story-editor-sheet">
-        <div className="story-editor-header">
-          <div>
-            <h2>Change background image</h2>
-            <p>Upload a new hero image for the homepage.</p>
-          </div>
-          <button type="button" className="story-editor-close" onClick={onCancel}>
-            Close
-          </button>
-        </div>
-
+    <AdminModalShell
+      eyebrow="Homepage hero"
+      title="Change background image"
+      description="Upload a new hero image for the homepage."
+      onClose={onCancel}
+    >
         <form onSubmit={onSave} className="story-admin-form">
           <div className="story-admin-grid two">
             <label>
@@ -123,16 +119,23 @@ function HomeHeroEditorModal({
           </div>
 
           <div className="story-admin-actions">
-            <button type="submit" disabled={isSaving}>
+            <button
+              type="submit"
+              className="story-admin-button story-admin-button--primary"
+              disabled={isSaving}
+            >
               {isSaving ? 'Saving…' : 'Save changes'}
             </button>
-            <button type="button" onClick={onCancel}>
+            <button
+              type="button"
+              className="story-admin-button story-admin-button--secondary"
+              onClick={onCancel}
+            >
               Cancel
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </AdminModalShell>
   );
 }
 

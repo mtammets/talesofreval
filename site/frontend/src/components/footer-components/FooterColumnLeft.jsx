@@ -53,6 +53,7 @@ function FooterColumnLeft({ texts, content = null }) {
   const openMapText = content?.openMapLabel
     ? getLocalizedSiteText(content.openMapLabel, localStorage.getItem('language') || 'en')
     : texts && texts["open-map"] ? texts["open-map"].text : '';
+  const footerTimeText = `${footerFirstTimeText} ${footerSecondTimeText}`.trim();
 
   const isSnap = navigator.userAgent === 'ReactSnap';
   const fallbackMap = (
@@ -65,8 +66,7 @@ function FooterColumnLeft({ texts, content = null }) {
       <div className="footer-column footer-column-left">
         <h3 className="cardo footer-title">{joinFreeTourText}</h3>
         <div className="footer-tour-times">
-          <p>{footerFirstTimeText}</p>
-          <p>{footerSecondTimeText}</p>
+          <p>{footerTimeText}</p>
         </div>
         <ul className="free-tour-info">
           <li>{languageText[0]}: <span className="bold">{languageText[1]}</span></li>

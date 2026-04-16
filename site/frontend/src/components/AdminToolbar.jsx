@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
+import storyAdminService from '../features/events/storyAdminService';
 
 function AdminToolbar({
   adminToken,
@@ -16,9 +16,10 @@ function AdminToolbar({
     return null;
   }
 
-  const logout = () => {
-    setStoredStoryAdminAuth('');
+  const logout = async () => {
+    await storyAdminService.logout();
     setAdminToken('');
+    setEditControlsVisible?.(false);
     toast.success('Admin mode disabled.');
     navigate('/', { replace: true });
   };
@@ -26,8 +27,7 @@ function AdminToolbar({
   return (
     <div className="admin-toolbar">
       <div className="admin-toolbar__meta">
-        <strong>Edit mode</strong>
-        <span>Inline editing is available where supported.</span>
+        <span className="admin-toolbar__eyebrow">Edit Mode</span>
       </div>
       <div className="admin-toolbar__actions">
         <button

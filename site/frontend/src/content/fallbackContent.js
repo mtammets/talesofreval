@@ -45,6 +45,10 @@ const MISC_EN = {
   "private-tour": "Private tour",
   "\"we-only-have-30-minutes!\"": "\"We Only Have 30 Minutes!\"",
   "destination-management": "Destination management",
+  "have-a-look-at-what's-possible!": "Have a look at what's possible!",
+  "destination-management-service-description-includes-in-the-following-pdf...":
+    "Destination management service description is included in the following PDF.",
+  "download-pdf": "Download PDF",
   "fantasy-weddings": "Fantasy Weddings",
   "our-story": "Our story",
   "our-story-home-blurb":
@@ -62,6 +66,10 @@ const MISC_EE = {
   "private-tour": "Privaattuur",
   "\"we-only-have-30-minutes!\"": "\"Meil on ainult 30 minutit!\"",
   "destination-management": "Sihtkoha haldus",
+  "have-a-look-at-what's-possible!": "Vaata, mis on võimalik!",
+  "destination-management-service-description-includes-in-the-following-pdf...":
+    "Sihtkoha halduse teenuse kirjeldus on toodud allolevas PDF-is.",
+  "download-pdf": "Laadi PDF alla",
   "fantasy-weddings": "Fantaasiapulmad",
   "our-story": "Meie lugu",
   "our-story-home-blurb":

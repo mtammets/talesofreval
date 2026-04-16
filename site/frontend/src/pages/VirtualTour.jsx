@@ -6,6 +6,7 @@ import google_store from '../img/google-store.png';
 import apple_store from '../img/apple-store.png';
 import { initiateStripe } from '../features/tour/tourSlice';
 import { useDispatch } from 'react-redux';
+import { ArrowRightUp } from '../icons/ArrowRightUp.tsx';
 
 function VirtualTour() {
   const dispatch = useDispatch();
@@ -49,10 +50,10 @@ function VirtualTour() {
                 </ul>
                 <PayNow onClick={initiateStripeFunction}/>
                 <div className="google-apple-stores padding-10-top flex gap-10">
-                  <a href="https://play.google.com/store/apps/details?id=com.leplace.global&pli=1" target="_blank">
+                  <a href="https://play.google.com/store/apps/details?id=com.leplace.global&pli=1" target="_blank" rel="noopener noreferrer">
                     <img src={google_store} alt="Google and Apple stores" />
                   </a>
-                  <a  href="https://apps.apple.com/ee/app/leplace-world/id1496776027" target="_blank">
+                  <a  href="https://apps.apple.com/ee/app/leplace-world/id1496776027" target="_blank" rel="noopener noreferrer">
                     <img src={apple_store} alt="Google and Apple stores" />
                   </a>
                 </div>
@@ -64,8 +65,14 @@ function VirtualTour() {
                 Leplace transforms local tourism with the most interactive outdoor exploration games on your mobile
                 phone and connects local creators and organizations with people and places worldwide!
               </p>
-              <a className="dark" href="https://connect.leplace.online/#/storyline?storyId=401&token=H1Z6AC1YVPJITQFYZMFWRN8AHFSJBJZT3GYES7ZU3PWKQFHLSQ" target='_blank'>
-                Read more
+              <a
+                className="dark virtual-tour__learn-more"
+                href="https://connect.leplace.online/#/storyline?storyId=401&token=H1Z6AC1YVPJITQFYZMFWRN8AHFSJBJZT3GYES7ZU3PWKQFHLSQ"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>Read more</span>
+                <ArrowRightUp size="1rem" />
               </a>
             </div>
           </div>
@@ -75,12 +82,3 @@ function VirtualTour() {
   }
   
   export default VirtualTour;
-  
-
-
-{/* <h2 className='virtual light'>
-              Explore Alone,
-              <br />
-              Discover More!
-          </h2>
-          <h3 className='cardo light padding-20-top'>Location based app guided tours</h3> */}

@@ -20,7 +20,7 @@ function PageHero({
         {isEditable ? (
           <div className="page-hero__admin-actions">
             <button type="button" onClick={onEditBackground}>
-              Edit
+              Edit hero
             </button>
           </div>
         ) : null}

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import { BrowserRouter as Router, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
@@ -7,9 +7,13 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import Spinner from './components/Spinner';
 import Footer from './components/Footer';
-import { getStoredStoryAdminAuth } from './features/events/storyAdminService';
+import storyAdminService, {
+  getStoredStoryAdminAuth,
+  setStoredStoryAdminAuth,
+} from './features/events/storyAdminService';
 import { DEFAULT_SITE_SETTINGS } from './content/siteSettingsDefaults';
 import siteSettingsService from './features/siteSettings/siteSettingsService';
+import { scrollViewportTop } from './utils/scrollViewportTop';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -28,7 +32,7 @@ function RouteFallback() {
 }
 
 function AppShell() {
-  const [adminToken, setAdminToken] = useState(getStoredStoryAdminAuth());
+  const [adminToken, setAdminToken] = useState('');
   const [showBookNow, setShowBookNow] = useState(false);
   const [showFreeBookNow, setShowFreeBookNow] = useState(false);
   const [siteSettings, setSiteSettings] = useState(DEFAULT_SITE_SETTINGS);
@@ -56,6 +60,80 @@ function AppShell() {
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const restoreAdminSession = async () => {
+      try {
+        await storyAdminService.getAdminSession();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setStoredStoryAdminAuth('active');
+        setAdminToken('active');
+        setEditControlsVisible(true);
+      } catch (_error) {
+        if (!isMounted) {
+          return;
+        }
+
+        setStoredStoryAdminAuth('');
+        setAdminToken('');
+        setEditControlsVisible(false);
+      }
+    };
+
+    restoreAdminSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const previousScrollRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'manual';
+
+    return () => {
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
+    const isAdminActive = Boolean(adminToken);
+
+    root.classList.toggle('story-admin-active', isAdminActive);
+    body.classList.toggle('story-admin-active', isAdminActive);
+
+    return () => {
+      root.classList.remove('story-admin-active');
+      body.classList.remove('story-admin-active');
+    };
+  }, [adminToken]);
+
+  useEffect(() => {
+    if (!adminToken) {
+      setEditControlsVisible(false);
+    }
+  }, [adminToken]);
+
+  useLayoutEffect(() => {
+    if (location.pathname === '/login') {
+      return undefined;
+    }
+
+    scrollViewportTop();
+    const frameId = window.requestAnimationFrame(scrollViewportTop);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [location.pathname, location.search]);
 
   return (
     <>
@@ -106,7 +184,11 @@ function AppShell() {
                     siteSettings={siteSettings}
                     setSiteSettings={setSiteSettings}
                   />
-                  <AdminLoginPage adminToken={adminToken} setAdminToken={setAdminToken} />
+                  <AdminLoginPage
+                    adminToken={adminToken}
+                    setAdminToken={setAdminToken}
+                    setEditControlsVisible={setEditControlsVisible}
+                  />
                 </>
               }
             />
@@ -170,7 +252,7 @@ function App() {
       <Router>
         <AppShell />
       </Router>
-      <ToastContainer />
+      <ToastContainer position="bottom-center" draggable={false} limit={1} />
     </>
   );
 }

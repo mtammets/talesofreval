@@ -1,3 +1,5 @@
+import AdminModalShell from './AdminModalShell';
+
 function StoryFeedEditorModal({
   form,
   setForm,
@@ -36,18 +38,13 @@ function StoryFeedEditorModal({
       : 'Create item';
 
   return (
-    <div className="story-editor-modal">
-      <div className="story-editor-sheet">
-        <div className="story-editor-header">
-          <div>
-            <h2>{title}</h2>
-            {helperText ? <p>{helperText}</p> : null}
-          </div>
-          <button type="button" className="story-editor-close" onClick={onCancel}>
-            Close
-          </button>
-        </div>
-
+    <AdminModalShell
+      eyebrow="Story timeline"
+      title={title}
+      description={helperText}
+      onClose={onCancel}
+      wide
+    >
         <form onSubmit={onSave} className="story-admin-form">
           <div className="story-admin-grid two">
             <label>
@@ -195,21 +192,33 @@ function StoryFeedEditorModal({
           ) : null}
 
           <div className="story-admin-actions">
-            <button type="submit" disabled={isSaving}>
+            <button
+              type="submit"
+              className="story-admin-button story-admin-button--primary"
+              disabled={isSaving}
+            >
               {isSaving ? 'Saving…' : submitLabel}
             </button>
             {form._id ? (
-              <button type="button" onClick={onDelete} disabled={isDeleting}>
+              <button
+                type="button"
+                className="story-admin-button story-admin-button--danger"
+                onClick={onDelete}
+                disabled={isDeleting}
+              >
                 {isDeleting ? 'Deleting…' : 'Delete item'}
               </button>
             ) : null}
-            <button type="button" onClick={onCancel}>
+            <button
+              type="button"
+              className="story-admin-button story-admin-button--secondary"
+              onClick={onCancel}
+            >
               Cancel
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </AdminModalShell>
   );
 }
 

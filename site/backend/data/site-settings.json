@@ -104,46 +104,42 @@
     },
     "members": [
       {
-        "key": "member-1",
-        "name": "Marek Tammets",
-        "email": "info@talesofreval.ee",
-        "phone": "+372 5560 4421",
-        "imageKey": "teamMember1",
-        "image": null
-      },
-      {
-        "key": "member-2",
+        "key": "contact-member-1",
         "name": "Tales of Reval Team",
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
-        "imageKey": "teamMember2",
+        "imageKey": "contactMember1",
         "image": null
       },
       {
-        "key": "member-3",
+        "key": "contact-member-2",
+        "name": "Tales of Reval Team",
+        "email": "info@talesofreval.ee",
+        "phone": "+372 5560 4421",
+        "imageKey": "contactMember2",
+        "image": null
+      },
+      {
+        "key": "contact-member-3",
         "name": "Guest Experience Host",
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
-        "imageKey": "teamMember3",
+        "imageKey": "contactMember3",
+        "image": null
+      },
+      {
+        "key": "contact-member-4",
+        "name": "Tales of Reval Host",
+        "email": "info@talesofreval.ee",
+        "phone": "+372 5560 4421",
+        "imageKey": "contactMember4",
         "image": null
       }
     ]
   },
-  "homeReview": {
-    "heading": {
-      "en": "Customers love us:",
-      "ee": "Külastajad armastavad meid:"
-    },
-    "text": {
-      "en": "This was absolutely amazing. The tour guide was so interesting, enthusiastic and humorous with an amazing knowledge of Tallinn. The whole family thoroughly enjoyed it and we can't recommend it enough!",
-      "ee": "See oli täiesti imeline. Giid oli väga huvitav, entusiastlik ja humoorikas ning tundis Tallinna ajalugu suurepäraselt. Kogu pere nautis seda väga ja soovitame soojalt!"
-    },
-    "reviewer": {
-      "en": "Tripadvisor review",
-      "ee": "Tripadvisori arvustus"
-    }
-  },
   "contactPage": {
+    "imageKey": "contactBg",
+    "image": null,
     "teamHeading": {
       "en": "Our team",
       "ee": "Meie tiim"
@@ -212,6 +208,20 @@
     "bankLine2": "LHV Pank AS",
     "email": "info@talesofreval.ee",
     "phone": "+372 5555 5555"
+  },
+  "homeReview": {
+    "heading": {
+      "en": "Customers love us:",
+      "ee": "Külastajad armastavad meid:"
+    },
+    "text": {
+      "en": "This was absolutely amazing. The tour guide was so interesting, enthusiastic and humorous with an amazing knowledge of Tallinn. The whole family thoroughly enjoyed it and we can't recommend it enough!",
+      "ee": "See oli täiesti imeline. Giid oli väga huvitav, entusiastlik ja humoorikas ning tundis Tallinna ajalugu suurepäraselt. Kogu pere nautis seda väga ja soovitame soojalt!"
+    },
+    "reviewer": {
+      "en": "Tripadvisor review",
+      "ee": "Tripadvisori arvustus"
+    }
   },
   "footer": {
     "freeTourHeading": {

@@ -1,3 +1,5 @@
+import AdminModalShell from './AdminModalShell';
+
 function ConfirmDialog({
   open = false,
   title = 'Confirm action',
@@ -13,22 +15,17 @@ function ConfirmDialog({
   }
 
   return (
-    <div className="story-editor-modal" onClick={onCancel}>
-      <div
-        className="story-editor-sheet story-editor-sheet--compact"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="story-editor-header">
-          <div>
-            <h2>{title}</h2>
-            {message ? <p>{message}</p> : null}
-          </div>
-        </div>
-
+    <AdminModalShell
+      eyebrow="Confirm action"
+      title={title}
+      description={message}
+      onClose={onCancel}
+      compact
+    >
         <div className="story-admin-actions story-admin-actions--confirm">
           <button
             type="button"
-            className="story-admin-actions__secondary"
+            className="story-admin-button story-admin-button--secondary"
             onClick={onCancel}
             disabled={isLoading}
           >
@@ -36,15 +33,14 @@ function ConfirmDialog({
           </button>
           <button
             type="button"
-            className="story-admin-actions__danger"
+            className="story-admin-button story-admin-button--danger"
             onClick={onConfirm}
             disabled={isLoading}
           >
             {isLoading ? 'Deleting…' : confirmLabel}
           </button>
         </div>
-      </div>
-    </div>
+    </AdminModalShell>
   );
 }
 

@@ -1,3 +1,5 @@
+import AdminModalShell from './AdminModalShell';
+
 function HeroImageEditorModal({
   title = 'Change background image',
   description = 'Upload a new background image.',
@@ -11,18 +13,12 @@ function HeroImageEditorModal({
   isSaving,
 }) {
   return (
-    <div className="story-editor-modal">
-      <div className="story-editor-sheet">
-        <div className="story-editor-header">
-          <div>
-            <h2>{title}</h2>
-            <p>{description}</p>
-          </div>
-          <button type="button" className="story-editor-close" onClick={onCancel}>
-            Close
-          </button>
-        </div>
-
+    <AdminModalShell
+      eyebrow="Hero media"
+      title={title}
+      description={description}
+      onClose={onCancel}
+    >
         <form onSubmit={onSave} className="story-admin-form">
           <label>
             Background image
@@ -50,16 +46,23 @@ function HeroImageEditorModal({
           </div>
 
           <div className="story-admin-actions">
-            <button type="submit" disabled={isSaving || !selectedFile}>
+            <button
+              type="submit"
+              className="story-admin-button story-admin-button--primary"
+              disabled={isSaving || !selectedFile}
+            >
               {isSaving ? 'Saving…' : 'Save changes'}
             </button>
-            <button type="button" onClick={onCancel}>
+            <button
+              type="button"
+              className="story-admin-button story-admin-button--secondary"
+              onClick={onCancel}
+            >
               Cancel
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </AdminModalShell>
   );
 }
 

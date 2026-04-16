@@ -2,54 +2,88 @@ import axios from 'axios';
 
 const API_URL = '/api/site-settings';
 
-const authHeaders = (token) => ({
-  headers: {
-    Authorization: `Basic ${token}`,
-  },
-});
+const adminRequest = (config) =>
+  axios({
+    withCredentials: true,
+    ...config,
+  });
+
+const resolvePayload = (maybeToken, maybePayload) =>
+  maybePayload === undefined ? maybeToken : maybePayload;
 
 export const getSiteSettings = async () => {
   const response = await axios.get(API_URL);
   return response.data;
 };
 
-export const getAdminSiteSettings = async (token) => {
-  const response = await axios.get(`${API_URL}/admin`, authHeaders(token));
+export const getAdminSiteSettings = async () => {
+  const response = await adminRequest({
+    method: 'get',
+    url: `${API_URL}/admin`,
+  });
   return response.data;
 };
 
-export const updateHeroSiteSettings = async (token, formData) => {
-  const response = await axios.put(`${API_URL}/admin/hero`, formData, authHeaders(token));
+export const updateHeroSiteSettings = async (tokenOrFormData, maybeFormData) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/hero`,
+    data: resolvePayload(tokenOrFormData, maybeFormData),
+  });
   return response.data;
 };
 
-export const updateStoryHeroSiteSettings = async (token, formData) => {
-  const response = await axios.put(`${API_URL}/admin/story-hero`, formData, authHeaders(token));
+export const updateStoryHeroSiteSettings = async (tokenOrFormData, maybeFormData) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/story-hero`,
+    data: resolvePayload(tokenOrFormData, maybeFormData),
+  });
   return response.data;
 };
 
-export const updateServicesSiteSettings = async (token, formData) => {
-  const response = await axios.put(`${API_URL}/admin/services`, formData, authHeaders(token));
+export const updateServicesSiteSettings = async (tokenOrFormData, maybeFormData) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/services`,
+    data: resolvePayload(tokenOrFormData, maybeFormData),
+  });
   return response.data;
 };
 
-export const updateTeamSiteSettings = async (token, formData) => {
-  const response = await axios.put(`${API_URL}/admin/team`, formData, authHeaders(token));
+export const updateTeamSiteSettings = async (tokenOrFormData, maybeFormData) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/team`,
+    data: resolvePayload(tokenOrFormData, maybeFormData),
+  });
   return response.data;
 };
 
-export const updateReviewSiteSettings = async (token, formData) => {
-  const response = await axios.put(`${API_URL}/admin/review`, formData, authHeaders(token));
+export const updateReviewSiteSettings = async (tokenOrFormData, maybeFormData) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/review`,
+    data: resolvePayload(tokenOrFormData, maybeFormData),
+  });
   return response.data;
 };
 
-export const updateContactPageSiteSettings = async (token, formData) => {
-  const response = await axios.put(`${API_URL}/admin/contact-page`, formData, authHeaders(token));
+export const updateContactPageSiteSettings = async (tokenOrFormData, maybeFormData) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/contact-page`,
+    data: resolvePayload(tokenOrFormData, maybeFormData),
+  });
   return response.data;
 };
 
-export const updateFooterSiteSettings = async (token, formData) => {
-  const response = await axios.put(`${API_URL}/admin/footer`, formData, authHeaders(token));
+export const updateFooterSiteSettings = async (tokenOrFormData, maybeFormData) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/footer`,
+    data: resolvePayload(tokenOrFormData, maybeFormData),
+  });
   return response.data;
 };
 

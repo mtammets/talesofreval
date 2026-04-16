@@ -1,13 +1,6 @@
 import PageHero from './PageHero';
 
 function HomeLanding({ texts, backgroundImage, isEditable = false, onEditBackground }) {
-  const overlayStyles = {
-    '--hero-overlay-left': '0',
-    '--hero-overlay-middle': '0',
-    '--hero-overlay-right': '0',
-    '--hero-overlay-flat': '0',
-  };
-
   if (!texts) {
     return null;
   }
@@ -23,7 +16,6 @@ function HomeLanding({ texts, backgroundImage, isEditable = false, onEditBackgro
       backgroundImage={backgroundImage}
       isEditable={isEditable}
       onEditBackground={onEditBackground}
-      overlay={<div className="home-landing-overlay" style={overlayStyles} />}
     >
       <div className="container home-landing-content">
         <div className="home-landing-copy">

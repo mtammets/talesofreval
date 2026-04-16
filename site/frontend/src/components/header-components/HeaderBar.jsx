@@ -1,14 +1,22 @@
 import MenuItem from "../style-components/MenuItem";
 import BookNow from "../style-components/BookNow";
 import HeaderServices from "./HeaderServices";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { scrollViewportTop } from '../../utils/scrollViewportTop';
 
 function HeaderBar({ setShowBookNow, ourServicesOpen, setOurServicesOpen, texts, misc_texts }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleClick = (path) => {
-    navigate(path);
     setOurServicesOpen(false);
+
+    if (location.pathname === path) {
+      scrollViewportTop();
+      return;
+    }
+
+    navigate(path);
   };
 
   // set localstorage for estonian or english

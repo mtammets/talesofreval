@@ -1,4 +1,5 @@
 import { resolveSiteImage } from '../content/siteSettingsDefaults';
+import AdminModalShell from './AdminModalShell';
 
 function HomeServicesEditorModal({
   heading,
@@ -56,18 +57,13 @@ function HomeServicesEditorModal({
   };
 
   return (
-    <div className="story-editor-modal">
-      <div className="story-editor-sheet">
-        <div className="story-editor-header">
-          <div>
-            <h2>Edit services</h2>
-            <p>Update the shared services content used across the site.</p>
-          </div>
-          <button type="button" className="story-editor-close" onClick={onCancel}>
-            Close
-          </button>
-        </div>
-
+    <AdminModalShell
+      eyebrow="Services library"
+      title="Edit services"
+      description="Update the shared services content used across the site."
+      onClose={onCancel}
+      wide
+    >
         <form onSubmit={onSave} className="story-admin-form">
           <div className="story-admin-grid two">
             <label>
@@ -152,16 +148,23 @@ function HomeServicesEditorModal({
           ))}
 
           <div className="story-admin-actions">
-            <button type="submit" disabled={isSaving}>
+            <button
+              type="submit"
+              className="story-admin-button story-admin-button--primary"
+              disabled={isSaving}
+            >
               {isSaving ? 'Saving…' : 'Save changes'}
             </button>
-            <button type="button" onClick={onCancel}>
+            <button
+              type="button"
+              className="story-admin-button story-admin-button--secondary"
+              onClick={onCancel}
+            >
               Cancel
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </AdminModalShell>
   );
 }
 

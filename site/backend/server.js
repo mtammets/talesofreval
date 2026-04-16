@@ -3,9 +3,16 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const express = require('express');
 
+dotenv.config({ path: path.join(__dirname, '.env') });
+
 const app = express();
-app.use(cors());
-dotenv.config();
+app.set('trust proxy', 1);
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 const {
   ensureRuntimeStorageReady,
   runtimeSiteUploadsDir,
@@ -14,6 +21,7 @@ const {
 ensureRuntimeStorageReady();
 
 const port = process.env.PORT || 3000;
+const adminRoutes = require('./routes/adminRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 const storyEventsRoutes = require('./routes/storyEventsRoutes');
 const siteSettingsRoutes = require('./routes/siteSettingsRoutes');
@@ -24,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/email', emailRoutes);
 app.use('/uploads/story', express.static(runtimeStoryUploadsDir));
 app.use('/uploads/site', express.static(runtimeSiteUploadsDir));
+app.use('/api/admin', adminRoutes);
 app.use('/api/story-events', storyEventsRoutes);
 app.use('/api/site-settings', siteSettingsRoutes);
 

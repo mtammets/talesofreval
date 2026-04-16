@@ -1,3 +1,5 @@
+import AdminModalShell from './AdminModalShell';
+
 function HomeReviewEditorModal({ heading, text, reviewer, onSave, onCancel, isSaving }) {
   const updateValue = (setter, language, value) => {
     setter((current) => ({
@@ -7,18 +9,12 @@ function HomeReviewEditorModal({ heading, text, reviewer, onSave, onCancel, isSa
   };
 
   return (
-    <div className="story-editor-modal">
-      <div className="story-editor-sheet">
-        <div className="story-editor-header">
-          <div>
-            <h2>Edit review</h2>
-            <p>Update the homepage testimonial block.</p>
-          </div>
-          <button type="button" className="story-editor-close" onClick={onCancel}>
-            Close
-          </button>
-        </div>
-
+    <AdminModalShell
+      eyebrow="Social proof"
+      title="Edit review"
+      description="Update the homepage testimonial block."
+      onClose={onCancel}
+    >
         <form onSubmit={onSave} className="story-admin-form">
           <div className="story-admin-grid two">
             <label>
@@ -75,16 +71,23 @@ function HomeReviewEditorModal({ heading, text, reviewer, onSave, onCancel, isSa
             </label>
           </div>
           <div className="story-admin-actions">
-            <button type="submit" disabled={isSaving}>
+            <button
+              type="submit"
+              className="story-admin-button story-admin-button--primary"
+              disabled={isSaving}
+            >
               {isSaving ? 'Saving…' : 'Save changes'}
             </button>
-            <button type="button" onClick={onCancel}>
+            <button
+              type="button"
+              className="story-admin-button story-admin-button--secondary"
+              onClick={onCancel}
+            >
               Cancel
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </AdminModalShell>
   );
 }
 

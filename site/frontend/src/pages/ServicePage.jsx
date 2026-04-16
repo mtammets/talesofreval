@@ -179,7 +179,7 @@ function ServicePage({
         <ServicePageCards activeService={service} />
       </div>
 
-      {review_author !== 'destination' ? (
+      {serviceType !== 'destination' ? (
         <div className="service-page-review">
           <div className="service-review-container">
             <h4 className="cardo padding-20-bottom">{review}</h4>

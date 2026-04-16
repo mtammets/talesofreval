@@ -3,10 +3,12 @@ import { IoMdClose } from "react-icons/io";
 import { IoMdMenu } from "react-icons/io";
 import BookNow from '../style-components/BookNow';
 import MobileDropdown from './MobileDropdown';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import baloon_icon from '../../img/baloon-icon.png';
 import { useState, useEffect, useRef } from 'react';
-import { setStoredStoryAdminAuth } from '../../features/events/storyAdminService';
+import { scrollViewportTop } from '../../utils/scrollViewportTop';
+
+const LOGO_LOGIN_TAP_WINDOW_MS = 1800;
 
 function MobileHeader({
   virtual,
@@ -15,51 +17,42 @@ function MobileHeader({
   setShowBookNow,
   texts,
   misc_texts,
-  adminToken,
-  setAdminToken,
 }) {
-
   const navigate = useNavigate();
+  const location = useLocation();
   const [hideOnScroll, setHideOnScroll] = useState(false);
-  const logoClickCount = useRef(0);
-  const logoClickTimer = useRef(null);
+  const logoTapCount = useRef(0);
+  const logoTapTimer = useRef(null);
 
   const goHome = () => {
-    const isHomePage = window.location.pathname === '/';
-
     setOurServicesOpen(false);
 
-    if (!isHomePage) {
-      navigate("/");
-      return;
+    logoTapCount.current += 1;
+
+    if (logoTapTimer.current) {
+      window.clearTimeout(logoTapTimer.current);
     }
 
-    logoClickCount.current += 1;
-
-    if (logoClickTimer.current) {
-      window.clearTimeout(logoClickTimer.current);
-    }
-
-    if (adminToken && logoClickCount.current >= 2) {
-      logoClickCount.current = 0;
-      setStoredStoryAdminAuth('');
-      setAdminToken?.('');
-      return;
-    }
-
-    if (logoClickCount.current >= 3) {
-      logoClickCount.current = 0;
+    if (logoTapCount.current >= 3) {
+      logoTapCount.current = 0;
       navigate('/login', {
         state: {
-          nextPath: window.location.pathname,
+          nextPath: location.pathname,
         },
       });
       return;
     }
 
-    logoClickTimer.current = window.setTimeout(() => {
-      logoClickCount.current = 0;
-    }, 900);
+    logoTapTimer.current = window.setTimeout(() => {
+      logoTapCount.current = 0;
+    }, LOGO_LOGIN_TAP_WINDOW_MS);
+
+    if (location.pathname !== "/") {
+      navigate("/");
+      return;
+    }
+
+    scrollViewportTop();
   };
 
   const handleBookNow = () => {
@@ -88,14 +81,14 @@ function MobileHeader({
     // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (logoClickTimer.current) {
-        window.clearTimeout(logoClickTimer.current);
+      if (logoTapTimer.current) {
+        window.clearTimeout(logoTapTimer.current);
       }
     };
   }, []);
 
   return (
-    <div className="mobile-header">
+    <div className={`mobile-header${ourServicesOpen ? ' mobile-header--menu-open' : ''}`}>
       <div className="header-logo" onClick={goHome}>
         <img src={logo} alt="Logo" />
       </div>

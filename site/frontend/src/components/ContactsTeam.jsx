@@ -1,5 +1,4 @@
-import ContactsTeamList from './ContactsTeamList';
-
+import OurTeamList from './OurTeamList';
 import Reviews from './Reviews';
 
 function ContactsTeam({ texts, contactPage = false, heading, items, language = 'en', adminAction = null }) {
@@ -13,7 +12,7 @@ function ContactsTeam({ texts, contactPage = false, heading, items, language = '
         <h2 className='padding-20-bottom'>{ourTeamText}</h2>
         {adminAction}
       </div>
-      <ContactsTeamList items={items} />
+      <OurTeamList items={items} />
       {!contactPage && <Reviews misc_texts={texts} />}
     </div>
   );

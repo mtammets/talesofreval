@@ -97,10 +97,13 @@ Lokaalne päris e-maili test:
 Story feed admin:
 - URL: `/login`
 - pärast sisselogimist näeb admin päris saiti ning saab `Our story` sündmusi otse `/story` lehel lisada, muuta ja kustutada
-- sisselogimine käib Basic Auth stiilis kasutajanime ja parooliga, mis tulevad `site/backend/.env` failist
+- sisselogimine käib nüüd tavalise login-vormiga üle serveripoolse sessiooni ja `HttpOnly` cookie abil
 - minimaalsed võtmed:
   - `ADMIN_USERNAME`
-  - `ADMIN_PASSWORD`
+  - `ADMIN_SESSION_SECRET`
+- soovitus productionis:
+  - kasuta `ADMIN_PASSWORD_HASH` väärtust kujul `scrypt$<saltBase64>$<hashBase64>`
+  - jäta `ADMIN_PASSWORD` ainult lokaalseks või üleminekuvariandiks
 - admin salvestab `Our story` sündmused faili `site/backend/data/story-events.json`
 - üleslaetud story pildid salvestuvad kausta `site/backend/uploads/story/`
 

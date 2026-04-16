@@ -1,6 +1,7 @@
 import tripadvisorimg from "../img/trip-advisor.png"
 import { FaCircle } from "react-icons/fa"
 import { ArrowRightUp } from "../icons/ArrowRightUp.tsx";
+import { TripAdvisor } from "../icons/TripAdvisor.tsx";
 import { getLocalizedSiteText } from "../content/siteSettingsDefaults";
 
 function Reviews({reviews, misc_texts, variant = "default", content = null, language = 'en', adminAction = null}) {
@@ -34,6 +35,9 @@ function Reviews({reviews, misc_texts, variant = "default", content = null, lang
         </div>
       </div>
       <a className="review-read-more" href="https://www.tripadvisor.co.uk/Attraction_Review-g274958-d14768095-Reviews-Tales_of_Reval-Tallinn_Harju_County.html" target="_blank" rel="noopener noreferrer">
+        <span className="review-read-more__icon">
+          <TripAdvisor size={variant === "home" ? "1.35rem" : "1.5rem"} />
+        </span>
         <span>Read more</span>
         <ArrowRightUp color="#202533" />
       </a>
