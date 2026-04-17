@@ -6,13 +6,13 @@ import { getStorytellers, reset } from '../features/storytellers/storytellerSlic
 import PaymentCard from './PaymentCard';
 import { FALLBACK_STORYTELLERS } from '../content/fallbackContent';
 import { resolveSiteImage } from '../content/siteSettingsDefaults';
+import { normalizePaymentLinks } from '../content/paymentMethods';
 
 function OurTeamList({ limit, showPaymentButton = false, items = null }) {
   const dispatch = useDispatch();
   const { storytellers, isError, message } = useSelector((state) => state.storytellers);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [links, setLinks] = useState([]);
-  const [name, setName] = useState('');
 
   useEffect(() => {
     if (items?.length) {
@@ -32,9 +32,8 @@ function OurTeamList({ limit, showPaymentButton = false, items = null }) {
     }
   }, [isError, message]);
 
-  const startPayment = (nextName, nextLinks) => {
-    setName(nextName);
-    setLinks(nextLinks);
+  const startPayment = (nextLinks) => {
+    setLinks(normalizePaymentLinks(nextLinks));
     setPaymentOpen(true);
   };
 
@@ -44,11 +43,14 @@ function OurTeamList({ limit, showPaymentButton = false, items = null }) {
         name: member.name,
         email: member.email,
         phone: member.phone,
-        payment_links: [],
+        payment_links: normalizePaymentLinks(member.payment_links),
         image: resolveSiteImage(member.image, member.imageKey),
       }))
     : storytellers.length
-      ? storytellers
+      ? storytellers.map((storyteller) => ({
+          ...storyteller,
+          payment_links: normalizePaymentLinks(storyteller.payment_links),
+        }))
       : FALLBACK_STORYTELLERS;
   const visibleStorytellers = limit ? roster.slice(0, limit) : roster;
 
@@ -77,7 +79,9 @@ function OurTeamList({ limit, showPaymentButton = false, items = null }) {
         )
       )}
 
-      {paymentOpen && <PaymentCard name={name} links={links} closePaymentCard={() => setPaymentOpen(false)} />}
+      {paymentOpen ? (
+        <PaymentCard links={links} closePaymentCard={() => setPaymentOpen(false)} />
+      ) : null}
     </div>
   );
 }

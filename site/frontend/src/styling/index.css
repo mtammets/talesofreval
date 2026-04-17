@@ -635,22 +635,42 @@ p.line-height-spaced{
 }
 
 .payment-button{
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   background: transparent;
   border: 1px solid var(--purple);
-  height: 50px;
+  min-height: 40px;
   font: inherit;
-  padding: 0 20px;
+  padding: 0 14px;
   color: var(--purple);
-  font-weight: 400;
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 600;
+  gap: 12px;
+  width: fit-content;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .payment-button:hover{
-  background: var(--purple);
-  color: var(--dark-blue);
+  background: rgba(198, 178, 198, 0.16);
   cursor: pointer;
+}
+
+.payment-button .button-text,
+.payment-button .icon-span-right{
+  display: inline-flex;
+  align-items: center;
+}
+
+.payment-button .icon-span-right{
+  line-height: 0;
+}
+
+.payment-button .icon-span-right svg{
+  width: 16px;
+  height: 16px;
+  margin-bottom: 0 !important;
 }
 
 .header-actions .action.book-now {
@@ -2052,6 +2072,52 @@ body.book-now-modal-open{
   margin-top: auto; /* Push the button to the bottom */
 }
 
+.team--tippable{
+  background: var(--blue);
+  min-height: 100%;
+}
+
+.team--tippable .team-image img{
+  display: block;
+  height: 160px;
+}
+
+.team-info--tippable{
+  padding: 14px 12px 16px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0;
+  background: var(--blue);
+}
+
+.team-info--tippable .team-name{
+  color: var(--cream);
+  font-size: 15px;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  padding-bottom: 0;
+}
+
+.team-link--tippable{
+  display: block;
+  color: var(--darker-cream);
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+
+.team-link--phone{
+  margin-top: 10px;
+  margin-bottom: 18px;
+  color: var(--cream);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 /* OUR TEAM */
 .contacts-team{
   color: var(--cream);
@@ -2131,53 +2197,130 @@ body.book-now-modal-open{
 .payment-card-container{
   z-index: 9999;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #20253388;
+  inset: 0;
+  padding: 24px;
+  background: rgba(32, 37, 51, 0.84);
   display: flex;
   justify-content: center;
   align-items: center;
-  
 }
 
 .payment-card{
   color: var(--cream);
-  padding: 20px;
-  width: 450px;
+  padding: 18px 14px 14px;
+  width: min(100%, 344px);
   background: var(--blue);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.25);
 }
 
-.payment-links{
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
+.payment-card h2{
+  font-size: 28px;
+  line-height: 1;
 }
 
-.payment-link{
-  background: var(--darker-cream);
-  width: 100%;
-  padding: 20px 0;
+.payment-card__intro{
+  margin-top: 12px;
+  color: #f0e6df;
+  font-size: 12px;
+  line-height: 1.15;
+  max-width: 235px;
+}
+
+.payment-card__row{
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.payment-card__row--three{
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.payment-card__row--two{
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 4px;
+}
+
+.payment-card__method{
+  min-height: 48px;
+  background: #f2e9e2;
+  color: var(--dark-blue);
+  border: 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 10px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.payment-link.hidden {
-  pointer-events: none; /* Disable clicking */
-  opacity: 0.5; /* Make it look darker */
-  filter: grayscale(100%); /* Optionally, make it grayscale */
+.payment-card__method:hover{
+  background: #fbf3ec;
+  transform: translateY(-1px);
 }
 
+.payment-card__method--disabled{
+  opacity: 0.45;
+  filter: grayscale(100%);
+  cursor: not-allowed;
+}
 
+.payment-card__method--disabled:hover{
+  background: #f2e9e2;
+  transform: none;
+}
 
-.payment-link:hover{
-  background: var(--darker-turquoise);
+.payment-card__logo{
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.payment-card__logo--wise{
+  width: 54px;
+}
+
+.payment-card__logo--apple{
+  width: 58px;
+}
+
+.payment-card__logo--google{
+  width: 48px;
+}
+
+.payment-card__logo--paypal{
+  width: 82px;
+}
+
+.payment-card__label{
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.payment-card__actions{
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.payment-card__cancel{
+  min-height: 34px;
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid rgba(230, 221, 215, 0.4);
+  color: var(--cream);
+  font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.payment-card__cancel:hover{
+  background: rgba(230, 221, 215, 0.08);
+  border-color: rgba(230, 221, 215, 0.7);
   cursor: pointer;
 }
-
-
 
 /* .team{
   background-size: cover;
@@ -3361,7 +3504,7 @@ h2.virtual{
 
 
   .payment-card{
-    width: 380px;
+    width: min(100%, 344px);
   }
 
   .virtual-tour{
@@ -5857,6 +6000,37 @@ button.year-event-switch.disabled{
     margin-bottom: 29px;
   }
 
+  .home-page .team--tippable .team-image img{
+    height: 186px;
+  }
+
+  .home-page .team-info--tippable{
+    padding: 16px 14px 18px;
+  }
+
+  .home-page .team-info--tippable .team-name{
+    font-size: 20px;
+    line-height: 1.12;
+    margin-bottom: 14px;
+  }
+
+  .home-page .team-link--tippable{
+    font-size: 14px;
+    line-height: 1.1;
+  }
+
+  .home-page .team-link--phone{
+    margin-top: 12px;
+    margin-bottom: 18px;
+    font-size: 14px;
+  }
+
+  .home-page .team-info--tippable .payment-button{
+    min-height: 42px;
+    padding: 0 14px;
+    font-size: 14px;
+  }
+
   .our-team .contacts-team{
     height: 200px !important;
     aspect-ratio: auto !important;
@@ -5889,6 +6063,46 @@ button.year-event-switch.disabled{
 
   .our-team .contacts-team-info .phone{
     font-weight: 700;
+  }
+
+  .payment-card-container{
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 88px;
+  }
+
+  .payment-card{
+    width: calc(100vw - 32px);
+    max-width: 344px;
+    padding: 20px 14px 14px;
+  }
+
+  .payment-card h2{
+    font-size: 25px;
+  }
+
+  .payment-card__intro{
+    max-width: none;
+    font-size: 12px;
+    line-height: 1.15;
+  }
+
+  .payment-card__row--three,
+  .payment-card__row--two{
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .payment-card__row--two{
+    margin-top: 4px;
+  }
+
+  .payment-card__method{
+    min-height: 40px;
+  }
+
+  .payment-card__actions{
+    margin-top: 10px;
   }
 
   .home-page .review-container-home{
@@ -6083,14 +6297,15 @@ button.year-event-switch.disabled{
     width: calc(100% - 32px);
   }
 
-  .contact-page-team .our-team{
-    padding-top: 20px;
+  .contact-page-team .our-team.padding-80-top{
+    padding-top: 14px !important;
   }
 
-  .contact-page-team .our-team h2{
+  .contact-page-team .our-team h2.padding-20-bottom{
     font-size: 32px;
     line-height: 1.1;
-    margin-bottom: 20px;
+    padding-bottom: 0 !important;
+    margin-bottom: 14px;
   }
 
   .contact-page-team .contacts-team-info .phone{
@@ -6098,7 +6313,7 @@ button.year-event-switch.disabled{
   }
 
   .contact-us-section{
-    padding: 23px 0 58px;
+    padding: 16px 0 24px;
     margin-bottom: 0;
   }
 

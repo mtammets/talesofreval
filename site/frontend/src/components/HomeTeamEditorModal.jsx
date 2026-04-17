@@ -1,4 +1,5 @@
 import { resolveSiteImage } from '../content/siteSettingsDefaults';
+import { PAYMENT_METHODS, normalizePaymentLinks } from '../content/paymentMethods';
 import AdminModalShell from './AdminModalShell';
 
 function HomeTeamEditorModal({
@@ -32,6 +33,21 @@ function HomeTeamEditorModal({
     );
   };
 
+  const updatePaymentLink = (memberIndex, methodName, value) => {
+    members.set((current) =>
+      current.map((member, index) =>
+        index === memberIndex
+          ? {
+              ...member,
+              payment_links: normalizePaymentLinks(member.payment_links).map((entry) =>
+                entry.name === methodName ? { ...entry, link: value } : entry
+              ),
+            }
+          : member
+      )
+    );
+  };
+
   const setMemberFile = (index, file) => {
     setImageFiles((current) => ({
       ...current,
@@ -47,27 +63,30 @@ function HomeTeamEditorModal({
       onClose={onCancel}
       wide
     >
-        <form onSubmit={onSave} className="story-admin-form">
-          <div className="story-admin-grid two">
-            <label>
-              Heading (EN)
-              <input
-                type="text"
-                value={heading.value.en}
-                onChange={(event) => updateHeading('en', event.target.value)}
-              />
-            </label>
-            <label>
-              Heading (ET)
-              <input
-                type="text"
-                value={heading.value.ee}
-                onChange={(event) => updateHeading('ee', event.target.value)}
-              />
-            </label>
-          </div>
+      <form onSubmit={onSave} className="story-admin-form">
+        <div className="story-admin-grid two">
+          <label>
+            Heading (EN)
+            <input
+              type="text"
+              value={heading.value.en}
+              onChange={(event) => updateHeading('en', event.target.value)}
+            />
+          </label>
+          <label>
+            Heading (ET)
+            <input
+              type="text"
+              value={heading.value.ee}
+              onChange={(event) => updateHeading('ee', event.target.value)}
+            />
+          </label>
+        </div>
 
-          {members.value.map((member, index) => (
+        {members.value.map((member, index) => {
+          const paymentLinks = normalizePaymentLinks(member.payment_links);
+
+          return (
             <div key={member.key} className="home-editor-card">
               <div className="story-admin-grid two">
                 <label>
@@ -119,26 +138,42 @@ function HomeTeamEditorModal({
                   ) : null}
                 </label>
               </div>
+              <div className="story-admin-grid two">
+                {PAYMENT_METHODS.map((methodName) => (
+                  <label key={methodName}>
+                    {methodName} link
+                    <input
+                      type="url"
+                      value={paymentLinks.find((entry) => entry.name === methodName)?.link || ''}
+                      onChange={(event) =>
+                        updatePaymentLink(index, methodName, event.target.value)
+                      }
+                      placeholder={`https://${methodName.toLowerCase().replace(/\s+/g, '')}.com/...`}
+                    />
+                  </label>
+                ))}
+              </div>
             </div>
-          ))}
+          );
+        })}
 
-          <div className="story-admin-actions">
-            <button
-              type="submit"
-              className="story-admin-button story-admin-button--primary"
-              disabled={isSaving}
-            >
-              {isSaving ? 'Saving…' : 'Save changes'}
-            </button>
-            <button
-              type="button"
-              className="story-admin-button story-admin-button--secondary"
-              onClick={onCancel}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+        <div className="story-admin-actions">
+          <button
+            type="submit"
+            className="story-admin-button story-admin-button--primary"
+            disabled={isSaving}
+          >
+            {isSaving ? 'Saving…' : 'Save changes'}
+          </button>
+          <button
+            type="button"
+            className="story-admin-button story-admin-button--secondary"
+            onClick={onCancel}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
     </AdminModalShell>
   );
 }

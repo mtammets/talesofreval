@@ -1,6 +1,7 @@
 import person1 from "../img/person1.webp";
 import person2 from "../img/person2.webp";
 import person3 from "../img/person3.webp";
+import { createEmptyPaymentLinks } from "./paymentMethods";
 
 export function hasTextEntries(value) {
   return Boolean(value && Object.keys(value).length > 0);
@@ -151,7 +152,7 @@ export const FALLBACK_STORYTELLERS = [
     name: "Marek Tammets",
     email: "info@talesofreval.ee",
     phone: "+372 5560 4421",
-    payment_links: [],
+    payment_links: createEmptyPaymentLinks(),
     image: { src: person1 },
   },
   {
@@ -159,7 +160,7 @@ export const FALLBACK_STORYTELLERS = [
     name: "Tales of Reval Team",
     email: "info@talesofreval.ee",
     phone: "+372 5560 4421",
-    payment_links: [],
+    payment_links: createEmptyPaymentLinks(),
     image: { src: person2 },
   },
   {
@@ -167,7 +168,7 @@ export const FALLBACK_STORYTELLERS = [
     name: "Guest Experience Host",
     email: "info@talesofreval.ee",
     phone: "+372 5560 4421",
-    payment_links: [],
+    payment_links: createEmptyPaymentLinks(),
     image: { src: person3 },
   },
 ];

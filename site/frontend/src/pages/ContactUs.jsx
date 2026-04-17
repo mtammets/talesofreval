@@ -265,13 +265,13 @@ function ContactUs({
 
       <div className="contact-us-section">
         <div className="container">
-          <div className="contact-section-admin-row">
-            {adminToken && isEditMode ? (
+          {adminToken && isEditMode ? (
+            <div className="contact-section-admin-row">
               <button type="button" className="section-edit-button" onClick={() => setIsContactEditorOpen(true)}>
                 Edit
               </button>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
           <div className="contact-cols">
             <div className="contact-col contact-col-form">
               <div className="input-form-card contact-us">

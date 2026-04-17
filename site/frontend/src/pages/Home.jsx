@@ -21,10 +21,15 @@ import {
   getLocalizedSiteText,
   resolveSiteImage,
 } from '../content/siteSettingsDefaults';
+import { normalizePaymentLinks } from '../content/paymentMethods';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
+const normalizeTeamMember = (member) => ({
+  ...member,
+  payment_links: normalizePaymentLinks(member?.payment_links),
+});
 
 function SectionEditButton({ onClick, label = 'Edit' }) {
   return (
@@ -53,7 +58,9 @@ function Home({
   const [heroImageFile, setHeroImageFile] = useState(null);
   const [heroPreviewUrl, setHeroPreviewUrl] = useState('');
   const [teamHeading, setTeamHeading] = useState(cloneValue(siteSettings.homeTeam.heading));
-  const [teamMembers, setTeamMembers] = useState(cloneValue(siteSettings.homeTeam.members));
+  const [teamMembers, setTeamMembers] = useState(
+    cloneValue(siteSettings.homeTeam.members.map(normalizeTeamMember))
+  );
   const [teamImageFiles, setTeamImageFiles] = useState({});
   const [reviewHeading, setReviewHeading] = useState(cloneValue(siteSettings.homeReview.heading));
   const [reviewText, setReviewText] = useState(cloneValue(siteSettings.homeReview.text));
@@ -84,7 +91,7 @@ function Home({
 
   useEffect(() => {
     setTeamHeading(cloneValue(siteSettings.homeTeam.heading));
-    setTeamMembers(cloneValue(siteSettings.homeTeam.members));
+    setTeamMembers(cloneValue(siteSettings.homeTeam.members.map(normalizeTeamMember)));
     setReviewHeading(cloneValue(siteSettings.homeReview.heading));
     setReviewText(cloneValue(siteSettings.homeReview.text));
     setReviewer(cloneValue(siteSettings.homeReview.reviewer));
@@ -248,6 +255,7 @@ function Home({
           texts={resolvedMiscTexts}
           heading={siteSettings.homeTeam.heading}
           items={siteSettings.homeTeam.members}
+          showPaymentButton
           language={language}
           adminAction={
             adminToken && isEditMode ? (

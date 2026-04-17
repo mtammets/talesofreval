@@ -30,6 +30,7 @@ import person3 from '../img/person3.webp';
 import bgcontact from '../img/bgcontact.webp';
 import storyBgImage from '../img/storybg.webp';
 import gpsGameImage from '../img/gps-game.webp';
+import { createEmptyPaymentLinks } from './paymentMethods';
 
 export const SITE_IMAGE_ASSETS = {
   homeBg,
@@ -175,6 +176,7 @@ export const DEFAULT_SITE_SETTINGS = {
         name: 'Marek Tammets',
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
+        payment_links: createEmptyPaymentLinks(),
         imageKey: 'teamMember1',
         image: null,
       },
@@ -183,6 +185,7 @@ export const DEFAULT_SITE_SETTINGS = {
         name: 'Tales of Reval Team',
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
+        payment_links: createEmptyPaymentLinks(),
         imageKey: 'teamMember2',
         image: null,
       },
@@ -191,6 +194,7 @@ export const DEFAULT_SITE_SETTINGS = {
         name: 'Guest Experience Host',
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
+        payment_links: createEmptyPaymentLinks(),
         imageKey: 'teamMember3',
         image: null,
       },
@@ -199,6 +203,7 @@ export const DEFAULT_SITE_SETTINGS = {
         name: 'Tales of Reval Host',
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
+        payment_links: createEmptyPaymentLinks(),
         imageKey: 'contactMember4',
         image: null,
       },
