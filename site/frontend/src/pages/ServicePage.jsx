@@ -8,8 +8,7 @@ import { useParams } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import ServicePageCards from '../components/ServicePageCards';
 import BookNow from '../components/style-components/BookNow';
-import OurServices from '../components/OurServices';
-import HomeServicesEditorModal from '../components/HomeServicesEditorModal';
+import ManagedServicesSection from '../components/ManagedServicesSection';
 import HeroImageEditorModal from '../components/HeroImageEditorModal';
 import PageHero from '../components/PageHero';
 import ServicePageContentEditorModal from '../components/ServicePageContentEditorModal';
@@ -222,15 +221,6 @@ function ServicePage({
   const [sectionForm, setSectionForm] = useState(createEmptyServiceSection(serviceType));
   const [sectionImageFile, setSectionImageFile] = useState(null);
   const [isSavingSection, setIsSavingSection] = useState(false);
-  const [isServicesEditorOpen, setIsServicesEditorOpen] = useState(false);
-  const [isSavingServices, setIsSavingServices] = useState(false);
-  const [servicesHeading, setServicesHeading] = useState(
-    cloneValue(siteSettings.homeServices.heading)
-  );
-  const [serviceItems, setServiceItems] = useState(
-    cloneValue(siteSettings.homeServices.items)
-  );
-  const [serviceImageFiles, setServiceImageFiles] = useState({});
 
   const servicePageContent = useMemo(
     () => buildServicePageContent(serviceType, siteSettings.servicePageContent?.[serviceType]),
@@ -254,11 +244,6 @@ function ServicePage({
     dispatch(getMiscTexts());
     dispatch(getService(serviceType));
   }, [dispatch, serviceType]);
-
-  useEffect(() => {
-    setServicesHeading(cloneValue(siteSettings.homeServices.heading));
-    setServiceItems(cloneValue(siteSettings.homeServices.items));
-  }, [siteSettings]);
 
   useEffect(() => {
     setServiceContentForm(cloneValue(servicePageContent));
@@ -446,35 +431,6 @@ function ServicePage({
 
   const openDeleteDialog = (index) => {
     setPendingDeleteIndex(index);
-  };
-
-  const saveServices = async (event) => {
-    event.preventDefault();
-    setIsSavingServices(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('heading', JSON.stringify(servicesHeading));
-      formData.append('items', JSON.stringify(serviceItems));
-      Object.entries(serviceImageFiles).forEach(([index, file]) => {
-        if (file) {
-          formData.append(`serviceImage_${index}`, file);
-        }
-      });
-
-      const nextSettings = await siteSettingsService.updateServicesSiteSettings(
-        adminToken,
-        formData
-      );
-      setSiteSettings(nextSettings);
-      setServiceImageFiles({});
-      setIsServicesEditorOpen(false);
-      toast.success('Services updated.');
-    } catch (error) {
-      handleAdminAuthError(error);
-    } finally {
-      setIsSavingServices(false);
-    }
   };
 
   const openCreateSectionEditor = () => {
@@ -682,40 +638,16 @@ function ServicePage({
       )}
 
       <div className="container">
-        <OurServices
+        <ManagedServicesSection
           texts={misc_texts}
-          heading={siteSettings.homeServices.heading}
-          items={siteSettings.homeServices.items}
+          siteSettings={siteSettings}
+          setSiteSettings={setSiteSettings}
+          adminToken={adminToken}
+          isEditMode={isEditMode}
           language={language}
-          adminAction={
-            adminToken && isEditMode ? (
-              <button
-                type="button"
-                className="section-edit-button"
-                onClick={() => setIsServicesEditorOpen(true)}
-              >
-                Edit
-              </button>
-            ) : null
-          }
+          onAdminAuthError={handleAdminAuthError}
         />
       </div>
-      {adminToken && isServicesEditorOpen ? (
-        <HomeServicesEditorModal
-          heading={{ value: servicesHeading, set: setServicesHeading }}
-          items={{ value: serviceItems, set: setServiceItems }}
-          imageFiles={serviceImageFiles}
-          setImageFiles={setServiceImageFiles}
-          onSave={saveServices}
-          onCancel={() => {
-            setIsServicesEditorOpen(false);
-            setServiceImageFiles({});
-            setServicesHeading(cloneValue(siteSettings.homeServices.heading));
-            setServiceItems(cloneValue(siteSettings.homeServices.items));
-          }}
-          isSaving={isSavingServices}
-        />
-      ) : null}
       {adminToken && isHeroEditorOpen ? (
         <HeroImageEditorModal
           title="Change background image"

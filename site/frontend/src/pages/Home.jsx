@@ -6,9 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import HomeLanding from '../components/HomeLanding';
 import HomeHeroEditorModal from '../components/HomeHeroEditorModal';
 import HomeReviewEditorModal from '../components/HomeReviewEditorModal';
-import HomeServicesEditorModal from '../components/HomeServicesEditorModal';
 import HomeTeamEditorModal from '../components/HomeTeamEditorModal';
-import OurServices from '../components/OurServices';
+import ManagedServicesSection from '../components/ManagedServicesSection';
 import OurTeam from '../components/OurTeam';
 import Reviews from '../components/Reviews';
 import { getHomeTexts, getMiscTexts, reset } from '../features/texts/textSlice';
@@ -48,15 +47,11 @@ function Home({
   const { misc_texts } = useSelector((state) => state.texts);
 
   const [isHeroEditorOpen, setIsHeroEditorOpen] = useState(false);
-  const [isServicesEditorOpen, setIsServicesEditorOpen] = useState(false);
   const [isTeamEditorOpen, setIsTeamEditorOpen] = useState(false);
   const [isReviewEditorOpen, setIsReviewEditorOpen] = useState(false);
 
   const [heroImageFile, setHeroImageFile] = useState(null);
   const [heroPreviewUrl, setHeroPreviewUrl] = useState('');
-  const [servicesHeading, setServicesHeading] = useState(cloneValue(siteSettings.homeServices.heading));
-  const [serviceItems, setServiceItems] = useState(cloneValue(siteSettings.homeServices.items));
-  const [serviceImageFiles, setServiceImageFiles] = useState({});
   const [teamHeading, setTeamHeading] = useState(cloneValue(siteSettings.homeTeam.heading));
   const [teamMembers, setTeamMembers] = useState(cloneValue(siteSettings.homeTeam.members));
   const [teamImageFiles, setTeamImageFiles] = useState({});
@@ -88,8 +83,6 @@ function Home({
   }, [isError, message]);
 
   useEffect(() => {
-    setServicesHeading(cloneValue(siteSettings.homeServices.heading));
-    setServiceItems(cloneValue(siteSettings.homeServices.items));
     setTeamHeading(cloneValue(siteSettings.homeTeam.heading));
     setTeamMembers(cloneValue(siteSettings.homeTeam.members));
     setReviewHeading(cloneValue(siteSettings.homeReview.heading));
@@ -173,32 +166,6 @@ function Home({
     }
   };
 
-  const saveServices = async (event) => {
-    event.preventDefault();
-    setIsSavingSection('services');
-
-    try {
-      const formData = new FormData();
-      formData.append('heading', JSON.stringify(servicesHeading));
-      formData.append('items', JSON.stringify(serviceItems));
-      Object.entries(serviceImageFiles).forEach(([index, file]) => {
-        if (file) {
-          formData.append(`serviceImage_${index}`, file);
-        }
-      });
-
-      const nextSettings = await siteSettingsService.updateServicesSiteSettings(adminToken, formData);
-      setSiteSettings(nextSettings);
-      setServiceImageFiles({});
-      setIsServicesEditorOpen(false);
-      toast.success('Homepage services updated.');
-    } catch (error) {
-      handleAdminAuthError(error, 'Services update failed.');
-    } finally {
-      setIsSavingSection('');
-    }
-  };
-
   const saveTeam = async (event) => {
     event.preventDefault();
     setIsSavingSection('team');
@@ -268,17 +235,14 @@ function Home({
       />
 
       <div className="container home-content">
-        <OurServices
+        <ManagedServicesSection
           texts={resolvedMiscTexts}
-          compact
-          heading={siteSettings.homeServices.heading}
-          items={siteSettings.homeServices.items}
+          siteSettings={siteSettings}
+          setSiteSettings={setSiteSettings}
+          adminToken={adminToken}
+          isEditMode={isEditMode}
           language={language}
-          adminAction={
-            adminToken && isEditMode ? (
-              <SectionEditButton onClick={() => setIsServicesEditorOpen(true)} />
-            ) : null
-          }
+          onAdminAuthError={handleAdminAuthError}
         />
         <OurTeam
           texts={resolvedMiscTexts}
@@ -320,23 +284,6 @@ function Home({
           setTitleLine2={setHeroTitleLine2}
           subtitle={heroSubtitle}
           setSubtitle={setHeroSubtitle}
-        />
-      ) : null}
-
-      {adminToken && isServicesEditorOpen ? (
-        <HomeServicesEditorModal
-          heading={{ value: servicesHeading, set: setServicesHeading }}
-          items={{ value: serviceItems, set: setServiceItems }}
-          imageFiles={serviceImageFiles}
-          setImageFiles={setServiceImageFiles}
-          onSave={saveServices}
-          onCancel={() => {
-            setIsServicesEditorOpen(false);
-            setServiceImageFiles({});
-            setServicesHeading(cloneValue(siteSettings.homeServices.heading));
-            setServiceItems(cloneValue(siteSettings.homeServices.items));
-          }}
-          isSaving={isSavingSection === 'services'}
         />
       ) : null}
 

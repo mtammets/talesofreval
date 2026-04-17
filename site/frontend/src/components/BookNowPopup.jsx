@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import ButtonPrimary from './style-components/ButtonPrimary';
-import ButtonSecondary from './style-components/ButtonSecondary';
 import { FaCheck } from "react-icons/fa";
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendMessage } from '../features/email/emailSlice';
 import Spinner from './Spinner';
 import { getMiscTexts, reset } from '../features/texts/textSlice';
+import { ArrowRight } from '../icons/ArrowRight.tsx';
 
 function BookNowPopup({ showBookNow, setShowBookNow }) {
     const [submitted, setSubmitted] = useState(false);
@@ -22,6 +21,13 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
     const { misc_texts } = useSelector(state => state.texts);
 
     const location = useLocation();
+
+    const resetFormState = () => {
+        setSubmitted(false);
+        setName('');
+        setEmail('');
+        setMessage('');
+    };
 
     useEffect(() => {
         dispatch(getMiscTexts());
@@ -62,6 +68,27 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
         }
     }, [location]);
 
+    useEffect(() => {
+        if (!showBookNow) {
+            return undefined;
+        }
+
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                setShowBookNow(false);
+                resetFormState();
+            }
+        };
+
+        document.body.classList.add('book-now-modal-open');
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.body.classList.remove('book-now-modal-open');
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [showBookNow, setShowBookNow]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!name) {
@@ -92,13 +119,9 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
         setMessage('');
     };
 
-    const handleClose = (e) => {
-        e.preventDefault();
+    const handleClose = () => {
         setShowBookNow(false);
-        setSubmitted(false);
-        setName('');
-        setEmail('');
-        setMessage('');
+        resetFormState();
     };
 
     const nameLabel = misc_texts?.["name"]?.text || 'Name';
@@ -114,29 +137,42 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
     }
 
     return (
-        <div className='book-now-popup'>
-            <div className="input-form-card book-card">
-                {submitted && <FaCheck size={25} color={"#05AA6C"} className='padding-20-bottom' />}
-                <h3 className='cardo'>{submitted ? "Thank you" : "Book now"}</h3>
-                <form>
+        <div className='book-now-popup' onClick={handleClose}>
+            <div
+                className={`book-now-dialog${submitted ? ' book-now-dialog--submitted' : ''}`}
+                onClick={(event) => event.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="book-now-dialog-title"
+            >
+                <div className={`book-now-dialog__body${submitted ? ' book-now-dialog__body--submitted' : ''}`}>
+                {submitted ? (
+                    <div className="book-now-confirmation-icon" aria-hidden="true">
+                        <FaCheck size={34} color={"#54b788"} />
+                    </div>
+                ) : null}
+                <h3 className={`book-now-dialog__title cardo${submitted ? ' book-now-dialog__title--submitted' : ''}`} id="book-now-dialog-title">
+                    {submitted ? "Thank you!" : "Book now"}
+                </h3>
+                <form className={`book-now-form${submitted ? ' book-now-form--submitted' : ''}`} onSubmit={handleSubmit}>
                     {!submitted ?
                         <>
-                            <div className="form-group padding-20-top">
+                            <div className="book-now-field">
                                 <label htmlFor="name">{nameLabel}*</label>
-                                <input name='name' type="text" value={name} onChange={(e) => setName(e.target.value)} />
+                                <input id="name" name='name' type="text" value={name} onChange={(e) => setName(e.target.value)} />
                             </div>
-                            <div className="form-group">
+                            <div className="book-now-field">
                                 <label htmlFor="email">{emailLabel}*</label>
-                                <input name='email' type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                <input id="email" name='email' type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                             </div>
-                            <div className="form-group">
+                            <div className="book-now-field">
                                 <label htmlFor="message">{writeSomethingText}</label>
-                                <textarea name="message" value={message} onChange={(e) => setMessage(e.target.value)} />
+                                <textarea id="message" name="message" value={message} onChange={(e) => setMessage(e.target.value)} />
                             </div>
                             {isHome &&
-                            <div className="form-group">
-                                <label htmlFor="email">Service*</label>
-                                <select className='basic-input' name='service-type' value={eventType} onChange={(e) => setEventType(e.target.value)}>
+                            <div className="book-now-field">
+                                <label htmlFor="service-type">Service*</label>
+                                <select id="service-type" name='service-type' value={eventType} onChange={(e) => setEventType(e.target.value)}>
                                     <option value="">Select</option>
                                     <option value="Team events">Team Events</option>
                                     <option value="Private events">Private Events</option>
@@ -150,20 +186,29 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
                         </>
                         :
                         <>
-                            <h5 className='padding-20-top'>We'll be in touch!</h5>
+                            <p className='book-now-confirmation-copy'>We'll be in touch :)</p>
                         </>
                     }
 
-                    <div className="submit">
-                        <div>
-                            <ButtonSecondary
-                                text={submitted ? "Close" : cancelText}
-                                onClick={handleClose}
-                            />
-                        </div>
-                        {!submitted && <div><ButtonPrimary icon="ArrowRight" text={sendText} onClick={handleSubmit} /></div>}
+                    <div className={`book-now-actions${submitted ? ' book-now-actions--submitted' : ''}`}>
+                        <button
+                            type="button"
+                            className={`book-now-action ${submitted ? 'book-now-action--close' : 'book-now-action--cancel'}`}
+                            onClick={handleClose}
+                        >
+                            {submitted ? "Close" : cancelText}
+                        </button>
+                        {!submitted && (
+                            <button type="submit" className="book-now-action book-now-action--submit">
+                                <span>{sendText}</span>
+                                <span className="book-now-action__icon" aria-hidden="true">
+                                    <ArrowRight size="1.15rem" />
+                                </span>
+                            </button>
+                        )}
                     </div>
                 </form>
+                </div>
             </div>
         </div>
     );

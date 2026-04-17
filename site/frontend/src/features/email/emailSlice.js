@@ -72,9 +72,7 @@ export const emailSlice = createSlice({
         state.isSuccess = true;
         state.isError = false;
         state.message = '';
-        if (action.payload === 1) {
-          toast.success('Message sent successfully');
-        } else {
+        if (action.payload !== 1) {
           toast.error('Message not sent');
         }
       })
@@ -118,9 +116,7 @@ export const emailSlice = createSlice({
         state.isSuccess = true;
         state.isError = false;
         state.message = '';
-        if (action.payload === 1) {
-          toast.success('Message sent successfully');
-        } else {
+        if (action.payload !== 1) {
           toast.error('Message was not sent, please try again later.');
         }
       })

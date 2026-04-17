@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
+import { Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import { BrowserRouter as Router, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
@@ -14,18 +14,43 @@ import storyAdminService, {
 import { DEFAULT_SITE_SETTINGS } from './content/siteSettingsDefaults';
 import siteSettingsService from './features/siteSettings/siteSettingsService';
 import { scrollViewportTop } from './utils/scrollViewportTop';
+import lazyWithRetry from './utils/lazyWithRetry';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-const StyleGuide = lazy(() => import('./pages/StyleGuide'));
-const ServicePage = lazy(() => import('./pages/ServicePage'));
-const StoryPage = lazy(() => import('./pages/StoryPage'));
-const ContactUs = lazy(() => import('./pages/ContactUs'));
-const VirtualTour = lazy(() => import('./pages/VirtualTour'));
-const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage'));
+const StyleGuide = lazyWithRetry(
+  () => import('./pages/StyleGuide'),
+  'lazy-retry:style-guide'
+);
+const ServicePage = lazyWithRetry(
+  () => import('./pages/ServicePage'),
+  'lazy-retry:service-page'
+);
+const StoryPage = lazyWithRetry(
+  () => import('./pages/StoryPage'),
+  'lazy-retry:story-page'
+);
+const ContactUs = lazyWithRetry(
+  () => import('./pages/ContactUs'),
+  'lazy-retry:contact-us'
+);
+const VirtualTour = lazyWithRetry(
+  () => import('./pages/VirtualTour'),
+  'lazy-retry:virtual-tour'
+);
+const AdminLoginPage = lazyWithRetry(
+  () => import('./pages/AdminLoginPage'),
+  'lazy-retry:admin-login'
+);
 
-const BookNowPopup = lazy(() => import('./components/BookNowPopup'));
-const FreeBookNow = lazy(() => import('./components/FreeBookNow'));
+const BookNowPopup = lazyWithRetry(
+  () => import('./components/BookNowPopup'),
+  'lazy-retry:book-now-popup'
+);
+const FreeBookNow = lazyWithRetry(
+  () => import('./components/FreeBookNow'),
+  'lazy-retry:free-book-now'
+);
 
 function RouteFallback() {
   return <Spinner />;

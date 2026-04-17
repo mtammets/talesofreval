@@ -3,11 +3,10 @@ import { Helmet } from 'react-helmet';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 
-import OurServices from '../components/OurServices';
+import ManagedServicesSection from '../components/ManagedServicesSection';
 import StoryYear from '../components/StoryYear.jsx';
 import Spinner from '../components/Spinner';
 import StoryFeedEditorModal from '../components/StoryFeedEditorModal';
-import HomeServicesEditorModal from '../components/HomeServicesEditorModal';
 import HeroImageEditorModal from '../components/HeroImageEditorModal';
 import ConfirmDialog from '../components/ConfirmDialog';
 import PageHero from '../components/PageHero';
@@ -24,8 +23,6 @@ import {
   mapStoryEventToForm,
 } from '../features/events/storyAdminUtils';
 import { DEFAULT_SITE_SETTINGS, resolveSiteImage } from '../content/siteSettingsDefaults';
-
-const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 
 function StoryPage({
   adminToken,
@@ -45,7 +42,6 @@ function StoryPage({
   const [didLoadAdminEvents, setDidLoadAdminEvents] = useState(false);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [isServicesEditorOpen, setIsServicesEditorOpen] = useState(false);
   const [editorForm, setEditorForm] = useState(createEmptyStoryEventForm());
   const [editorMode, setEditorMode] = useState('create');
   const [lockYear, setLockYear] = useState(false);
@@ -59,10 +55,6 @@ function StoryPage({
   const [isDeleting, setIsDeleting] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState('');
   const [isSavingHero, setIsSavingHero] = useState(false);
-  const [isSavingServices, setIsSavingServices] = useState(false);
-  const [servicesHeading, setServicesHeading] = useState(cloneValue(siteSettings.homeServices.heading));
-  const [serviceItems, setServiceItems] = useState(cloneValue(siteSettings.homeServices.items));
-  const [serviceImageFiles, setServiceImageFiles] = useState({});
 
   useEffect(() => {
     if (isError) {
@@ -81,11 +73,6 @@ function StoryPage({
   useEffect(() => {
     dispatch(getEvents());
   }, [dispatch]);
-
-  useEffect(() => {
-    setServicesHeading(cloneValue(siteSettings.homeServices.heading));
-    setServiceItems(cloneValue(siteSettings.homeServices.items));
-  }, [siteSettings]);
 
   useEffect(() => {
     if (!storyHeroImageFile) {
@@ -333,32 +320,6 @@ function StoryPage({
     }
   };
 
-  const saveServices = async (event) => {
-    event.preventDefault();
-    setIsSavingServices(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('heading', JSON.stringify(servicesHeading));
-      formData.append('items', JSON.stringify(serviceItems));
-      Object.entries(serviceImageFiles).forEach(([index, file]) => {
-        if (file) {
-          formData.append(`serviceImage_${index}`, file);
-        }
-      });
-
-      const nextSettings = await siteSettingsService.updateServicesSiteSettings(adminToken, formData);
-      setSiteSettings(nextSettings);
-      setServiceImageFiles({});
-      setIsServicesEditorOpen(false);
-      toast.success('Services updated.');
-    } catch (error) {
-      handleAdminAuthError(error);
-    } finally {
-      setIsSavingServices(false);
-    }
-  };
-
   const saveStoryHero = async (event) => {
     event.preventDefault();
     setIsSavingHero(true);
@@ -459,22 +420,14 @@ function StoryPage({
       </div>
 
       <div className="container">
-        <OurServices
+        <ManagedServicesSection
           texts={misc_texts}
-          heading={siteSettings.homeServices.heading}
-          items={siteSettings.homeServices.items}
+          siteSettings={siteSettings}
+          setSiteSettings={setSiteSettings}
+          adminToken={adminToken}
+          isEditMode={isEditMode}
           language={language}
-          adminAction={
-            adminToken && isEditMode ? (
-              <button
-                type="button"
-                className="section-edit-button"
-                onClick={() => setIsServicesEditorOpen(true)}
-              >
-                Edit
-              </button>
-            ) : null
-          }
+          onAdminAuthError={handleAdminAuthError}
         />
       </div>
 
@@ -520,22 +473,6 @@ function StoryPage({
             setStoryHeroImageFile(null);
           }}
           isSaving={isSavingHero}
-        />
-      ) : null}
-      {adminToken && isServicesEditorOpen ? (
-        <HomeServicesEditorModal
-          heading={{ value: servicesHeading, set: setServicesHeading }}
-          items={{ value: serviceItems, set: setServiceItems }}
-          imageFiles={serviceImageFiles}
-          setImageFiles={setServiceImageFiles}
-          onSave={saveServices}
-          onCancel={() => {
-            setIsServicesEditorOpen(false);
-            setServiceImageFiles({});
-            setServicesHeading(cloneValue(siteSettings.homeServices.heading));
-            setServiceItems(cloneValue(siteSettings.homeServices.items));
-          }}
-          isSaving={isSavingServices}
         />
       ) : null}
     </div>

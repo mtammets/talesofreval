@@ -251,11 +251,13 @@ p.date-tours{
 .basic-select{
   padding: 0 10px;
   height: 3rem;
+  font-size: 16px;
 }
 
 .basic-input{
   padding: 0 10px;
   height: 3rem;
+  font-size: 16px;
 }
 
 
@@ -1200,6 +1202,7 @@ p.line-height-spaced{
   border: 1px solid #e6e6e6;
   margin-bottom: 10px;
   font-family: inherit;
+  font-size: 16px;
 }
 
 .form-group label {
@@ -1554,17 +1557,208 @@ p.line-height-spaced{
 }
 
 /* BOOK NOW POPUP */
+body.book-now-modal-open{
+  overflow: hidden;
+}
+
 .book-now-popup{
   display: flex;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  padding: 16px;
+  background: rgba(23, 27, 38, 0.62);
   z-index: 100000;
+}
+
+.book-now-dialog{
+  width: min(100%, 322px);
+  background: var(--cream);
+  box-sizing: border-box;
+}
+
+.book-now-dialog--submitted{
+  width: min(100%, 308px);
+}
+
+.book-now-dialog__body{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 18px 18px 16px;
+}
+
+.book-now-dialog__body--submitted{
+  gap: 18px;
+  padding: 26px 18px 14px;
+}
+
+.book-now-confirmation-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #54b788;
+}
+
+.book-now-dialog__title{
+  color: var(--dark-blue);
+  font-size: clamp(2.5rem, 4.3vw, 2.9rem);
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+}
+
+.book-now-dialog__title--submitted{
+  font-size: clamp(3.35rem, 9vw, 4rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
+
+.book-now-form{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.book-now-form--submitted{
+  min-height: 178px;
+  justify-content: space-between;
+}
+
+.book-now-field{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.book-now-field label{
+  color: rgba(32, 37, 51, 0.82);
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  font-weight: 400;
+}
+
+.book-now-field input,
+.book-now-field textarea,
+.book-now-field select{
+  width: 100%;
+  border: 1px solid rgba(215, 205, 198, 0.82);
+  background: #ffffff;
+  border-radius: 2px;
+  box-sizing: border-box;
+  color: var(--dark-blue);
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.book-now-field input,
+.book-now-field select{
+  min-height: 48px;
+  padding: 0 14px;
+}
+
+.book-now-field textarea{
+  min-height: 122px;
+  padding: 14px;
+  resize: none;
+}
+
+.book-now-field select{
+  appearance: none;
+}
+
+.book-now-field input:focus-visible,
+.book-now-field textarea:focus-visible,
+.book-now-field select:focus-visible{
+  outline: 2px solid rgba(198, 178, 198, 0.65);
+  outline-offset: 1px;
+}
+
+.book-now-confirmation-copy{
+  color: var(--dark-blue);
+  font-family: "Inter", sans-serif;
+  font-size: 2rem;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+.book-now-actions{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.book-now-actions--submitted{
+  margin-top: auto;
+}
+
+.book-now-action{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 88px;
+  min-height: 56px;
+  padding: 0 24px;
+  border-radius: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.book-now-action:hover{
+  cursor: pointer;
+}
+
+.book-now-action--cancel{
+  border: 1px solid var(--darker-cream);
+  background: transparent;
+  color: var(--dark-blue);
+}
+
+.book-now-action--cancel:hover{
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.book-now-action--submit{
+  border: 1px solid transparent;
+  background: var(--purple);
+  color: var(--dark-blue);
+}
+
+.book-now-action--submit:hover{
+  background: #d3c2d3;
+}
+
+.book-now-action--close{
+  min-width: 110px;
+  min-height: 80px;
+  padding: 0 28px;
+  border: 1px solid var(--darker-cream);
+  background: transparent;
+  color: var(--dark-blue);
+}
+
+.book-now-action--close:hover{
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.book-now-action__icon{
+  display: inline-flex;
+  align-items: center;
+  color: currentColor;
 }
 
 .input-form-card{
@@ -1594,6 +1788,9 @@ p.line-height-spaced{
   min-height: 3rem;
   padding: 0 10px;
   border: none;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
 }
 
 .input-form-card form textarea{
@@ -1601,7 +1798,6 @@ p.line-height-spaced{
   border: none;
   resize: none;
   padding: 10px;
-  font: inherit;
 }
 
 .input-form-card .submit{
@@ -1685,6 +1881,7 @@ p.line-height-spaced{
 }
 
 .input-form-card.contact-us form{
+  margin-top: 12px;
   gap: 14px;
 }
 
@@ -1700,6 +1897,9 @@ p.line-height-spaced{
   width: 100%;
   border: 0;
   background: #ffffff;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
 }
 
 .input-form-card.contact-us input{
@@ -4045,12 +4245,12 @@ button.year-event-switch.disabled{
 
 }
 
-/* HOMEPAGE FIGMA PASS */
-.home-page .our-services.padding-80-top{
+/* SHARED SERVICES SECTION */
+.our-services-section.padding-80-top{
   padding-top: 72px !important;
 }
 
-.home-page .our-services h2,
+.our-services-section h2,
 .home-page .our-team h2{
   font-size: 28px;
   line-height: 1.1;
@@ -4424,7 +4624,7 @@ button.year-event-switch.disabled{
     max-width: 420px;
   }
 
-  .home-page .our-services h2{
+  .our-services-section h2{
     font-size: 36px;
     margin-bottom: 28px;
   }
@@ -4551,11 +4751,11 @@ button.year-event-switch.disabled{
     font-size: 15px;
   }
 
-  .home-page .our-services.padding-80-top{
+  .our-services-section.padding-80-top{
     padding-top: 48px !important;
   }
 
-  .home-page .our-services h2{
+  .our-services-section h2{
     font-size: 32px;
     margin-bottom: 24px;
   }
@@ -4870,7 +5070,7 @@ button.year-event-switch.disabled{
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.86);
   color: #202533;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.5;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
@@ -5622,32 +5822,32 @@ button.year-event-switch.disabled{
     line-height: 1.2;
   }
 
-  .home-page .our-services.padding-80-top{
+  .our-services-section.padding-80-top{
     padding-top: 24px !important;
   }
 
-  .home-page .our-services h2{
+  .our-services-section h2{
     font-size: 32px;
     line-height: 1.1;
     margin-bottom: 28px;
   }
 
-  .home-page .our-services .our-services-grid,
-  .home-page .our-services .our-services-grid.tripple,
-  .home-page .our-services .our-services-grid.double{
+  .our-services-section .our-services-grid,
+  .our-services-section .our-services-grid.tripple,
+  .our-services-section .our-services-grid.double{
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0 !important;
   }
 
-  .home-page .our-services .service{
+  .our-services-section .service{
     height: 164px !important;
   }
 
-  .home-page .our-services .service-compact .service-info{
+  .our-services-section .service-compact .service-info{
     padding: 0 8px 8px;
   }
 
-  .home-page .our-services .service-compact .service-title{
+  .our-services-section .service-compact .service-title{
     color: var(--turquoise);
     font-size: 16px;
     line-height: 1.2;
@@ -5946,6 +6146,7 @@ button.year-event-switch.disabled{
   }
 
   .input-form-card.contact-us form{
+    margin-top: 12px;
     gap: 16px;
   }
 
@@ -5965,6 +6166,9 @@ button.year-event-switch.disabled{
     border-radius: 4px;
     min-height: 58px;
     padding: 0 12px;
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    line-height: 1.4;
   }
 
   .input-form-card.contact-us textarea{

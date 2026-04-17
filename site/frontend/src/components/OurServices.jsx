@@ -2,7 +2,7 @@ import React from 'react';
 import ServicesList from './ServicesList';
 import { getLocalizedSiteText } from '../content/siteSettingsDefaults';
 
-function OurServices({ texts, compact = false, heading, items, language = 'en', adminAction = null }) {
+function OurServices({ texts, compact = true, heading, items, language = 'en', adminAction = null }) {
   const ourServicesText = heading
     ? getLocalizedSiteText(heading, language)
     : texts && texts["our-services"]
@@ -10,7 +10,7 @@ function OurServices({ texts, compact = false, heading, items, language = 'en', 
       : null;
 
   return (
-    <div className="section our-services padding-80-top">
+    <div className="section our-services our-services-section padding-80-top">
       <div className="section-heading-row">
         <h2 className='padding-20-bottom'>{ourServicesText}</h2>
         {adminAction}
