@@ -28,7 +28,7 @@ function FooterColumnRight({ texts, content = null }) {
         <h3 className="cardo footer-title">{contactUsText}</h3>
         <div className="footer-contact-links">
           <a className="mail" href={`mailto:${content?.email || "info@talesofreval.ee"}`}>{content?.email || "info@talesofreval.ee"}</a>
-          <a className="mail" href={`tel:${content?.phone || "+37255604421"}`}>{content?.phone || "+372 5560 4421"}</a>
+          <a className="phone" href={`tel:${content?.phone || "+37255604421"}`}>{content?.phone || "+372 5560 4421"}</a>
         </div>
         <p className="footer-company-meta">
           {content?.companyName || 'OÜ Satsang'} <br />

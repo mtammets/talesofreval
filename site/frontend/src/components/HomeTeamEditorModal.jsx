@@ -10,7 +10,7 @@ function HomeTeamEditorModal({
   onCancel,
   isSaving,
   modalTitle = 'Edit team',
-  modalDescription = 'Update the homepage team heading and visible cards.',
+  modalDescription = 'Update the shared team heading and cards used across the site.',
 }) {
   const updateHeading = (language, value) => {
     heading.set((current) => ({

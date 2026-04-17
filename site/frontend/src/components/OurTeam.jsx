@@ -3,7 +3,7 @@ import { getLocalizedSiteText } from '../content/siteSettingsDefaults';
 
 function OurTeam({
   texts,
-  limit = 3,
+  limit = null,
   showPaymentButton = false,
   heading,
   items,
