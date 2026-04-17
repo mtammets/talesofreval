@@ -19,6 +19,233 @@
     "imageKey": "storyBg",
     "image": null
   },
+  "servicePageHeroes": {
+    "team": {
+      "imageKey": "serviceTeamHero",
+      "image": null
+    },
+    "private": {
+      "imageKey": "servicePrivateHero",
+      "image": null
+    },
+    "quick": {
+      "imageKey": "serviceQuickHero",
+      "image": null
+    },
+    "destination": {
+      "imageKey": "serviceDestinationHero",
+      "image": null
+    },
+    "wedding": {
+      "imageKey": "serviceWeddingHero",
+      "image": null
+    }
+  },
+  "servicePageContent": {
+    "team": {
+      "isCustomized": true,
+      "title": {
+        "en": "Team events",
+        "ee": "Tiimiuritused"
+      },
+      "intro": {
+        "en": "Interactive medieval team events in Tallinn that bring guests together through humour, storytelling and live performance.",
+        "ee": "Interaktiivsed keskaegsed meeskonnauritused Tallinnas, mis toovad inimesed kokku huumori, lugude ja elava esituse kaudu."
+      },
+      "cards": [
+        {
+          "key": "team-card-1",
+          "imageKey": "serviceTeamSection1",
+          "image": null,
+          "layout": "image-left",
+          "title": {
+            "en": "Live hosts, real energy",
+            "ee": "Elavad tegelased ja paras energia"
+          },
+          "body": {
+            "en": "Our storytellers guide the group with humour, roleplay and a strong shared narrative that makes everyone part of the experience.",
+            "ee": "Meie jutuvestjad juhivad gruppi huumori, rollimangu ja tugeva looskeemiga, mis kaasab koiki osalejaid."
+          }
+        },
+        {
+          "key": "team-card-2",
+          "imageKey": "serviceTeamSection2",
+          "image": null,
+          "layout": "image-right",
+          "title": {
+            "en": "Built for groups",
+            "ee": "Loodud gruppidele"
+          },
+          "body": {
+            "en": "Perfect for company events, visiting delegations and teams who want something more original than a standard guided walk.",
+            "ee": "Ideaalne firmapidudeks, delegatsioonidele ja tiimidele, kes tahavad tavaparasest tuurist erilisemat kogemust."
+          }
+        },
+        {
+          "key": "team-card-3",
+          "imageKey": "serviceTeamSection3",
+          "image": null,
+          "layout": "image-left",
+          "title": {
+            "en": "Tailored to your goal",
+            "ee": "Kohandatud sinu eesmargile"
+          },
+          "body": {
+            "en": "We can shape the route, tone and activities around celebration, bonding, hospitality or a showcase of Tallinn.",
+            "ee": "Saame marsruudi, tooni ja tegevused kohandada pidustuse, meeskonnatunde, vastuvotu voi Tallinna tutvustamise jargi."
+          }
+        }
+      ],
+      "review": {
+        "en": "A brilliant way to bring the whole group together. Funny, clever and genuinely memorable from start to finish.",
+        "ee": "Suureparane viis kogu grupp kokku tuua. Naljakas, nutikas ja algusest lopuni meeldejaav kogemus."
+      },
+      "reviewAuthor": {
+        "en": "Tripadvisor review",
+        "ee": "Tripadvisori arvustus"
+      },
+      "destinationHeading": {
+        "en": "Have a look at what's possible!",
+        "ee": "Vaata, mis on võimalik!"
+      },
+      "destinationDescription": {
+        "en": "Destination management service description is included in the following PDF.",
+        "ee": "Sihtkoha halduse teenuse kirjeldus on toodud allolevas PDF-is."
+      },
+      "destinationButtonLabel": {
+        "en": "Download PDF",
+        "ee": "Laadi PDF alla"
+      }
+    },
+    "private": {
+      "isCustomized": false,
+      "title": {
+        "en": "",
+        "ee": ""
+      },
+      "intro": {
+        "en": "",
+        "ee": ""
+      },
+      "cards": [],
+      "review": {
+        "en": "",
+        "ee": ""
+      },
+      "reviewAuthor": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationHeading": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationDescription": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationButtonLabel": {
+        "en": "",
+        "ee": ""
+      }
+    },
+    "quick": {
+      "isCustomized": false,
+      "title": {
+        "en": "",
+        "ee": ""
+      },
+      "intro": {
+        "en": "",
+        "ee": ""
+      },
+      "cards": [],
+      "review": {
+        "en": "",
+        "ee": ""
+      },
+      "reviewAuthor": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationHeading": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationDescription": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationButtonLabel": {
+        "en": "",
+        "ee": ""
+      }
+    },
+    "destination": {
+      "isCustomized": false,
+      "title": {
+        "en": "",
+        "ee": ""
+      },
+      "intro": {
+        "en": "",
+        "ee": ""
+      },
+      "cards": [],
+      "review": {
+        "en": "",
+        "ee": ""
+      },
+      "reviewAuthor": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationHeading": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationDescription": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationButtonLabel": {
+        "en": "",
+        "ee": ""
+      }
+    },
+    "wedding": {
+      "isCustomized": false,
+      "title": {
+        "en": "",
+        "ee": ""
+      },
+      "intro": {
+        "en": "",
+        "ee": ""
+      },
+      "cards": [],
+      "review": {
+        "en": "",
+        "ee": ""
+      },
+      "reviewAuthor": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationHeading": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationDescription": {
+        "en": "",
+        "ee": ""
+      },
+      "destinationButtonLabel": {
+        "en": "",
+        "ee": ""
+      }
+    }
+  },
   "homeServices": {
     "heading": {
       "en": "Our services",
