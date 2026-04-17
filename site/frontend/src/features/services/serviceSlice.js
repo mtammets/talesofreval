@@ -2,25 +2,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import serviceService from './serviceService';
 
 const initialState = {
-  services: [],
   service: null,
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: '',
 };
-
-export const getServices = createAsyncThunk('services/all', async (_, thunkAPI) => {
-  try {
-    return await serviceService.getServices();
-  } catch (error) {
-    const message =
-      (error.response && error.response.data && error.response.data.message) ||
-      error.message ||
-      error.toString();
-    return thunkAPI.rejectWithValue(message);
-  }
-});
 
 export const getService = createAsyncThunk('services/:name', async (name, thunkAPI) => {
   try {
@@ -47,20 +34,6 @@ export const serviceSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getServices.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(getServices.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.services = action.payload;
-      })
-      .addCase(getServices.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
-        state.services = [];
-      })
       .addCase(getService.pending, (state) => {
         state.isLoading = true;
       })

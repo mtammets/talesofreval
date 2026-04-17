@@ -16,14 +16,6 @@ export const getSiteSettings = async () => {
   return response.data;
 };
 
-export const getAdminSiteSettings = async () => {
-  const response = await adminRequest({
-    method: 'get',
-    url: `${API_URL}/admin`,
-  });
-  return response.data;
-};
-
 export const updateHeroSiteSettings = async (tokenOrFormData, maybeFormData) => {
   const response = await adminRequest({
     method: 'put',
@@ -115,7 +107,6 @@ export const updateFooterSiteSettings = async (tokenOrFormData, maybeFormData) =
 
 const siteSettingsService = {
   getSiteSettings,
-  getAdminSiteSettings,
   updateHeroSiteSettings,
   updateStoryHeroSiteSettings,
   updateServicePageHeroSiteSettings,

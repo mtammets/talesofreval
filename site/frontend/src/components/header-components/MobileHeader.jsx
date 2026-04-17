@@ -67,6 +67,9 @@ function MobileHeader({
     window.location.reload();
   };
 
+  const languageSwitchText =
+    texts && texts["eesti-keeles"] ? texts["eesti-keeles"].text : "Eesti keeles";
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 150) {
@@ -102,7 +105,7 @@ function MobileHeader({
           <div className="mobile-header-bar">
             {ourServicesOpen ? (
               <div className="mobile-language-switcher">
-                <span onClick={setLanguage} style={{ cursor: "pointer" }}>Eesti keeles</span>
+                <span onClick={setLanguage} style={{ cursor: "pointer" }}>{languageSwitchText}</span>
               </div>
             ) : (
               <div className="mobile-book-now" onClick={handleBookNow}>

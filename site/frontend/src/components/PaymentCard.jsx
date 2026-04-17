@@ -1,5 +1,4 @@
 import React from "react";
-import ButtonSecondary from "./style-components/ButtonSecondary";
 import google_logo from "../img/google-logo.png";
 import paypal_logo from "../img/paypal-logo.png";
 import apple_logo from "../img/apple-logo.png";
@@ -8,14 +7,10 @@ import revolut_logo from "../img/revolut-logo.png";
 import CancelButton from "./style-components/CancelButton";
 
 function PaymentCard({ name, links, closePaymentCard }) {
-  // Transform the links array into a map
-  console.log(links)
   const linkMap = links.reduce((acc, link) => {
     acc[link.name] = link.link;
     return acc;
   }, {});
-
-  // console.log(linkMap["Google Pay"]);
 
   return (
     <div className="payment-card-container">

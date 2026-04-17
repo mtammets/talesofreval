@@ -1,9 +1,4 @@
-import { getFallbackService, getFallbackServices } from '../../content/fallbackServices';
-
-const getServices = async () => {
-  const language = localStorage.getItem('language') || 'en';
-  return getFallbackServices(language);
-};
+import { getFallbackService } from '../../content/fallbackServices';
 
 const getService = async (name) => {
   const language = localStorage.getItem('language') || 'en';
@@ -11,7 +6,6 @@ const getService = async (name) => {
 };
 
 const serviceService = {
-  getServices,
   getService,
 };
 

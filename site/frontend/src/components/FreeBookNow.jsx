@@ -19,8 +19,6 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
     const [availableTimes, setAvailableTimes] = useState([]);
     const [selectedTime, setSelectedTime] = useState('');
     const [numberOfPeople, setNumberOfPeople] = useState('');
-    const [dateObject, setDateObject] = useState(null);
-
     const dispatch = useDispatch();
     const { isLoading } = useSelector(state => state.email);
     const { misc_texts } = useSelector(state => state.texts);
@@ -202,7 +200,6 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
                                         <label htmlFor="time">Select a Time:</label>
                                         <select className="basic-select" id="time" name="time" value={selectedTime} onChange={(e) => {
                                             setSelectedTime(e.target.value);
-                                            setDateObject(getDateObject(selectedDate, e.target.value));
                                         }}>
                                             <option value="">Select a time</option>
                                             {availableTimes.map((time) => (

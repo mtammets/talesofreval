@@ -68,8 +68,3 @@ export const getFallbackEvents = (language = 'en') =>
     .slice()
     .sort((a, b) => (a.year === b.year ? a.order - b.order : a.year - b.year))
     .map((event) => applyLanguage(event, language));
-
-export const getFallbackEvent = (id, language = 'en') => {
-  const event = events.find((item) => item._id === id) || events[0];
-  return applyLanguage(event, language);
-};

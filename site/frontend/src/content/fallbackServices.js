@@ -288,6 +288,3 @@ export const getFallbackService = (name, language = 'en') => {
   const service = services[name] || services.team;
   return transformForLanguage(service, language);
 };
-
-export const getFallbackServices = (language = 'en') =>
-  Object.keys(services).map((key) => transformForLanguage(services[key], language));

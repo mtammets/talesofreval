@@ -1,6 +1,5 @@
 import { TripAdvisor } from "../../icons/TripAdvisor.tsx";
 import { ArrowRightUp } from "../../icons/ArrowRightUp.tsx";
-import { Link } from 'react-router-dom';
 
 function TripAdvisorButton({text, link}) {
   return (

@@ -23,7 +23,7 @@ const HEADER_EE = {
   home: "Avaleht",
   "our-story": "Meie lugu",
   contacts: "Kontakt",
-  "eesti-keeles": "In English",
+  "eesti-keeles": "English",
   "book-now": "Broneeri",
 };
 

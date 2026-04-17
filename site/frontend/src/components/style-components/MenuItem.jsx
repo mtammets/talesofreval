@@ -1,4 +1,3 @@
-import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import { DownSmall } from "../../icons/DownSmall.tsx";
 import { UpSmall } from "../../icons/UpSmall.tsx";
 
