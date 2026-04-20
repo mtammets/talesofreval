@@ -8,14 +8,76 @@ const localized = (value = {}, fallbackEn = '', fallbackEe = '') => ({
   ee: value.ee || fallbackEe || fallbackEn,
 });
 
-const imageShape = (image = {}, fallbackWidth = 1440, fallbackHeight = 700) => ({
-  src: image.src || '',
-  name: image.name || '',
-  width: Number(image.width) || fallbackWidth,
-  height: Number(image.height) || fallbackHeight,
-  format: image.format || '',
-  pixelRatio: Number(image.pixelRatio) || 1,
+const normalizeImageZoom = (value, fallback = 1) => {
+  const resolvedValue = Number(value);
+
+  if (!Number.isFinite(resolvedValue)) {
+    return fallback;
+  }
+
+  return Math.min(2.5, Math.max(1, Number(resolvedValue.toFixed(2))));
+};
+
+const imageVariantShape = (variant = {}, fallbackWidth = 1440, fallbackHeight = 700) => ({
+  src: variant.src || '',
+  width: Number(variant.width) || fallbackWidth,
+  height: Number(variant.height) || fallbackHeight,
+  format: variant.format || 'webp',
 });
+
+const imageShape = (image = {}, fallbackWidth = 1440, fallbackHeight = 700) => ({
+  ...(() => {
+    const variants = Array.isArray(image.variants)
+      ? image.variants
+          .map((variant) => imageVariantShape(variant, fallbackWidth, fallbackHeight))
+          .filter((variant) => variant.src)
+          .sort((left, right) => left.width - right.width)
+      : [];
+    const preferredVariant =
+      variants.find((variant) => variant.src === image.src) ||
+      variants.find((variant) => variant.width >= fallbackWidth) ||
+      variants[variants.length - 1] ||
+      null;
+
+    return {
+      src: image.src || preferredVariant?.src || '',
+      name: image.name || '',
+      width: Number(image.width) || preferredVariant?.width || fallbackWidth,
+      height: Number(image.height) || preferredVariant?.height || fallbackHeight,
+      format: image.format || preferredVariant?.format || '',
+      pixelRatio:
+        Number(image.pixelRatio) ||
+        (variants.some((variant) => variant.width >= fallbackWidth * 2) ? 2 : 1),
+      focusX: Number(image.focusX) >= 0 ? Number(image.focusX) : 50,
+      focusY: Number(image.focusY) >= 0 ? Number(image.focusY) : 50,
+      ...(image.zoom != null ? { zoom: normalizeImageZoom(image.zoom, 1) } : {}),
+      variants,
+    };
+  })(),
+});
+
+const normalizeImageGallery = (
+  images = [],
+  fallbackImage = null,
+  fallbackWidth = 1440,
+  fallbackHeight = 700
+) => {
+  const normalizedImages = Array.isArray(images)
+    ? images
+        .map((image) => imageShape(image, fallbackWidth, fallbackHeight))
+        .filter((image) => image.src)
+    : [];
+
+  if (normalizedImages.length) {
+    return normalizedImages;
+  }
+
+  if (fallbackImage?.src) {
+    return [imageShape(fallbackImage, fallbackWidth, fallbackHeight)];
+  }
+
+  return [];
+};
 
 const DEFAULT_SERVICE_PAGE_HERO_KEYS = {
   team: 'serviceTeamHero',
@@ -78,104 +140,112 @@ const normalizeSocialLinks = (links = {}) => ({
   airbnb: links.airbnb || '',
 });
 
-const normalizeSiteSettings = (settings = {}) => ({
-  homeHero: {
-    titleLine1: localized(settings.homeHero?.titleLine1),
-    titleLine2: localized(settings.homeHero?.titleLine2),
-    subtitle: localized(settings.homeHero?.subtitle),
-    imageKey: settings.homeHero?.imageKey || '',
-    image: settings.homeHero?.image ? imageShape(settings.homeHero.image) : null,
-  },
-  storyPage: {
-    imageKey: settings.storyPage?.imageKey || 'storyBg',
-    image: settings.storyPage?.image ? imageShape(settings.storyPage.image) : null,
-  },
-  servicePageHeroes: Object.keys(DEFAULT_SERVICE_PAGE_HERO_KEYS).reduce((accumulator, serviceKey) => {
-    accumulator[serviceKey] = normalizeServicePageHero(
-      settings.servicePageHeroes?.[serviceKey],
-      serviceKey
-    );
-    return accumulator;
-  }, {}),
-  servicePageContent: Object.keys(DEFAULT_SERVICE_PAGE_HERO_KEYS).reduce((accumulator, serviceKey) => {
-    accumulator[serviceKey] = normalizeServicePageContent(
-      settings.servicePageContent?.[serviceKey],
-      serviceKey
-    );
-    return accumulator;
-  }, {}),
-  homeServices: {
-    heading: localized(settings.homeServices?.heading),
-    items: Array.isArray(settings.homeServices?.items)
-      ? settings.homeServices.items.map(normalizeServiceItem)
-      : [],
-  },
-  ...(() => {
-    const sharedTeamHeading = settings.contactPage?.teamHeading || settings.homeTeam?.heading;
-    const sharedTeamMembers = Array.isArray(settings.contactPage?.teamMembers) && settings.contactPage.teamMembers.length
-      ? settings.contactPage.teamMembers
-      : settings.homeTeam?.members;
-    const normalizedTeamHeading = localized(sharedTeamHeading);
-    const normalizedTeamMembers = Array.isArray(sharedTeamMembers)
-      ? sharedTeamMembers.map(normalizeTeamMember)
-      : [];
+const normalizeSiteSettings = (settings = {}) => {
+  const homeHeroImages = normalizeImageGallery(
+    settings.homeHero?.images,
+    settings.homeHero?.image
+  );
 
-    return {
-      homeTeam: {
-        heading: normalizedTeamHeading,
-        members: normalizedTeamMembers,
-      },
-      contactPage: {
-        imageKey: settings.contactPage?.imageKey || 'contactBg',
-        image: settings.contactPage?.image ? imageShape(settings.contactPage.image) : null,
-        teamHeading: normalizedTeamHeading,
-        teamMembers: normalizedTeamMembers,
-        formTitle: localized(settings.contactPage?.formTitle),
-        nameLabel: localized(settings.contactPage?.nameLabel),
-        emailLabel: localized(settings.contactPage?.emailLabel),
-        messageLabel: localized(settings.contactPage?.messageLabel),
-        submitLabel: localized(settings.contactPage?.submitLabel),
-        companyName: settings.contactPage?.companyName || '',
-        companyReg: settings.contactPage?.companyReg || '',
-        address: localized(settings.contactPage?.address),
-        bankLine1: settings.contactPage?.bankLine1 || '',
-        bankLine2: settings.contactPage?.bankLine2 || '',
-        email: settings.contactPage?.email || '',
-        phone: settings.contactPage?.phone || '',
-      },
-    };
-  })(),
-  homeReview: {
-    heading: localized(settings.homeReview?.heading),
-    text: localized(settings.homeReview?.text),
-    reviewer: localized(settings.homeReview?.reviewer),
-  },
-  footer: {
-    freeTourHeading: localized(settings.footer?.freeTourHeading),
-    firstTime: localized(settings.footer?.firstTime),
-    secondTime: localized(settings.footer?.secondTime),
-    languageLine: localized(settings.footer?.languageLine),
-    durationLine: localized(settings.footer?.durationLine),
-    distanceLine: localized(settings.footer?.distanceLine),
-    startingPointLine: localized(settings.footer?.startingPointLine),
-    openMapLabel: localized(settings.footer?.openMapLabel),
-    openMapUrl: settings.footer?.openMapUrl || '',
-    gpsHeading: localized(settings.footer?.gpsHeading),
-    gpsCopy: localized(settings.footer?.gpsCopy),
-    gpsButtonLabel: localized(settings.footer?.gpsButtonLabel),
-    gpsUrl: settings.footer?.gpsUrl || '',
-    gpsImageKey: settings.footer?.gpsImageKey || '',
-    gpsImage: settings.footer?.gpsImage ? imageShape(settings.footer.gpsImage, 800, 560) : null,
-    followUsHeading: localized(settings.footer?.followUsHeading),
-    contactHeading: localized(settings.footer?.contactHeading),
-    companyName: settings.footer?.companyName || '',
-    companyReg: settings.footer?.companyReg || '',
-    email: settings.footer?.email || '',
-    phone: settings.footer?.phone || '',
-    address: localized(settings.footer?.address),
-    socialLinks: normalizeSocialLinks(settings.footer?.socialLinks),
-  },
-});
+  return {
+    homeHero: {
+      titleLine1: localized(settings.homeHero?.titleLine1),
+      titleLine2: localized(settings.homeHero?.titleLine2),
+      subtitle: localized(settings.homeHero?.subtitle),
+      imageKey: settings.homeHero?.imageKey || '',
+      images: homeHeroImages,
+      image: homeHeroImages[0] || null,
+    },
+    storyPage: {
+      imageKey: settings.storyPage?.imageKey || 'storyBg',
+      image: settings.storyPage?.image ? imageShape(settings.storyPage.image) : null,
+    },
+    servicePageHeroes: Object.keys(DEFAULT_SERVICE_PAGE_HERO_KEYS).reduce((accumulator, serviceKey) => {
+      accumulator[serviceKey] = normalizeServicePageHero(
+        settings.servicePageHeroes?.[serviceKey],
+        serviceKey
+      );
+      return accumulator;
+    }, {}),
+    servicePageContent: Object.keys(DEFAULT_SERVICE_PAGE_HERO_KEYS).reduce((accumulator, serviceKey) => {
+      accumulator[serviceKey] = normalizeServicePageContent(
+        settings.servicePageContent?.[serviceKey],
+        serviceKey
+      );
+      return accumulator;
+    }, {}),
+    homeServices: {
+      heading: localized(settings.homeServices?.heading),
+      items: Array.isArray(settings.homeServices?.items)
+        ? settings.homeServices.items.map(normalizeServiceItem)
+        : [],
+    },
+    ...(() => {
+      const sharedTeamHeading = settings.contactPage?.teamHeading || settings.homeTeam?.heading;
+      const sharedTeamMembers = Array.isArray(settings.contactPage?.teamMembers) && settings.contactPage.teamMembers.length
+        ? settings.contactPage.teamMembers
+        : settings.homeTeam?.members;
+      const normalizedTeamHeading = localized(sharedTeamHeading);
+      const normalizedTeamMembers = Array.isArray(sharedTeamMembers)
+        ? sharedTeamMembers.map(normalizeTeamMember)
+        : [];
+
+      return {
+        homeTeam: {
+          heading: normalizedTeamHeading,
+          members: normalizedTeamMembers,
+        },
+        contactPage: {
+          imageKey: settings.contactPage?.imageKey || 'contactBg',
+          image: settings.contactPage?.image ? imageShape(settings.contactPage.image) : null,
+          teamHeading: normalizedTeamHeading,
+          teamMembers: normalizedTeamMembers,
+          formTitle: localized(settings.contactPage?.formTitle),
+          nameLabel: localized(settings.contactPage?.nameLabel),
+          emailLabel: localized(settings.contactPage?.emailLabel),
+          messageLabel: localized(settings.contactPage?.messageLabel),
+          submitLabel: localized(settings.contactPage?.submitLabel),
+          companyName: settings.contactPage?.companyName || '',
+          companyReg: settings.contactPage?.companyReg || '',
+          address: localized(settings.contactPage?.address),
+          bankLine1: settings.contactPage?.bankLine1 || '',
+          bankLine2: settings.contactPage?.bankLine2 || '',
+          email: settings.contactPage?.email || '',
+          phone: settings.contactPage?.phone || '',
+        },
+      };
+    })(),
+    homeReview: {
+      heading: localized(settings.homeReview?.heading),
+      text: localized(settings.homeReview?.text),
+      reviewer: localized(settings.homeReview?.reviewer),
+    },
+    footer: {
+      freeTourHeading: localized(settings.footer?.freeTourHeading),
+      firstTime: localized(settings.footer?.firstTime),
+      secondTime: localized(settings.footer?.secondTime),
+      languageLine: localized(settings.footer?.languageLine),
+      durationLine: localized(settings.footer?.durationLine),
+      distanceLine: localized(settings.footer?.distanceLine),
+      startingPointLine: localized(settings.footer?.startingPointLine),
+      openMapLabel: localized(settings.footer?.openMapLabel),
+      openMapUrl: settings.footer?.openMapUrl || '',
+      gpsHeading: localized(settings.footer?.gpsHeading),
+      gpsCopy: localized(settings.footer?.gpsCopy),
+      gpsButtonLabel: localized(settings.footer?.gpsButtonLabel),
+      gpsUrl: settings.footer?.gpsUrl || '',
+      gpsImageKey: settings.footer?.gpsImageKey || '',
+      gpsImage: settings.footer?.gpsImage ? imageShape(settings.footer.gpsImage, 800, 560) : null,
+      followUsHeading: localized(settings.footer?.followUsHeading),
+      contactHeading: localized(settings.footer?.contactHeading),
+      companyName: settings.footer?.companyName || '',
+      companyReg: settings.footer?.companyReg || '',
+      email: settings.footer?.email || '',
+      phone: settings.footer?.phone || '',
+      address: localized(settings.footer?.address),
+      socialLinks: normalizeSocialLinks(settings.footer?.socialLinks),
+    },
+  };
+};
 
 const readSiteSettings = async () => {
   try {

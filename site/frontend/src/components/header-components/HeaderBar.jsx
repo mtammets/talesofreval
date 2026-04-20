@@ -4,9 +4,19 @@ import HeaderServices from "./HeaderServices";
 import { useLocation, useNavigate } from "react-router-dom";
 import { scrollViewportTop } from '../../utils/scrollViewportTop';
 
-function HeaderBar({ setShowBookNow, ourServicesOpen, setOurServicesOpen, texts, misc_texts }) {
+function HeaderBar({
+  setShowBookNow,
+  ourServicesOpen,
+  setOurServicesOpen,
+  texts,
+  misc_texts,
+  serviceItems,
+  isEditMode = false,
+  adminToken,
+}) {
   const navigate = useNavigate();
   const location = useLocation();
+  const isHomeLikePage = location.pathname === '/' || location.pathname === '/login';
 
   const handleClick = (path) => {
     setOurServicesOpen(false);
@@ -31,6 +41,12 @@ function HeaderBar({ setShowBookNow, ourServicesOpen, setOurServicesOpen, texts,
   const ourStoryText = texts && texts["our-story"] ? texts["our-story"].text : null;
   const contactsText = texts && texts["contacts"] ? texts["contacts"].text : null;
   const eestiKeelesText = texts && texts["eesti-keeles"] ? texts["eesti-keeles"].text : null;
+  const canEditServicesFromDropdown = Boolean(adminToken) && isEditMode && isHomeLikePage;
+
+  const handleOpenServicesEditor = () => {
+    setOurServicesOpen(false);
+    window.dispatchEvent(new CustomEvent('open-home-services-editor'));
+  };
 
   return (
     <div className="header-bar">
@@ -54,7 +70,23 @@ function HeaderBar({ setShowBookNow, ourServicesOpen, setOurServicesOpen, texts,
         className="large-dropdown"
         style={ourServicesOpen ? null : { display: "none" }}
       >
-        <HeaderServices texts={misc_texts} setOurServicesOpen={setOurServicesOpen} mobile={false} />
+        <HeaderServices
+          texts={misc_texts}
+          setOurServicesOpen={setOurServicesOpen}
+          mobile={false}
+          items={serviceItems}
+          adminAction={
+            canEditServicesFromDropdown ? (
+              <button
+                type="button"
+                className="section-edit-button"
+                onClick={handleOpenServicesEditor}
+              >
+                Edit
+              </button>
+            ) : null
+          }
+        />
       </div>
     </div>
   );

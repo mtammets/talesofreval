@@ -8,6 +8,15 @@ import { FALLBACK_STORYTELLERS } from '../content/fallbackContent';
 import { resolveSiteImage } from '../content/siteSettingsDefaults';
 import { normalizePaymentLinks } from '../content/paymentMethods';
 
+const normalizeRosterImage = (image, imageKey = '') => {
+  if (image?.src || typeof image === 'string') {
+    return image;
+  }
+
+  const fallbackSrc = resolveSiteImage(image, imageKey);
+  return fallbackSrc ? { src: fallbackSrc } : null;
+};
+
 function OurTeamList({ limit, showPaymentButton = false, items = null }) {
   const dispatch = useDispatch();
   const { storytellers, isError, message } = useSelector((state) => state.storytellers);
@@ -44,12 +53,13 @@ function OurTeamList({ limit, showPaymentButton = false, items = null }) {
         email: member.email,
         phone: member.phone,
         payment_links: normalizePaymentLinks(member.payment_links),
-        image: resolveSiteImage(member.image, member.imageKey),
+        image: normalizeRosterImage(member.image, member.imageKey),
       }))
     : storytellers.length
       ? storytellers.map((storyteller) => ({
           ...storyteller,
           payment_links: normalizePaymentLinks(storyteller.payment_links),
+          image: normalizeRosterImage(storyteller.image),
         }))
       : FALLBACK_STORYTELLERS;
   const visibleStorytellers = limit ? roster.slice(0, limit) : roster;
@@ -60,7 +70,7 @@ function OurTeamList({ limit, showPaymentButton = false, items = null }) {
         showPaymentButton ? (
           <OurTeamCard
             key={storyteller._id}
-            bgimage={storyteller.image?.src || storyteller.image}
+            image={storyteller.image}
             title={storyteller.name}
             email={storyteller.email || ""}
             phone={storyteller.phone || ""}
@@ -71,7 +81,7 @@ function OurTeamList({ limit, showPaymentButton = false, items = null }) {
         ) : (
           <ContactsTeamCard
             key={storyteller._id}
-            bgimage={storyteller.image?.src || storyteller.image}
+            image={storyteller.image}
             title={storyteller.name}
             email={storyteller.email || ""}
             phone={storyteller.phone || ""}

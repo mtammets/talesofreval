@@ -13,11 +13,29 @@ import HeroImageEditorModal from '../components/HeroImageEditorModal';
 import PageHero from '../components/PageHero';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
-import { DEFAULT_SITE_SETTINGS, getLocalizedSiteText, resolveSiteImage } from '../content/siteSettingsDefaults';
+import {
+  DEFAULT_SITE_SETTINGS,
+  HERO_MEDIA_SIZES,
+  createPreviewMediaAsset,
+  getLocalizedSiteText,
+  resolveSiteImage,
+  resolveSiteImageMedia,
+} from '../content/siteSettingsDefaults';
 import { ArrowRight } from '../icons/ArrowRight.tsx';
+import {
+  HERO_IMAGE_PREPARATION_OPTIONS,
+  prepareImageFileForUpload,
+} from '../utils/prepareImageFilesForUpload';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
-const buildContactPageFormData = (heading, members, contact, imageFiles = {}, heroImageFile = null) => {
+const buildContactPageFormData = (
+  heading,
+  members,
+  contact,
+  imageFiles = {},
+  heroImageFile = null,
+  heroImage = undefined
+) => {
   const formData = new FormData();
 
   formData.append('teamHeading', JSON.stringify(heading));
@@ -43,6 +61,10 @@ const buildContactPageFormData = (heading, members, contact, imageFiles = {}, he
 
   if (heroImageFile) {
     formData.append('contactHeroImage', heroImageFile);
+  }
+
+  if (heroImage !== undefined) {
+    formData.append('image', JSON.stringify(heroImage));
   }
 
   return formData;
@@ -74,6 +96,10 @@ function ContactUs({
   const [contactForm, setContactForm] = useState(cloneValue(siteSettings.contactPage));
   const [contactHeroImageFile, setContactHeroImageFile] = useState(null);
   const [contactHeroPreviewUrl, setContactHeroPreviewUrl] = useState('');
+  const [contactHeroDraftImage, setContactHeroDraftImage] = useState(
+    cloneValue(siteSettings.contactPage.image || null)
+  );
+  const [isPreparingHeroImage, setIsPreparingHeroImage] = useState(false);
 
   useEffect(() => {
     if (isError) {
@@ -93,6 +119,7 @@ function ContactUs({
     setContactTeamHeading(cloneValue(siteSettings.homeTeam.heading));
     setContactTeamMembers(cloneValue(siteSettings.homeTeam.members));
     setContactForm(cloneValue(siteSettings.contactPage));
+    setContactHeroDraftImage(cloneValue(siteSettings.contactPage.image || null));
   }, [siteSettings]);
 
   useEffect(() => {
@@ -199,12 +226,14 @@ function ContactUs({
         contactTeamMembers,
         contactForm,
         {},
-        contactHeroImageFile
+        contactHeroImageFile,
+        contactHeroDraftImage
       );
 
       const nextSettings = await siteSettingsService.updateContactPageSiteSettings(adminToken, formData);
       setSiteSettings(nextSettings);
       setContactHeroImageFile(null);
+      setContactHeroDraftImage(cloneValue(nextSettings.contactPage.image || null));
       setIsHeroEditorOpen(false);
       toast.success('Contact background updated.');
     } catch (error) {
@@ -225,10 +254,42 @@ function ContactUs({
   const writeSomethingText = getLocalizedSiteText(siteSettings.contactPage.messageLabel, language, 'Write something');
   const sendText = getLocalizedSiteText(siteSettings.contactPage.submitLabel, language, 'Send');
   const addressText = getLocalizedSiteText(siteSettings.contactPage.address, language, '');
-  const contactHeroBackground =
-    contactHeroPreviewUrl ||
-    resolveSiteImage(siteSettings.contactPage.image, siteSettings.contactPage.imageKey) ||
-    bgcontact;
+  const contactHeroMedia =
+    (contactHeroPreviewUrl
+      ? createPreviewMediaAsset(
+          contactHeroPreviewUrl,
+          HERO_MEDIA_SIZES,
+          contactHeroDraftImage
+        )
+      : null) ||
+    resolveSiteImageMedia(
+      siteSettings.contactPage.image,
+      siteSettings.contactPage.imageKey,
+      HERO_MEDIA_SIZES
+    ) ||
+    createPreviewMediaAsset(bgcontact, HERO_MEDIA_SIZES);
+
+  const handleContactHeroFileSelected = async (file) => {
+    if (!file) {
+      setContactHeroImageFile(null);
+      return;
+    }
+
+    setIsPreparingHeroImage(true);
+
+    try {
+      const preparedFile = await prepareImageFileForUpload(
+        file,
+        HERO_IMAGE_PREPARATION_OPTIONS
+      );
+      setContactHeroImageFile(preparedFile);
+      setContactHeroDraftImage((current) => current || { focusX: 50, focusY: 50, zoom: 1 });
+    } catch (error) {
+      toast.error(error?.message || 'Image optimization failed.');
+    } finally {
+      setIsPreparingHeroImage(false);
+    }
+  };
 
   return (
     <div className='story-page contact-page'>
@@ -240,7 +301,7 @@ function ContactUs({
       <PageHero
         className="contact-page-hero"
         mediaClassName="story-landing"
-        backgroundImage={contactHeroBackground}
+        backgroundMedia={contactHeroMedia}
         isEditable={Boolean(adminToken) && isEditMode}
         onEditBackground={() => setIsHeroEditorOpen(true)}
       >
@@ -379,15 +440,19 @@ function ContactUs({
           description="Upload a new background image for the contact page."
           currentImage={siteSettings.contactPage.image}
           currentImageUrl={resolveSiteImage(siteSettings.contactPage.image, siteSettings.contactPage.imageKey)}
+          draftImage={contactHeroDraftImage}
+          onChangeImage={setContactHeroDraftImage}
           selectedFile={contactHeroImageFile}
-          setSelectedFile={setContactHeroImageFile}
+          onSelectFile={handleContactHeroFileSelected}
           previewUrl={contactHeroPreviewUrl}
           onSave={saveContactHero}
           onCancel={() => {
             setIsHeroEditorOpen(false);
             setContactHeroImageFile(null);
+            setContactHeroDraftImage(cloneValue(siteSettings.contactPage.image || null));
           }}
           isSaving={isSavingHero}
+          isPreparingImage={isPreparingHeroImage}
         />
       ) : null}
     </div>

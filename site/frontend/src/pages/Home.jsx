@@ -18,14 +18,23 @@ import {
 } from '../content/fallbackContent';
 import {
   DEFAULT_SITE_SETTINGS,
+  HERO_MEDIA_SIZES,
+  createPreviewMediaAsset,
   getLocalizedSiteText,
   resolveSiteImage,
+  resolveSiteImageMedia,
+  resolveSiteImageMediaList,
 } from '../content/siteSettingsDefaults';
 import { normalizePaymentLinks } from '../content/paymentMethods';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
+import {
+  HERO_IMAGE_PREPARATION_OPTIONS,
+  prepareImageFilesForUpload,
+} from '../utils/prepareImageFilesForUpload';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
+const MAX_HOME_HERO_IMAGES = 6;
 const normalizeTeamMember = (member) => ({
   ...member,
   payment_links: normalizePaymentLinks(member?.payment_links),
@@ -55,8 +64,13 @@ function Home({
   const [isTeamEditorOpen, setIsTeamEditorOpen] = useState(false);
   const [isReviewEditorOpen, setIsReviewEditorOpen] = useState(false);
 
-  const [heroImageFile, setHeroImageFile] = useState(null);
-  const [heroPreviewUrl, setHeroPreviewUrl] = useState('');
+  const [heroImageFiles, setHeroImageFiles] = useState([]);
+  const [heroNewImages, setHeroNewImages] = useState([]);
+  const [heroPreviewUrls, setHeroPreviewUrls] = useState([]);
+  const [retainedHeroImages, setRetainedHeroImages] = useState(
+    cloneValue(siteSettings.homeHero.images || [])
+  );
+  const [isPreparingHeroImages, setIsPreparingHeroImages] = useState(false);
   const [teamHeading, setTeamHeading] = useState(cloneValue(siteSettings.homeTeam.heading));
   const [teamMembers, setTeamMembers] = useState(
     cloneValue(siteSettings.homeTeam.members.map(normalizeTeamMember))
@@ -98,21 +112,22 @@ function Home({
     setHeroTitleLine1(cloneValue(siteSettings.homeHero.titleLine1));
     setHeroTitleLine2(cloneValue(siteSettings.homeHero.titleLine2));
     setHeroSubtitle(cloneValue(siteSettings.homeHero.subtitle));
+    setRetainedHeroImages(cloneValue(siteSettings.homeHero.images || []));
   }, [siteSettings]);
 
   useEffect(() => {
-    if (!heroImageFile) {
-      setHeroPreviewUrl('');
+    if (!heroImageFiles.length) {
+      setHeroPreviewUrls([]);
       return;
     }
 
-    const objectUrl = window.URL.createObjectURL(heroImageFile);
-    setHeroPreviewUrl(objectUrl);
+    const objectUrls = heroImageFiles.map((file) => window.URL.createObjectURL(file));
+    setHeroPreviewUrls(objectUrls);
 
     return () => {
-      window.URL.revokeObjectURL(objectUrl);
+      objectUrls.forEach((objectUrl) => window.URL.revokeObjectURL(objectUrl));
     };
-  }, [heroImageFile]);
+  }, [heroImageFiles]);
 
   const handleAdminAuthError = (error, fallbackMessage) => {
     if (error?.response?.status === 401) {
@@ -141,12 +156,111 @@ function Home({
     [language, resolvedHomeTexts, siteSettings.homeHero]
   );
 
+  const persistedHeroImages = useMemo(
+    () =>
+      resolveSiteImageMediaList(
+        siteSettings.homeHero.images,
+        siteSettings.homeHero.image,
+        siteSettings.homeHero.imageKey,
+        HERO_MEDIA_SIZES
+      ),
+    [siteSettings.homeHero]
+  );
+
+  const retainedHeroMediaItems = useMemo(
+    () =>
+      retainedHeroImages
+        .map((image) => resolveSiteImageMedia(image, '', HERO_MEDIA_SIZES))
+        .filter(Boolean),
+    [retainedHeroImages]
+  );
+  const retainedHeroImageUrls = useMemo(
+    () => retainedHeroMediaItems.map((image) => image.src).filter(Boolean),
+    [retainedHeroMediaItems]
+  );
+  const previewHeroMediaItems = useMemo(
+    () =>
+      heroPreviewUrls
+        .map((url, index) =>
+          createPreviewMediaAsset(url, HERO_MEDIA_SIZES, heroNewImages[index])
+        )
+        .filter(Boolean),
+    [heroNewImages, heroPreviewUrls]
+  );
+
+  const activeHeroMediaItems = useMemo(() => {
+    if (!isHeroEditorOpen) {
+      return persistedHeroImages;
+    }
+
+    const draftImages = [...previewHeroMediaItems, ...retainedHeroMediaItems].filter(Boolean);
+    return draftImages.length
+      ? draftImages
+      : [createPreviewMediaAsset(resolveSiteImage(null, siteSettings.homeHero.imageKey), HERO_MEDIA_SIZES)].filter(Boolean);
+  }, [
+    isHeroEditorOpen,
+    persistedHeroImages,
+    previewHeroMediaItems,
+    retainedHeroMediaItems,
+    siteSettings.homeHero.imageKey,
+  ]);
+  const preloadHeroMedia = activeHeroMediaItems[0] || null;
+
+  const handleHeroFilesSelected = async (fileList) => {
+    const files = Array.from(fileList || []);
+
+    if (!files.length) {
+      return;
+    }
+
+    const availableSlots = Math.max(
+      0,
+      MAX_HOME_HERO_IMAGES - retainedHeroImages.length - heroImageFiles.length
+    );
+
+    if (!availableSlots) {
+      toast.error(`Homepage hero supports up to ${MAX_HOME_HERO_IMAGES} images.`);
+      return;
+    }
+
+    const filesToPrepare = files.slice(0, availableSlots);
+
+    if (files.length > filesToPrepare.length) {
+      toast.error(`Homepage hero supports up to ${MAX_HOME_HERO_IMAGES} images.`);
+    }
+
+    setIsPreparingHeroImages(true);
+
+    try {
+      const preparedFiles = await prepareImageFilesForUpload(
+        filesToPrepare,
+        HERO_IMAGE_PREPARATION_OPTIONS
+      );
+      setHeroImageFiles((current) => [...preparedFiles, ...current]);
+      setHeroNewImages((current) => [
+        ...preparedFiles.map((file) => ({
+          name: file.name,
+          focusX: 50,
+          focusY: 50,
+          zoom: 1,
+        })),
+        ...current,
+      ]);
+    } catch (error) {
+      toast.error(error?.message || 'Image optimization failed.');
+    } finally {
+      setIsPreparingHeroImages(false);
+    }
+  };
+
   const closeHeroEditor = () => {
     setIsHeroEditorOpen(false);
-    setHeroImageFile(null);
+    setHeroImageFiles([]);
+    setHeroNewImages([]);
     setHeroTitleLine1(cloneValue(siteSettings.homeHero.titleLine1));
     setHeroTitleLine2(cloneValue(siteSettings.homeHero.titleLine2));
     setHeroSubtitle(cloneValue(siteSettings.homeHero.subtitle));
+    setRetainedHeroImages(cloneValue(siteSettings.homeHero.images || []));
   };
 
   const saveHero = async (event) => {
@@ -158,16 +272,18 @@ function Home({
       formData.append('titleLine1', JSON.stringify(heroTitleLine1));
       formData.append('titleLine2', JSON.stringify(heroTitleLine2));
       formData.append('subtitle', JSON.stringify(heroSubtitle));
-      if (heroImageFile) {
-        formData.append('imageFile', heroImageFile);
-      }
+      formData.append('retainedImages', JSON.stringify(retainedHeroImages));
+      formData.append('newImages', JSON.stringify(heroNewImages));
+      heroImageFiles.forEach((file) => {
+        formData.append('imageFile', file);
+      });
 
       const nextSettings = await siteSettingsService.updateHeroSiteSettings(adminToken, formData);
       setSiteSettings(nextSettings);
       closeHeroEditor();
-      toast.success('Homepage background updated.');
+      toast.success('Homepage hero updated.');
     } catch (error) {
-      handleAdminAuthError(error, 'Background update failed.');
+      handleAdminAuthError(error, 'Hero update failed.');
     } finally {
       setIsSavingSection('');
     }
@@ -224,6 +340,15 @@ function Home({
     <div className="home-page">
       <Helmet>
         <title>Home - Tales of Reval</title>
+        {preloadHeroMedia?.src ? (
+          <link
+            rel="preload"
+            as="image"
+            href={preloadHeroMedia.src}
+            imagesrcset={preloadHeroMedia.srcSet || undefined}
+            imagesizes={preloadHeroMedia.sizes || undefined}
+          />
+        ) : null}
         <meta
           name="description"
           content="Experience the most authentic medieval tours in Tallinn. Discover unique live experiences and historical adventures with Tales of Reval."
@@ -236,7 +361,7 @@ function Home({
 
       <HomeLanding
         texts={heroTexts}
-        backgroundImage={heroPreviewUrl || resolveSiteImage(siteSettings.homeHero.image, siteSettings.homeHero.imageKey)}
+        backgroundMediaItems={activeHeroMediaItems}
         isEditable={Boolean(adminToken) && isEditMode}
         onEditBackground={() => setIsHeroEditorOpen(true)}
       />
@@ -278,14 +403,20 @@ function Home({
 
       {adminToken && isHeroEditorOpen ? (
         <HomeHeroEditorModal
-          currentImage={siteSettings.homeHero.image}
-          currentImageUrl={resolveSiteImage(siteSettings.homeHero.image, siteSettings.homeHero.imageKey)}
-          selectedFile={heroImageFile}
-          setSelectedFile={setHeroImageFile}
-          previewUrl={heroPreviewUrl}
+          currentImages={retainedHeroImages}
+          currentImageUrls={retainedHeroImageUrls}
+          setCurrentImages={setRetainedHeroImages}
+          selectedFiles={heroImageFiles}
+          setSelectedFiles={setHeroImageFiles}
+          selectedImages={heroNewImages}
+          setSelectedImages={setHeroNewImages}
+          onSelectFiles={handleHeroFilesSelected}
+          previewUrls={heroPreviewUrls}
           onSave={saveHero}
           onCancel={closeHeroEditor}
           isSaving={isSavingSection === 'hero'}
+          isPreparingImages={isPreparingHeroImages}
+          maxImageCount={MAX_HOME_HERO_IMAGES}
           titleLine1={heroTitleLine1}
           setTitleLine1={setHeroTitleLine1}
           titleLine2={heroTitleLine2}

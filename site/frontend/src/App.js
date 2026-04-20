@@ -166,6 +166,8 @@ function AppShell() {
         setShowBookNow={setShowBookNow}
         adminToken={adminToken}
         setAdminToken={setAdminToken}
+        siteSettings={siteSettings}
+        isEditMode={editControlsVisible}
       />
       <AdminToolbar
         adminToken={adminToken}

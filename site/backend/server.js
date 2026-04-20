@@ -20,6 +20,14 @@ const {
 } = require('./lib/storagePaths');
 ensureRuntimeStorageReady();
 
+const uploadStaticOptions = {
+  immutable: true,
+  maxAge: '365d',
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  },
+};
+
 const port = process.env.PORT || 3000;
 const adminRoutes = require('./routes/adminRoutes');
 const emailRoutes = require('./routes/emailRoutes');
@@ -30,8 +38,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/email', emailRoutes);
-app.use('/uploads/story', express.static(runtimeStoryUploadsDir));
-app.use('/uploads/site', express.static(runtimeSiteUploadsDir));
+app.use('/uploads/story', express.static(runtimeStoryUploadsDir, uploadStaticOptions));
+app.use('/uploads/site', express.static(runtimeSiteUploadsDir, uploadStaticOptions));
 app.use('/api/admin', adminRoutes);
 app.use('/api/story-events', storyEventsRoutes);
 app.use('/api/site-settings', siteSettingsRoutes);

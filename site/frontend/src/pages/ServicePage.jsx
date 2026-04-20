@@ -25,10 +25,17 @@ import {
 import { getFallbackService } from '../content/fallbackServices';
 import {
   DEFAULT_SITE_SETTINGS,
+  HERO_MEDIA_SIZES,
+  createPreviewMediaAsset,
   getLocalizedSiteText,
   resolveSiteImage,
+  resolveSiteImageMedia,
 } from '../content/siteSettingsDefaults';
 import dmc_file from '../img/dmc_file.pdf';
+import {
+  HERO_IMAGE_PREPARATION_OPTIONS,
+  prepareImageFileForUpload,
+} from '../utils/prepareImageFilesForUpload';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 const createLocalizedValue = (en = '', ee = '') => ({ en, ee });
@@ -211,6 +218,10 @@ function ServicePage({
   const [isHeroEditorOpen, setIsHeroEditorOpen] = useState(false);
   const [serviceHeroImageFile, setServiceHeroImageFile] = useState(null);
   const [serviceHeroPreviewUrl, setServiceHeroPreviewUrl] = useState('');
+  const [serviceHeroDraftImage, setServiceHeroDraftImage] = useState(
+    cloneValue(siteSettings.servicePageHeroes?.[serviceType]?.image || null)
+  );
+  const [isPreparingHeroImage, setIsPreparingHeroImage] = useState(false);
   const [isSavingHero, setIsSavingHero] = useState(false);
   const [isContentEditorOpen, setIsContentEditorOpen] = useState(false);
   const [isSavingContent, setIsSavingContent] = useState(false);
@@ -263,6 +274,12 @@ function ServicePage({
     };
   }, [serviceHeroImageFile]);
 
+  useEffect(() => {
+    setServiceHeroDraftImage(
+      cloneValue(siteSettings.servicePageHeroes?.[serviceType]?.image || null)
+    );
+  }, [serviceType, siteSettings.servicePageHeroes]);
+
   const handleAdminAuthError = (error, fallbackMessage = 'Services update failed.') => {
     if (error?.response?.status === 401) {
       setStoredStoryAdminAuth('');
@@ -277,6 +294,9 @@ function ServicePage({
   const closeHeroEditor = () => {
     setIsHeroEditorOpen(false);
     setServiceHeroImageFile(null);
+    setServiceHeroDraftImage(
+      cloneValue(siteSettings.servicePageHeroes?.[serviceType]?.image || null)
+    );
   };
 
   const closeContentEditor = () => {
@@ -321,6 +341,7 @@ function ServicePage({
 
     try {
       const formData = new FormData();
+      formData.append('image', JSON.stringify(serviceHeroDraftImage));
 
       if (serviceHeroImageFile) {
         formData.append('imageFile', serviceHeroImageFile);
@@ -332,7 +353,11 @@ function ServicePage({
         formData
       );
       setSiteSettings(nextSettings);
-      closeHeroEditor();
+      setServiceHeroImageFile(null);
+      setServiceHeroDraftImage(
+        cloneValue(nextSettings.servicePageHeroes?.[serviceType]?.image || null)
+      );
+      setIsHeroEditorOpen(false);
       toast.success('Service background updated.');
     } catch (error) {
       handleAdminAuthError(error, 'Service background update failed.');
@@ -454,11 +479,42 @@ function ServicePage({
   }
 
   const servicePageHero = siteSettings.servicePageHeroes?.[serviceType];
-  const backgroundImage =
-    serviceHeroPreviewUrl ||
-    resolveSiteImage(servicePageHero?.image, servicePageHero?.imageKey) ||
-    service?.background_image?.src ||
-    '';
+  const backgroundMedia =
+    (serviceHeroPreviewUrl
+      ? createPreviewMediaAsset(
+          serviceHeroPreviewUrl,
+          HERO_MEDIA_SIZES,
+          serviceHeroDraftImage
+        )
+      : null) ||
+    resolveSiteImageMedia(
+      servicePageHero?.image,
+      servicePageHero?.imageKey,
+      HERO_MEDIA_SIZES
+    ) ||
+    createPreviewMediaAsset(service?.background_image?.src || '', HERO_MEDIA_SIZES);
+
+  const handleServiceHeroFileSelected = async (file) => {
+    if (!file) {
+      setServiceHeroImageFile(null);
+      return;
+    }
+
+    setIsPreparingHeroImage(true);
+
+    try {
+      const preparedFile = await prepareImageFileForUpload(
+        file,
+        HERO_IMAGE_PREPARATION_OPTIONS
+      );
+      setServiceHeroImageFile(preparedFile);
+      setServiceHeroDraftImage((current) => current || { focusX: 50, focusY: 50, zoom: 1 });
+    } catch (error) {
+      toast.error(error?.message || 'Image optimization failed.');
+    } finally {
+      setIsPreparingHeroImage(false);
+    }
+  };
 
   const pageTitle = getLocalizedSiteText(serviceContentForm.title, language, service?.title || '');
   const intro = getLocalizedSiteText(serviceContentForm.intro, language, service?.intro || '');
@@ -502,6 +558,7 @@ function ServicePage({
     key: card.key || `${serviceType}-card-${index + 1}`,
     title: getLocalizedSiteText(card.title, language, ''),
     body: getLocalizedSiteText(card.body, language, ''),
+    image: card.image,
     imageSrc: resolveSiteImage(card.image, card.imageKey),
     layout: card.layout,
   }));
@@ -566,7 +623,7 @@ function ServicePage({
       <PageHero
         className="service-page-hero"
         mediaClassName="service-landing"
-        backgroundImage={backgroundImage}
+        backgroundMedia={backgroundMedia}
         isEditable={Boolean(adminToken) && isEditMode}
         onEditBackground={() => setIsHeroEditorOpen(true)}
       >
@@ -658,12 +715,15 @@ function ServicePage({
             service?.background_image?.src ||
             ''
           }
+          draftImage={serviceHeroDraftImage}
+          onChangeImage={setServiceHeroDraftImage}
           selectedFile={serviceHeroImageFile}
-          setSelectedFile={setServiceHeroImageFile}
+          onSelectFile={handleServiceHeroFileSelected}
           previewUrl={serviceHeroPreviewUrl}
           onSave={saveServiceHero}
           onCancel={closeHeroEditor}
           isSaving={isSavingHero}
+          isPreparingImage={isPreparingHeroImage}
         />
       ) : null}
       {adminToken && isContentEditorOpen ? (

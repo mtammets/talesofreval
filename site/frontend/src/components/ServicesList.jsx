@@ -74,10 +74,10 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
   ];
 
   const serviceItems = Array.isArray(itemsOverride) && itemsOverride.length
-    ? itemsOverride.map((item, index) => ({
+      ? itemsOverride.map((item, index) => ({
         key: item.key || fallbackItems[index]?.key || `service-${index + 1}`,
         link: item.link || fallbackItems[index]?.link || `service-${index + 1}`,
-        image: resolveSiteImage(item.image, item.imageKey) || fallbackItems[index]?.image,
+        image: item.image || resolveSiteImage(item.image, item.imageKey) || fallbackItems[index]?.image,
         title: getLocalizedSiteText(item.title, language, fallbackItems[index]?.title || ''),
         description: compact
           ? null
@@ -94,7 +94,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
               <ServiceCard
                 key={item.key}
                 link={item.link}
-                bgimage={item.image}
+                image={item.image}
                 title={item.title}
                 description={item.description}
                 compact={compact}
@@ -107,7 +107,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
               <ServiceCard
                 key={item.key}
                 link={item.link}
-                bgimage={item.image}
+                image={item.image}
                 title={item.title}
                 description={item.description}
                 compact={compact}
@@ -122,7 +122,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
               <ServiceCard
                 key={item.key}
                 link={item.link}
-                bgimage={item.image}
+                image={item.image}
                 title={item.title}
                 description={item.description}
                 compact={compact}

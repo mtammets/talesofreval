@@ -5,8 +5,16 @@ function AdminModalShell({
   onClose,
   compact = false,
   wide = false,
+  noBackdropBlur = false,
+  hideClose = false,
   children,
 }) {
+  const modalClassName = [
+    'story-editor-modal',
+    noBackdropBlur ? 'story-editor-modal--plain' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
   const sheetClassName = [
     'story-editor-sheet',
     compact ? 'story-editor-sheet--compact' : '',
@@ -16,7 +24,7 @@ function AdminModalShell({
     .join(' ');
 
   return (
-    <div className="story-editor-modal" onClick={onClose}>
+    <div className={modalClassName} onClick={onClose}>
       <div
         className={sheetClassName}
         onClick={(event) => event.stopPropagation()}
@@ -25,15 +33,17 @@ function AdminModalShell({
       >
         <div className="story-editor-shell">
           <div className="story-editor-body">
-            <div className="story-editor-kicker">{eyebrow}</div>
+            {eyebrow ? <div className="story-editor-kicker">{eyebrow}</div> : null}
             <div className="story-editor-header">
               <div>
                 <h2>{title}</h2>
                 {description ? <p>{description}</p> : null}
               </div>
-              <button type="button" className="story-editor-close" onClick={onClose}>
-                Close
-              </button>
+              {hideClose ? null : (
+                <button type="button" className="story-editor-close" onClick={onClose}>
+                  Close
+                </button>
+              )}
             </div>
             {children}
           </div>

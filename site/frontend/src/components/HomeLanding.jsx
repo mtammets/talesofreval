@@ -1,6 +1,11 @@
 import PageHero from './PageHero';
 
-function HomeLanding({ texts, backgroundImage, isEditable = false, onEditBackground }) {
+function HomeLanding({
+  texts,
+  backgroundMediaItems = [],
+  isEditable = false,
+  onEditBackground,
+}) {
   if (!texts) {
     return null;
   }
@@ -13,7 +18,7 @@ function HomeLanding({ texts, backgroundImage, isEditable = false, onEditBackgro
     <PageHero
       className="home-landing"
       mediaClassName="home-landing-media"
-      backgroundImage={backgroundImage}
+      backgroundMediaItems={backgroundMediaItems}
       isEditable={isEditable}
       onEditBackground={onEditBackground}
     >

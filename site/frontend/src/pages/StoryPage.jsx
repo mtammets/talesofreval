@@ -22,7 +22,19 @@ import {
   editorTextToHtml,
   mapStoryEventToForm,
 } from '../features/events/storyAdminUtils';
-import { DEFAULT_SITE_SETTINGS, resolveSiteImage } from '../content/siteSettingsDefaults';
+import {
+  DEFAULT_SITE_SETTINGS,
+  HERO_MEDIA_SIZES,
+  createPreviewMediaAsset,
+  resolveSiteImage,
+  resolveSiteImageMedia,
+} from '../content/siteSettingsDefaults';
+import {
+  HERO_IMAGE_PREPARATION_OPTIONS,
+  prepareImageFileForUpload,
+} from '../utils/prepareImageFilesForUpload';
+
+const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 
 function StoryPage({
   adminToken,
@@ -51,6 +63,10 @@ function StoryPage({
   const [galleryFiles, setGalleryFiles] = useState([]);
   const [storyHeroImageFile, setStoryHeroImageFile] = useState(null);
   const [storyHeroPreviewUrl, setStoryHeroPreviewUrl] = useState('');
+  const [storyHeroDraftImage, setStoryHeroDraftImage] = useState(
+    cloneValue(siteSettings.storyPage.image || null)
+  );
+  const [isPreparingHeroImage, setIsPreparingHeroImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState('');
@@ -87,6 +103,10 @@ function StoryPage({
       URL.revokeObjectURL(nextUrl);
     };
   }, [storyHeroImageFile]);
+
+  useEffect(() => {
+    setStoryHeroDraftImage(cloneValue(siteSettings.storyPage.image || null));
+  }, [siteSettings.storyPage.image]);
 
   const handleAdminAuthError = (error) => {
     if (error?.response?.status === 401) {
@@ -326,6 +346,7 @@ function StoryPage({
 
     try {
       const formData = new FormData();
+      formData.append('image', JSON.stringify(storyHeroDraftImage));
       if (storyHeroImageFile) {
         formData.append('imageFile', storyHeroImageFile);
       }
@@ -333,6 +354,7 @@ function StoryPage({
       const nextSettings = await siteSettingsService.updateStoryHeroSiteSettings(adminToken, formData);
       setSiteSettings(nextSettings);
       setStoryHeroImageFile(null);
+      setStoryHeroDraftImage(cloneValue(nextSettings.storyPage.image || null));
       setIsHeroEditorOpen(false);
       toast.success('Story background updated.');
     } catch (error) {
@@ -351,9 +373,41 @@ function StoryPage({
   }
 
   const ourStoryText = misc_texts && misc_texts['our-story'] ? misc_texts['our-story'].text : null;
-  const storyHeroBackground =
-    storyHeroPreviewUrl ||
-    resolveSiteImage(siteSettings.storyPage.image, siteSettings.storyPage.imageKey);
+  const storyHeroMedia =
+    (storyHeroPreviewUrl
+      ? createPreviewMediaAsset(
+          storyHeroPreviewUrl,
+          HERO_MEDIA_SIZES,
+          storyHeroDraftImage
+        )
+      : null) ||
+    resolveSiteImageMedia(
+      siteSettings.storyPage.image,
+      siteSettings.storyPage.imageKey,
+      HERO_MEDIA_SIZES
+    );
+
+  const handleStoryHeroFileSelected = async (file) => {
+    if (!file) {
+      setStoryHeroImageFile(null);
+      return;
+    }
+
+    setIsPreparingHeroImage(true);
+
+    try {
+      const preparedFile = await prepareImageFileForUpload(
+        file,
+        HERO_IMAGE_PREPARATION_OPTIONS
+      );
+      setStoryHeroImageFile(preparedFile);
+      setStoryHeroDraftImage((current) => current || { focusX: 50, focusY: 50, zoom: 1 });
+    } catch (error) {
+      toast.error(error?.message || 'Image optimization failed.');
+    } finally {
+      setIsPreparingHeroImage(false);
+    }
+  };
 
   return (
     <div className="story-page">
@@ -371,7 +425,7 @@ function StoryPage({
 
       <PageHero
         mediaClassName="story-landing"
-        backgroundImage={storyHeroBackground}
+        backgroundMedia={storyHeroMedia}
         isEditable={Boolean(adminToken) && isEditMode}
         onEditBackground={() => setIsHeroEditorOpen(true)}
       >
@@ -464,15 +518,19 @@ function StoryPage({
           description="Upload a new background image for the story page."
           currentImage={siteSettings.storyPage.image}
           currentImageUrl={resolveSiteImage(siteSettings.storyPage.image, siteSettings.storyPage.imageKey)}
+          draftImage={storyHeroDraftImage}
+          onChangeImage={setStoryHeroDraftImage}
           selectedFile={storyHeroImageFile}
-          setSelectedFile={setStoryHeroImageFile}
+          onSelectFile={handleStoryHeroFileSelected}
           previewUrl={storyHeroPreviewUrl}
           onSave={saveStoryHero}
           onCancel={() => {
             setIsHeroEditorOpen(false);
             setStoryHeroImageFile(null);
+            setStoryHeroDraftImage(cloneValue(siteSettings.storyPage.image || null));
           }}
           isSaving={isSavingHero}
+          isPreparingImage={isPreparingHeroImage}
         />
       ) : null}
     </div>

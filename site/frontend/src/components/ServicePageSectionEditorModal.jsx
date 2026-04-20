@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react';
+
 import { resolveSiteImage } from '../content/siteSettingsDefaults';
 import AdminModalShell from './AdminModalShell';
+import ImageFocusEditor from './ImageFocusEditor';
 
 function ServicePageSectionEditorModal({
   mode = 'create',
@@ -11,6 +14,22 @@ function ServicePageSectionEditorModal({
   onCancel,
   isSaving,
 }) {
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  useEffect(() => {
+    if (!imageFile) {
+      setPreviewUrl('');
+      return undefined;
+    }
+
+    const nextUrl = URL.createObjectURL(imageFile);
+    setPreviewUrl(nextUrl);
+
+    return () => {
+      URL.revokeObjectURL(nextUrl);
+    };
+  }, [imageFile]);
+
   const updateLocalized = (field, language, value) => {
     setSection((current) => ({
       ...current,
@@ -28,7 +47,18 @@ function ServicePageSectionEditorModal({
     }));
   };
 
+  const updateImageFocus = (focus) => {
+    setSection((current) => ({
+      ...current,
+      image: {
+        ...(current.image || {}),
+        ...focus,
+      },
+    }));
+  };
+
   const title = mode === 'create' ? 'Add section' : 'Edit section';
+  const imageUrl = previewUrl || resolveSiteImage(section.image, section.imageKey);
 
   return (
     <AdminModalShell
@@ -50,28 +80,27 @@ function ServicePageSectionEditorModal({
           </select>
         </label>
 
-        <label>
-          Section image
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(event) => setImageFile(event.target.files?.[0] || null)}
-          />
-          {resolveSiteImage(section.image, section.imageKey) ? (
-            <div className="editor-inline-preview">
-              <span className="story-admin-help">Current image</span>
-              <div
-                className="editor-inline-preview__image"
-                style={{
-                  backgroundImage: `url(${resolveSiteImage(section.image, section.imageKey)})`,
-                }}
-              />
-            </div>
-          ) : null}
+        <div>
+          <label>
+            Section image
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(event) => setImageFile(event.target.files?.[0] || null)}
+            />
+          </label>
           {imageFile ? (
             <span className="story-admin-help">Selected: {imageFile.name}</span>
           ) : null}
-        </label>
+          <ImageFocusEditor
+            image={section.image}
+            imageUrl={imageUrl}
+            onChange={updateImageFocus}
+            aspectRatio="11 / 7"
+            label="Section preview"
+            helpText="Drag the image until the section preview looks right."
+          />
+        </div>
 
         <div className="story-admin-grid two">
           <label>

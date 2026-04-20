@@ -9,7 +9,13 @@ import {
   hasTextEntries,
 } from '../content/fallbackContent';
 
-function Header({ setShowBookNow, adminToken, setAdminToken }) {
+function Header({
+  setShowBookNow,
+  adminToken,
+  setAdminToken,
+  siteSettings,
+  isEditMode = false,
+}) {
   const [smallScreen, setSmallScreen] = useState(window.innerWidth < 1100);
   const [ourServicesOpen, setOurServicesOpen] = useState(false);
   const dispatch = useDispatch();
@@ -73,6 +79,8 @@ function Header({ setShowBookNow, adminToken, setAdminToken }) {
           setShowBookNow={setShowBookNow}
           adminToken={adminToken}
           setAdminToken={setAdminToken}
+          serviceItems={siteSettings?.homeServices?.items || []}
+          isEditMode={isEditMode}
           ourServicesOpen={ourServicesOpen}
           setOurServicesOpen={setOurServicesOpen}
         />

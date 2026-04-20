@@ -22,10 +22,12 @@ const upload = multer({
     cb(new Error('Only image uploads are allowed.'));
   },
   limits: {
-    fileSize: 10 * 1024 * 1024,
+    fileSize: 25 * 1024 * 1024,
   },
 });
 
+const MAX_HOME_HERO_IMAGES = 6;
+const homeHeroUpload = upload.fields([{ name: 'imageFile', maxCount: MAX_HOME_HERO_IMAGES }]);
 const heroUpload = upload.fields([{ name: 'imageFile', maxCount: 1 }]);
 const servicesUpload = upload.any();
 const teamUpload = upload.any();
@@ -47,6 +49,33 @@ const parseJsonField = (value, fallback) => {
   }
 };
 
+const normalizeImageZoom = (value, fallback = 1) => {
+  const resolvedValue = Number(value);
+
+  if (!Number.isFinite(resolvedValue)) {
+    return fallback;
+  }
+
+  return Math.min(2.5, Math.max(1, Number(resolvedValue.toFixed(2))));
+};
+
+const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage = null) => ({
+  ...(processedImage || fallbackImage || null),
+  focusX:
+    Number(providedImage?.focusX) >= 0
+      ? Number(providedImage.focusX)
+      : Number(fallbackImage?.focusX) >= 0
+        ? Number(fallbackImage.focusX)
+        : 50,
+  focusY:
+    Number(providedImage?.focusY) >= 0
+      ? Number(providedImage.focusY)
+      : Number(fallbackImage?.focusY) >= 0
+        ? Number(fallbackImage.focusY)
+        : 50,
+  zoom: normalizeImageZoom(providedImage?.zoom, normalizeImageZoom(fallbackImage?.zoom, 1)),
+});
+
 router.get(
   '/',
   asyncHandler(async (_req, res) => {
@@ -67,18 +96,48 @@ router.get(
 router.put(
   '/admin/hero',
   adminAuth,
-  heroUpload,
+  homeHeroUpload,
   asyncHandler(async (req, res) => {
     const settings = await readSiteSettings();
-    const imageFile = req.files?.imageFile?.[0];
-    const processedHeroImage = imageFile
-      ? await processUploadedImage({
-          file: imageFile,
-          outputDir: siteUploadsDir,
-          publicPathPrefix: '/uploads/site',
-          preset: IMAGE_PRESETS.hero,
-        })
-      : null;
+    const imageFiles = req.files?.imageFile || [];
+    const providedNewImages = parseJsonField(req.body.newImages, []);
+    const processedHeroImages = await Promise.all(
+      imageFiles.map(async (file, index) =>
+        mergeImageMetadata(
+          await processUploadedImage({
+            file,
+            outputDir: siteUploadsDir,
+            publicPathPrefix: '/uploads/site',
+            preset: IMAGE_PRESETS.hero,
+          }),
+          null,
+          providedNewImages[index]
+        )
+      )
+    );
+    const currentImages = Array.isArray(settings.homeHero.images)
+      ? settings.homeHero.images
+      : settings.homeHero.image
+        ? [settings.homeHero.image]
+        : [];
+    const hasRetainedImages = Object.prototype.hasOwnProperty.call(req.body, 'retainedImages');
+    const retainedImages = hasRetainedImages
+      ? parseJsonField(req.body.retainedImages, currentImages)
+      : currentImages;
+    const nextHeroImages = hasRetainedImages
+      ? [
+          ...processedHeroImages.filter(Boolean),
+          ...(Array.isArray(retainedImages) ? retainedImages : currentImages).filter(
+            (image) => image?.src
+          ),
+        ]
+      : processedHeroImages.length
+        ? [processedHeroImages[0]]
+        : currentImages;
+
+    if (nextHeroImages.length > MAX_HOME_HERO_IMAGES) {
+      throw new Error(`Homepage hero supports up to ${MAX_HOME_HERO_IMAGES} images.`);
+    }
 
     const nextSettings = {
       ...settings,
@@ -87,7 +146,8 @@ router.put(
         titleLine1: parseJsonField(req.body.titleLine1, settings.homeHero.titleLine1),
         titleLine2: parseJsonField(req.body.titleLine2, settings.homeHero.titleLine2),
         subtitle: parseJsonField(req.body.subtitle, settings.homeHero.subtitle),
-        image: processedHeroImage || settings.homeHero.image,
+        images: nextHeroImages,
+        image: nextHeroImages[0] || null,
       },
     };
 
@@ -103,6 +163,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const settings = await readSiteSettings();
     const imageFile = req.files?.imageFile?.[0];
+    const providedImage = parseJsonField(req.body.image, settings.storyPage.image);
     const processedHeroImage = imageFile
       ? await processUploadedImage({
           file: imageFile,
@@ -111,12 +172,17 @@ router.put(
           preset: IMAGE_PRESETS.hero,
         })
       : null;
+    const nextHeroImage = processedHeroImage
+      ? mergeImageMetadata(processedHeroImage, settings.storyPage.image, providedImage)
+      : providedImage
+        ? mergeImageMetadata(null, settings.storyPage.image, providedImage)
+        : settings.storyPage.image;
 
     const nextSettings = {
       ...settings,
       storyPage: {
         ...settings.storyPage,
-        image: processedHeroImage || settings.storyPage.image,
+        image: nextHeroImage,
       },
     };
 
@@ -139,6 +205,8 @@ router.put(
 
     const settings = await readSiteSettings();
     const imageFile = req.files?.imageFile?.[0];
+    const currentHeroImage = settings.servicePageHeroes?.[serviceKey]?.image || null;
+    const providedImage = parseJsonField(req.body.image, currentHeroImage);
     const processedHeroImage = imageFile
       ? await processUploadedImage({
           file: imageFile,
@@ -147,6 +215,11 @@ router.put(
           preset: IMAGE_PRESETS.hero,
         })
       : null;
+    const nextHeroImage = processedHeroImage
+      ? mergeImageMetadata(processedHeroImage, currentHeroImage, providedImage)
+      : providedImage
+        ? mergeImageMetadata(null, currentHeroImage, providedImage)
+        : currentHeroImage;
 
     const nextSettings = {
       ...settings,
@@ -154,7 +227,7 @@ router.put(
         ...settings.servicePageHeroes,
         [serviceKey]: {
           ...settings.servicePageHeroes?.[serviceKey],
-          image: processedHeroImage || settings.servicePageHeroes?.[serviceKey]?.image || null,
+          image: nextHeroImage,
         },
       },
     };
@@ -200,10 +273,13 @@ router.put(
       ...currentContent.cards?.[index],
       ...card,
       image:
-        processedCardImages[index] ||
-        card.image ||
-        currentContent.cards?.[index]?.image ||
-        null,
+        processedCardImages[index]
+          ? mergeImageMetadata(
+              processedCardImages[index],
+              currentContent.cards?.[index]?.image,
+              card.image
+            )
+          : card.image || currentContent.cards?.[index]?.image || null,
     }));
 
     const nextSettings = {
@@ -268,7 +344,13 @@ router.put(
     const nextItems = items.map((item, index) => ({
       ...settings.homeServices.items[index],
       ...item,
-      image: processedImages[index] || item.image || settings.homeServices.items[index]?.image || null,
+      image: processedImages[index]
+        ? mergeImageMetadata(
+            processedImages[index],
+            settings.homeServices.items[index]?.image,
+            item.image
+          )
+        : item.image || settings.homeServices.items[index]?.image || null,
     }));
 
     const nextSettings = {
@@ -312,9 +394,15 @@ router.put(
     );
 
     const nextMembers = members.map((member, index) => ({
-      ...settings.homeTeam.members[index],
+      ...(settings.homeTeam.members[index] || {}),
       ...member,
-      image: processedImages[index] || member.image || settings.homeTeam.members[index]?.image || null,
+      image: processedImages[index]
+        ? mergeImageMetadata(
+            processedImages[index],
+            settings.homeTeam.members[index]?.image,
+            member.image
+          )
+        : member.image || settings.homeTeam.members[index]?.image || null,
     }));
 
     const nextSettings = {
@@ -366,6 +454,7 @@ router.put(
     const settings = await readSiteSettings();
     const teamHeading = parseJsonField(req.body.teamHeading, settings.contactPage.teamHeading);
     const teamMembers = parseJsonField(req.body.teamMembers, settings.contactPage.teamMembers);
+    const providedHeroImage = parseJsonField(req.body.image, settings.contactPage.image);
     const fileMap = new Map((req.files || []).map((file) => [file.fieldname, file]));
     const processedTeamImages = await Promise.all(
       teamMembers.map(async (_member, index) => {
@@ -390,11 +479,22 @@ router.put(
           preset: IMAGE_PRESETS.hero,
         })
       : null;
+    const nextHeroImage = processedHeroImage
+      ? mergeImageMetadata(processedHeroImage, settings.contactPage.image, providedHeroImage)
+      : providedHeroImage
+        ? mergeImageMetadata(null, settings.contactPage.image, providedHeroImage)
+        : settings.contactPage.image;
 
     const nextTeamMembers = teamMembers.map((member, index) => ({
-      ...settings.contactPage.teamMembers[index],
+      ...(settings.contactPage.teamMembers[index] || {}),
       ...member,
-      image: processedTeamImages[index] || member.image || settings.contactPage.teamMembers[index]?.image || null,
+      image: processedTeamImages[index]
+        ? mergeImageMetadata(
+            processedTeamImages[index],
+            settings.contactPage.teamMembers[index]?.image,
+            member.image
+          )
+        : member.image || settings.contactPage.teamMembers[index]?.image || null,
     }));
 
     const nextSettings = {
@@ -406,7 +506,7 @@ router.put(
       },
       contactPage: {
         ...settings.contactPage,
-        image: processedHeroImage || settings.contactPage.image,
+        image: nextHeroImage,
         teamHeading,
         teamMembers: nextTeamMembers,
         formTitle: parseJsonField(req.body.formTitle, settings.contactPage.formTitle),
@@ -484,6 +584,13 @@ router.put(
 
 router.use((error, _req, res, _next) => {
   if (res.headersSent) {
+    return;
+  }
+
+  if (error?.code === 'LIMIT_FILE_SIZE') {
+    res.status(400).json({
+      message: 'Image file is too large. Maximum raw upload size is 25 MB before optimization.',
+    });
     return;
   }
 

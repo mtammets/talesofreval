@@ -14,6 +14,9 @@ function DesktopHeader({
   setShowBookNow,
   texts,
   misc_texts,
+  serviceItems,
+  isEditMode = false,
+  adminToken,
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -89,6 +92,9 @@ function DesktopHeader({
           setShowBookNow={setShowBookNow}
           ourServicesOpen={ourServicesOpen}
           setOurServicesOpen={setOurServicesOpen}
+          serviceItems={serviceItems}
+          isEditMode={isEditMode}
+          adminToken={adminToken}
         />
       )}
     </div>

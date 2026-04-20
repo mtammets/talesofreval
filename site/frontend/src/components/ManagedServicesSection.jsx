@@ -31,6 +31,20 @@ function ManagedServicesSection({
     setServiceItems(cloneValue(siteSettings.homeServices.items));
   }, [siteSettings]);
 
+  useEffect(() => {
+    const openEditor = () => {
+      if (adminToken) {
+        setIsEditorOpen(true);
+      }
+    };
+
+    window.addEventListener('open-home-services-editor', openEditor);
+
+    return () => {
+      window.removeEventListener('open-home-services-editor', openEditor);
+    };
+  }, [adminToken]);
+
   const closeEditor = () => {
     setIsEditorOpen(false);
     setServiceImageFiles({});

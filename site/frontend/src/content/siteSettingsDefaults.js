@@ -71,6 +71,14 @@ export const SITE_IMAGE_ASSETS = {
   gpsGame: gpsGameImage,
 };
 
+export const HERO_MEDIA_SIZES = '(max-width: 768px) 100vw, (max-width: 1440px) 100vw, 1440px';
+const HERO_MEDIA_FRAME = {
+  width: 1440,
+  height: 700,
+};
+export const MIN_IMAGE_ZOOM = 1;
+export const MAX_IMAGE_ZOOM = 2.5;
+
 export const DEFAULT_SITE_SETTINGS = {
   homeHero: {
     titleLine1: { en: 'Storytelling', ee: 'Lugude jutustamine' },
@@ -80,6 +88,7 @@ export const DEFAULT_SITE_SETTINGS = {
       ee: 'Lase oma kujutlusvõimel hääl leida!',
     },
     imageKey: 'homeBg',
+    images: [],
     image: null,
   },
   storyPage: {
@@ -315,10 +324,159 @@ export const getLocalizedSiteText = (value, language = 'en', fallback = '') => {
   return value.en || value.ee || fallback;
 };
 
+const normalizeResponsiveVariants = (variants = []) =>
+  Array.isArray(variants)
+    ? variants
+        .filter((variant) => variant?.src)
+        .map((variant) => ({
+          src: variant.src,
+          width: Number(variant.width) || 0,
+          height: Number(variant.height) || 0,
+          format: variant.format || '',
+        }))
+        .filter((variant) => variant.width > 0)
+        .sort((left, right) => left.width - right.width)
+    : [];
+
+const pickPreferredVariant = (variants = [], preferredWidth = 0) =>
+  variants.find((variant) => variant.width >= preferredWidth) ||
+  variants[variants.length - 1] ||
+  null;
+
+const clampImageZoom = (value) =>
+  Math.min(MAX_IMAGE_ZOOM, Math.max(MIN_IMAGE_ZOOM, Number(value) || MIN_IMAGE_ZOOM));
+
+const resolveResponsiveSizes = (sizes = '100vw', width = 0, height = 0, zoom = MIN_IMAGE_ZOOM) => {
+  if (sizes !== HERO_MEDIA_SIZES || !width || !height) {
+    return sizes;
+  }
+
+  const imageAspectRatio = width / height;
+  const heroAspectRatio = HERO_MEDIA_FRAME.width / HERO_MEDIA_FRAME.height;
+  const coverWidthMultiplier = Math.max(
+    MIN_IMAGE_ZOOM,
+    (imageAspectRatio / heroAspectRatio) * clampImageZoom(zoom)
+  );
+
+  if (coverWidthMultiplier <= 1.02) {
+    return sizes;
+  }
+
+  const viewportWidth = Math.round(coverWidthMultiplier * 100);
+  const fixedWidth = Math.round(HERO_MEDIA_FRAME.width * coverWidthMultiplier);
+
+  return `(max-width: 768px) ${viewportWidth}vw, (max-width: 1440px) ${viewportWidth}vw, ${fixedWidth}px`;
+};
+
+export const getImageFocusPoint = (image = null) => ({
+  focusX: Number(image?.focusX) >= 0 ? Number(image.focusX) : 50,
+  focusY: Number(image?.focusY) >= 0 ? Number(image.focusY) : 50,
+});
+
+export const getImageZoom = (image = null) => clampImageZoom(image?.zoom);
+
+export const getImageObjectPosition = (image = null) => {
+  const focus = getImageFocusPoint(image);
+  return `${focus.focusX}% ${focus.focusY}%`;
+};
+
+export const getImageBackgroundPosition = (image = null) =>
+  getImageObjectPosition(image);
+
 export const resolveSiteImage = (image, imageKey) => {
   if (image?.src) {
     return image.src;
   }
 
+  const variants = normalizeResponsiveVariants(image?.variants);
+
+  if (variants.length) {
+    return pickPreferredVariant(variants, Number(image?.width) || 0)?.src || '';
+  }
+
   return SITE_IMAGE_ASSETS[imageKey] || '';
 };
+
+export const resolveSiteImageMedia = (image, imageKey = '', sizes = '100vw') => {
+  const variants = normalizeResponsiveVariants(image?.variants);
+  const resolvedSrc = resolveSiteImage(image, imageKey);
+  const focus = getImageFocusPoint(image);
+  const zoom = getImageZoom(image);
+
+  if (!resolvedSrc) {
+    return null;
+  }
+
+  const preferredVariant = pickPreferredVariant(variants, Number(image?.width) || 0);
+  const resolvedWidth = Number(image?.width) || preferredVariant?.width || 0;
+  const resolvedHeight = Number(image?.height) || preferredVariant?.height || 0;
+
+  return {
+    src: resolvedSrc,
+    srcSet: variants.length
+      ? variants.map((variant) => `${variant.src} ${variant.width}w`).join(', ')
+      : '',
+    sizes: resolveResponsiveSizes(sizes, resolvedWidth, resolvedHeight, zoom),
+    width: resolvedWidth,
+    height: resolvedHeight,
+    format: image?.format || preferredVariant?.format || '',
+    objectPosition: getImageObjectPosition(image),
+    backgroundPosition: getImageBackgroundPosition(image),
+    focusX: focus.focusX,
+    focusY: focus.focusY,
+    zoom,
+  };
+};
+
+export const resolveSiteImages = (images = [], fallbackImage = null, imageKey = '') => {
+  const resolvedImages = Array.isArray(images)
+    ? images.map((image) => resolveSiteImage(image, '')).filter(Boolean)
+    : [];
+
+  if (resolvedImages.length) {
+    return resolvedImages;
+  }
+
+  const fallbackUrl = resolveSiteImage(fallbackImage, imageKey);
+  return fallbackUrl ? [fallbackUrl] : [];
+};
+
+export const resolveSiteImageMediaList = (
+  images = [],
+  fallbackImage = null,
+  imageKey = '',
+  sizes = '100vw'
+) => {
+  const resolvedImages = Array.isArray(images)
+    ? images.map((image) => resolveSiteImageMedia(image, '', sizes)).filter(Boolean)
+    : [];
+
+  if (resolvedImages.length) {
+    return resolvedImages;
+  }
+
+  const fallbackMedia = resolveSiteImageMedia(fallbackImage, imageKey, sizes);
+  return fallbackMedia ? [fallbackMedia] : [];
+};
+
+export const createPreviewMediaAsset = (src, sizes = '100vw', image = null) =>
+  src
+    ? (() => {
+        const focus = getImageFocusPoint(image);
+        const zoom = getImageZoom(image);
+
+        return {
+          src,
+          srcSet: '',
+          sizes,
+          width: 0,
+          height: 0,
+          format: '',
+          objectPosition: getImageObjectPosition(image),
+          backgroundPosition: getImageBackgroundPosition(image),
+          focusX: focus.focusX,
+          focusY: focus.focusY,
+          zoom,
+        };
+      })()
+    : null;

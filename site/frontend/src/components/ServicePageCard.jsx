@@ -1,3 +1,5 @@
+import { getImageObjectPosition } from '../content/siteSettingsDefaults';
+
 function ServicePageCard({
   card,
   index,
@@ -26,7 +28,11 @@ function ServicePageCard({
         }`}
       >
         <div className="service-card-image">
-          <img src={card.imageSrc} alt={card.title} />
+          <img
+            src={card.imageSrc}
+            alt={card.title}
+            style={{ objectPosition: getImageObjectPosition(card.image) }}
+          />
         </div>
         <div className="service-card-info">
           <h5 className="padding-20-bottom">{card.title}</h5>

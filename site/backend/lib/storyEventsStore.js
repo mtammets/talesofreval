@@ -3,13 +3,41 @@ const { runtimeStoryEventsFile } = require('./storagePaths');
 
 const DATA_FILE = runtimeStoryEventsFile;
 
+const imageVariantShape = (variant = {}) => ({
+  src: variant.src || '',
+  width: Number(variant.width) || 1200,
+  height: Number(variant.height) || 760,
+  format: variant.format || 'webp',
+});
+
 const defaultImageShape = (image = {}) => ({
-  src: image.src || '',
-  name: image.name || '',
-  width: Number(image.width) || 1200,
-  height: Number(image.height) || 760,
-  format: image.format || '',
-  pixelRatio: Number(image.pixelRatio) || 1,
+  ...(() => {
+    const variants = Array.isArray(image.variants)
+      ? image.variants
+          .map(imageVariantShape)
+          .filter((variant) => variant.src)
+          .sort((left, right) => left.width - right.width)
+      : [];
+    const preferredVariant =
+      variants.find((variant) => variant.src === image.src) ||
+      variants.find((variant) => variant.width >= 1200) ||
+      variants[variants.length - 1] ||
+      null;
+
+    return {
+      src: image.src || preferredVariant?.src || '',
+      name: image.name || '',
+      width: Number(image.width) || preferredVariant?.width || 1200,
+      height: Number(image.height) || preferredVariant?.height || 760,
+      format: image.format || preferredVariant?.format || '',
+      pixelRatio:
+        Number(image.pixelRatio) ||
+        (variants.some((variant) => variant.width >= 2400) ? 2 : 1),
+      focusX: Number(image.focusX) >= 0 ? Number(image.focusX) : 50,
+      focusY: Number(image.focusY) >= 0 ? Number(image.focusY) : 50,
+      variants,
+    };
+  })(),
 });
 
 const normalizeEventShape = (event) => ({

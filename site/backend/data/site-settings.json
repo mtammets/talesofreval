@@ -13,7 +13,256 @@
       "ee": "Lase oma kujutlusvõimel hääl leida!"
     },
     "imageKey": "homeBg",
-    "image": null
+    "images": [
+      {
+        "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1440w.webp",
+        "name": "TUUL6405.webp",
+        "width": 1440,
+        "height": 2160,
+        "format": "webp",
+        "pixelRatio": 1,
+        "focusX": 51.49,
+        "focusY": 49.46,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-768w.webp",
+            "width": 768,
+            "height": 1152,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1024w.webp",
+            "width": 1024,
+            "height": 1536,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1280w.webp",
+            "width": 1280,
+            "height": 1920,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1440w.webp",
+            "width": 1440,
+            "height": 2160,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1920w.webp",
+            "width": 1920,
+            "height": 2880,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-2133w.webp",
+            "width": 2133,
+            "height": 3200,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1440w.webp",
+        "name": "1_Hero 1.webp",
+        "width": 1440,
+        "height": 960,
+        "format": "webp",
+        "pixelRatio": 1,
+        "focusX": 94.51,
+        "focusY": 24.75,
+        "variants": [
+          {
+            "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-768w.webp",
+            "width": 768,
+            "height": 512,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1024w.webp",
+            "width": 1024,
+            "height": 683,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1280w.webp",
+            "width": 1280,
+            "height": 853,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1440w.webp",
+            "width": 1440,
+            "height": 960,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1800w.webp",
+            "width": 1800,
+            "height": 1200,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/site/1776675102372-8000bd82-c668-49bd-a0db-be60034a1986-1440w.webp",
+        "name": "Private Tours - An Express Route to the Heart.webp",
+        "width": 1440,
+        "height": 960,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 49.55,
+        "focusY": 33.53,
+        "variants": [
+          {
+            "src": "/uploads/site/1776675102372-8000bd82-c668-49bd-a0db-be60034a1986-768w.webp",
+            "width": 768,
+            "height": 512,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675102372-8000bd82-c668-49bd-a0db-be60034a1986-1024w.webp",
+            "width": 1024,
+            "height": 683,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675102372-8000bd82-c668-49bd-a0db-be60034a1986-1280w.webp",
+            "width": 1280,
+            "height": 853,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675102372-8000bd82-c668-49bd-a0db-be60034a1986-1440w.webp",
+            "width": 1440,
+            "height": 960,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675102372-8000bd82-c668-49bd-a0db-be60034a1986-1920w.webp",
+            "width": 1920,
+            "height": 1280,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675102372-8000bd82-c668-49bd-a0db-be60034a1986-2560w.webp",
+            "width": 2560,
+            "height": 1706,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675102372-8000bd82-c668-49bd-a0db-be60034a1986-2880w.webp",
+            "width": 2880,
+            "height": 1920,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/site/1776675283105-91e68070-5454-4652-a161-029ba7711ad2-1440w.webp",
+        "name": "Team Events - Fostering connections.webp",
+        "width": 1440,
+        "height": 960,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 46.04,
+        "focusY": 27.03,
+        "variants": [
+          {
+            "src": "/uploads/site/1776675283105-91e68070-5454-4652-a161-029ba7711ad2-768w.webp",
+            "width": 768,
+            "height": 512,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675283105-91e68070-5454-4652-a161-029ba7711ad2-1024w.webp",
+            "width": 1024,
+            "height": 683,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675283105-91e68070-5454-4652-a161-029ba7711ad2-1280w.webp",
+            "width": 1280,
+            "height": 853,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675283105-91e68070-5454-4652-a161-029ba7711ad2-1440w.webp",
+            "width": 1440,
+            "height": 960,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675283105-91e68070-5454-4652-a161-029ba7711ad2-1920w.webp",
+            "width": 1920,
+            "height": 1280,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675283105-91e68070-5454-4652-a161-029ba7711ad2-2560w.webp",
+            "width": 2560,
+            "height": 1706,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/site/1776675283105-91e68070-5454-4652-a161-029ba7711ad2-2880w.webp",
+            "width": 2880,
+            "height": 1920,
+            "format": "webp"
+          }
+        ]
+      }
+    ],
+    "image": {
+      "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1440w.webp",
+      "name": "TUUL6405.webp",
+      "width": 1440,
+      "height": 2160,
+      "format": "webp",
+      "pixelRatio": 1,
+      "focusX": 51.49,
+      "focusY": 49.46,
+      "zoom": 1,
+      "variants": [
+        {
+          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-768w.webp",
+          "width": 768,
+          "height": 1152,
+          "format": "webp"
+        },
+        {
+          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1024w.webp",
+          "width": 1024,
+          "height": 1536,
+          "format": "webp"
+        },
+        {
+          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1280w.webp",
+          "width": 1280,
+          "height": 1920,
+          "format": "webp"
+        },
+        {
+          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1440w.webp",
+          "width": 1440,
+          "height": 2160,
+          "format": "webp"
+        },
+        {
+          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1920w.webp",
+          "width": 1920,
+          "height": 2880,
+          "format": "webp"
+        },
+        {
+          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-2133w.webp",
+          "width": 2133,
+          "height": 3200,
+          "format": "webp"
+        }
+      ]
+    }
   },
   "storyPage": {
     "imageKey": "storyBg",
@@ -278,7 +527,49 @@
           "ee": "Privaatsed giidituurid ja kaasahaaravad elamused peredele, partneritele, delegatsioonidele ning erikülalistele."
         },
         "imageKey": "servicePrivate",
-        "image": null
+        "image": {
+          "src": "/uploads/site/1776686440463-10474cc8-aa66-4bfd-9dbf-9eb5c3c86262-640w.webp",
+          "name": "Frostgrave 2019_2.webp",
+          "width": 640,
+          "height": 520,
+          "format": "webp",
+          "pixelRatio": 2,
+          "focusX": 49.41,
+          "focusY": 64.43,
+          "zoom": 1,
+          "variants": [
+            {
+              "src": "/uploads/site/1776686440463-10474cc8-aa66-4bfd-9dbf-9eb5c3c86262-320w.webp",
+              "width": 320,
+              "height": 260,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776686440463-10474cc8-aa66-4bfd-9dbf-9eb5c3c86262-480w.webp",
+              "width": 480,
+              "height": 390,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776686440463-10474cc8-aa66-4bfd-9dbf-9eb5c3c86262-640w.webp",
+              "width": 640,
+              "height": 520,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776686440463-10474cc8-aa66-4bfd-9dbf-9eb5c3c86262-960w.webp",
+              "width": 960,
+              "height": 780,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776686440463-10474cc8-aa66-4bfd-9dbf-9eb5c3c86262-1280w.webp",
+              "width": 1280,
+              "height": 1040,
+              "format": "webp"
+            }
+          ]
+        }
       },
       {
         "key": "quick",
@@ -336,7 +627,42 @@
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "imageKey": "contactMember1",
-        "image": null
+        "image": {
+          "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-520w.webp",
+          "name": "DSC05465.webp",
+          "width": 520,
+          "height": 520,
+          "format": "webp",
+          "pixelRatio": 2,
+          "focusX": 50,
+          "focusY": 17.26,
+          "variants": [
+            {
+              "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-260w.webp",
+              "width": 260,
+              "height": 260,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-520w.webp",
+              "width": 520,
+              "height": 520,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-780w.webp",
+              "width": 780,
+              "height": 780,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-1040w.webp",
+              "width": 1040,
+              "height": 1040,
+              "format": "webp"
+            }
+          ]
+        }
       },
       {
         "key": "contact-member-2",
@@ -344,7 +670,42 @@
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "imageKey": "contactMember2",
-        "image": null
+        "image": {
+          "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-520w.webp",
+          "name": "DSC05432.webp",
+          "width": 520,
+          "height": 420,
+          "format": "webp",
+          "pixelRatio": 2,
+          "focusX": 50.04,
+          "focusY": 0,
+          "variants": [
+            {
+              "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-260w.webp",
+              "width": 260,
+              "height": 210,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-520w.webp",
+              "width": 520,
+              "height": 420,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-780w.webp",
+              "width": 780,
+              "height": 630,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-1040w.webp",
+              "width": 1040,
+              "height": 840,
+              "format": "webp"
+            }
+          ]
+        }
       },
       {
         "key": "contact-member-3",
@@ -352,7 +713,42 @@
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "imageKey": "contactMember3",
-        "image": null
+        "image": {
+          "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-520w.webp",
+          "name": "DSC05398.webp",
+          "width": 520,
+          "height": 520,
+          "format": "webp",
+          "pixelRatio": 2,
+          "focusX": 48.2,
+          "focusY": 14.92,
+          "variants": [
+            {
+              "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-260w.webp",
+              "width": 260,
+              "height": 260,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-520w.webp",
+              "width": 520,
+              "height": 520,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-780w.webp",
+              "width": 780,
+              "height": 780,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-1040w.webp",
+              "width": 1040,
+              "height": 1040,
+              "format": "webp"
+            }
+          ]
+        }
       },
       {
         "key": "contact-member-4",
@@ -360,7 +756,42 @@
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "imageKey": "contactMember4",
-        "image": null
+        "image": {
+          "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-520w.webp",
+          "name": "DSC05465.webp",
+          "width": 520,
+          "height": 520,
+          "format": "webp",
+          "pixelRatio": 2,
+          "focusX": 50,
+          "focusY": 11.08,
+          "variants": [
+            {
+              "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-260w.webp",
+              "width": 260,
+              "height": 260,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-520w.webp",
+              "width": 520,
+              "height": 520,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-780w.webp",
+              "width": 780,
+              "height": 780,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-1040w.webp",
+              "width": 1040,
+              "height": 1040,
+              "format": "webp"
+            }
+          ]
+        }
       }
     ]
   },
@@ -378,7 +809,42 @@
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "imageKey": "contactMember1",
-        "image": null
+        "image": {
+          "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-520w.webp",
+          "name": "DSC05465.webp",
+          "width": 520,
+          "height": 520,
+          "format": "webp",
+          "pixelRatio": 2,
+          "focusX": 50,
+          "focusY": 17.26,
+          "variants": [
+            {
+              "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-260w.webp",
+              "width": 260,
+              "height": 260,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-520w.webp",
+              "width": 520,
+              "height": 520,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-780w.webp",
+              "width": 780,
+              "height": 780,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-1040w.webp",
+              "width": 1040,
+              "height": 1040,
+              "format": "webp"
+            }
+          ]
+        }
       },
       {
         "key": "contact-member-2",
@@ -386,7 +852,42 @@
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "imageKey": "contactMember2",
-        "image": null
+        "image": {
+          "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-520w.webp",
+          "name": "DSC05432.webp",
+          "width": 520,
+          "height": 420,
+          "format": "webp",
+          "pixelRatio": 2,
+          "focusX": 50.04,
+          "focusY": 0,
+          "variants": [
+            {
+              "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-260w.webp",
+              "width": 260,
+              "height": 210,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-520w.webp",
+              "width": 520,
+              "height": 420,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-780w.webp",
+              "width": 780,
+              "height": 630,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-1040w.webp",
+              "width": 1040,
+              "height": 840,
+              "format": "webp"
+            }
+          ]
+        }
       },
       {
         "key": "contact-member-3",
@@ -394,7 +895,42 @@
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "imageKey": "contactMember3",
-        "image": null
+        "image": {
+          "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-520w.webp",
+          "name": "DSC05398.webp",
+          "width": 520,
+          "height": 520,
+          "format": "webp",
+          "pixelRatio": 2,
+          "focusX": 48.2,
+          "focusY": 14.92,
+          "variants": [
+            {
+              "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-260w.webp",
+              "width": 260,
+              "height": 260,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-520w.webp",
+              "width": 520,
+              "height": 520,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-780w.webp",
+              "width": 780,
+              "height": 780,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-1040w.webp",
+              "width": 1040,
+              "height": 1040,
+              "format": "webp"
+            }
+          ]
+        }
       },
       {
         "key": "contact-member-4",
@@ -402,7 +938,42 @@
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "imageKey": "contactMember4",
-        "image": null
+        "image": {
+          "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-520w.webp",
+          "name": "DSC05465.webp",
+          "width": 520,
+          "height": 520,
+          "format": "webp",
+          "pixelRatio": 2,
+          "focusX": 50,
+          "focusY": 11.08,
+          "variants": [
+            {
+              "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-260w.webp",
+              "width": 260,
+              "height": 260,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-520w.webp",
+              "width": 520,
+              "height": 520,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-780w.webp",
+              "width": 780,
+              "height": 780,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-1040w.webp",
+              "width": 1040,
+              "height": 1040,
+              "format": "webp"
+            }
+          ]
+        }
       }
     ],
     "formTitle": {
