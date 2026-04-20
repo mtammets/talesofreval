@@ -162,16 +162,6 @@ function ImageFocusEditor({
             transformOrigin: focusPosition,
           }}
         />
-        {previewVariant === 'hero' ? (
-          <div className="image-focus-editor__hero-overlay" aria-hidden="true">
-            <div className="image-focus-editor__hero-vignette" />
-            <div className="image-focus-editor__hero-copy">
-              <span className="image-focus-editor__hero-line image-focus-editor__hero-line--wide" />
-              <span className="image-focus-editor__hero-line image-focus-editor__hero-line--medium" />
-              <span className="image-focus-editor__hero-line image-focus-editor__hero-line--short" />
-            </div>
-          </div>
-        ) : null}
       </div>
       {showZoomControls ? (
         <div className="image-focus-editor__zoom">

@@ -597,7 +597,49 @@
           "ee": "Sihtkoha halduse tugi kureeritud Tallinna programmidele, võõrustatud elamustele ja grupi-itineraridele."
         },
         "imageKey": "serviceDestination",
-        "image": null
+        "image": {
+          "src": "/uploads/site/1776687129687-bd458ef9-88cf-4266-8b3b-75465a5401a6-640w.webp",
+          "name": "Team-Visit-estonia.webp",
+          "width": 640,
+          "height": 520,
+          "format": "webp",
+          "pixelRatio": 2,
+          "focusX": 41.19,
+          "focusY": 50,
+          "zoom": 1,
+          "variants": [
+            {
+              "src": "/uploads/site/1776687129687-bd458ef9-88cf-4266-8b3b-75465a5401a6-320w.webp",
+              "width": 320,
+              "height": 260,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776687129687-bd458ef9-88cf-4266-8b3b-75465a5401a6-480w.webp",
+              "width": 480,
+              "height": 390,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776687129687-bd458ef9-88cf-4266-8b3b-75465a5401a6-640w.webp",
+              "width": 640,
+              "height": 520,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776687129687-bd458ef9-88cf-4266-8b3b-75465a5401a6-960w.webp",
+              "width": 960,
+              "height": 780,
+              "format": "webp"
+            },
+            {
+              "src": "/uploads/site/1776687129687-bd458ef9-88cf-4266-8b3b-75465a5401a6-1280w.webp",
+              "width": 1280,
+              "height": 1040,
+              "format": "webp"
+            }
+          ]
+        }
       },
       {
         "key": "wedding",

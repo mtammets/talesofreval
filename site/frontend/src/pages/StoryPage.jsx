@@ -264,6 +264,10 @@ function StoryPage({
     payload.append('description_estonian', editorTextToHtml(editorForm.description_estonian));
     payload.append('video', editorForm.video);
 
+    if (Number(editorForm.mediaType) === 0) {
+      payload.append('image', JSON.stringify(editorForm.image || null));
+    }
+
     if (singleImageFile) {
       payload.append('imageFile', singleImageFile);
     }
@@ -288,6 +292,24 @@ function StoryPage({
 
     if (!editorForm.description.trim() || !editorForm.description_estonian.trim()) {
       toast.error('Both English and Estonian descriptions are required.');
+      return;
+    }
+
+    if (
+      Number(editorForm.mediaType) === 0 &&
+      !singleImageFile &&
+      !resolveSiteImage(editorForm.image, '')
+    ) {
+      toast.error('Image is required for single-image entries.');
+      return;
+    }
+
+    if (
+      Number(editorForm.mediaType) === 1 &&
+      !galleryFiles.length &&
+      !(Array.isArray(editorForm.images) && editorForm.images.length)
+    ) {
+      toast.error('At least one image is required for gallery entries.');
       return;
     }
 
@@ -401,7 +423,12 @@ function StoryPage({
         HERO_IMAGE_PREPARATION_OPTIONS
       );
       setStoryHeroImageFile(preparedFile);
-      setStoryHeroDraftImage((current) => current || { focusX: 50, focusY: 50, zoom: 1 });
+      setStoryHeroDraftImage({
+        name: preparedFile.name,
+        focusX: 50,
+        focusY: 50,
+        zoom: 1,
+      });
     } catch (error) {
       toast.error(error?.message || 'Image optimization failed.');
     } finally {
@@ -515,7 +542,7 @@ function StoryPage({
       {adminToken && isHeroEditorOpen ? (
         <HeroImageEditorModal
           title="Change background image"
-          description="Upload a new background image for the story page."
+          description={null}
           currentImage={siteSettings.storyPage.image}
           currentImageUrl={resolveSiteImage(siteSettings.storyPage.image, siteSettings.storyPage.imageKey)}
           draftImage={storyHeroDraftImage}

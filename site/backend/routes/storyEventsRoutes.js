@@ -33,6 +33,56 @@ const uploadFields = upload.fields([
   { name: 'galleryFiles', maxCount: 8 },
 ]);
 
+const parseJsonField = (value, fallback) => {
+  if (!value) {
+    return fallback;
+  }
+
+  try {
+    return JSON.parse(value);
+  } catch (_error) {
+    return fallback;
+  }
+};
+
+const normalizeImageZoom = (value, fallback = 1) => {
+  const resolvedValue = Number(value);
+
+  if (!Number.isFinite(resolvedValue)) {
+    return fallback;
+  }
+
+  return Math.min(2.5, Math.max(1, Number(resolvedValue.toFixed(2))));
+};
+
+const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage = null) => {
+  const baseImage = processedImage || fallbackImage || null;
+
+  if (!baseImage) {
+    return null;
+  }
+
+  return {
+    ...baseImage,
+    focusX:
+      Number(providedImage?.focusX) >= 0
+        ? Number(providedImage.focusX)
+        : Number(fallbackImage?.focusX) >= 0
+          ? Number(fallbackImage.focusX)
+          : 50,
+    focusY:
+      Number(providedImage?.focusY) >= 0
+        ? Number(providedImage.focusY)
+        : Number(fallbackImage?.focusY) >= 0
+          ? Number(fallbackImage.focusY)
+          : 50,
+    zoom: normalizeImageZoom(
+      providedImage?.zoom,
+      normalizeImageZoom(fallbackImage?.zoom, 1)
+    ),
+  };
+};
+
 const normalizePayload = (body, existing = {}) => {
   const year = Number(body.year);
   const order = Number(body.order);
@@ -52,20 +102,27 @@ const normalizePayload = (body, existing = {}) => {
   };
 };
 
-const cleanMediaForType = async (event, files, existing = {}) => {
+const cleanMediaForType = async (event, files, existing = {}, body = {}) => {
   const next = { ...event };
   const singleFile = files?.imageFile?.[0];
   const galleryFiles = files?.galleryFiles || [];
+  const providedImage = parseJsonField(body.image, existing.image || next.image || null);
 
   if (next.mediaType === 0) {
-    next.image = singleFile
+    const processedImage = singleFile
       ? await processUploadedImage({
           file: singleFile,
           outputDir: storyUploadsDir,
           publicPathPrefix: '/uploads/story',
           preset: IMAGE_PRESETS.storyMedia,
         })
-      : existing.image || next.image || null;
+      : null;
+
+    next.image = mergeImageMetadata(
+      processedImage,
+      existing.image || next.image || null,
+      providedImage
+    );
     next.images = [];
     next.video = '';
   } else if (next.mediaType === 1) {
@@ -177,7 +234,9 @@ router.post(
         ...base,
         _id: crypto.randomUUID(),
       },
-      req.files
+      req.files,
+      {},
+      req.body
     );
 
     const saved = await writeStoryEvents(reindexYearEvents(events, nextEvent));
@@ -198,7 +257,12 @@ router.put(
       throw new Error('Story event not found.');
     }
 
-    const updated = await cleanMediaForType(normalizePayload(req.body, existing), req.files, existing);
+    const updated = await cleanMediaForType(
+      normalizePayload(req.body, existing),
+      req.files,
+      existing,
+      req.body
+    );
     updated._id = existing._id;
 
     const saved = await writeStoryEvents(reindexYearEvents(events, updated, existing._id));

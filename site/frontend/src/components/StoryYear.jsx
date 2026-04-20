@@ -2,6 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { FaRegCircle, FaCircle } from "react-icons/fa";
 import { ArrowLeft } from '../icons/ArrowLeft.tsx';
 import { ArrowRight } from '../icons/ArrowRight.tsx';
+import {
+  getImageObjectPosition,
+  getImageZoom,
+  resolveSiteImageMedia,
+} from '../content/siteSettingsDefaults';
+
+const STORY_MEDIA_SIZES = '(max-width: 768px) 100vw, 55vw';
 
 function StoryYear({
   events,
@@ -332,6 +339,12 @@ function StoryYear({
     const { isTarget = false, isMeasure = false, slideStyle, layerKey, hideControls = false } = options;
     const { mediaType, image, images, video } = event;
     const { title, description } = getEventCopy(event);
+    const singleImageMedia =
+      mediaType === 0 && image ? resolveSiteImageMedia(image, '', STORY_MEDIA_SIZES) : null;
+    const singleImageSrc = singleImageMedia?.src || image?.src || '';
+    const singleImagePosition =
+      singleImageMedia?.objectPosition || getImageObjectPosition(image);
+    const singleImageZoom = singleImageMedia?.zoom || getImageZoom(image);
 
     return (
       <div
@@ -340,7 +353,22 @@ function StoryYear({
         style={slideStyle}
         aria-hidden={isMeasure ? 'true' : undefined}
       >
-        <div className="year-media" style={mediaType === 0 ? { background: `url(${image.src})` } : {}}>
+        <div className="year-media">
+          {mediaType === 0 && singleImageSrc ? (
+            <img
+              className="year-media__single"
+              src={singleImageSrc}
+              srcSet={singleImageMedia?.srcSet || undefined}
+              sizes={singleImageMedia?.sizes || undefined}
+              alt=""
+              aria-hidden="true"
+              style={{
+                objectPosition: singleImagePosition,
+                transform: `scale(${singleImageZoom})`,
+                transformOrigin: singleImagePosition,
+              }}
+            />
+          ) : null}
           {mediaType === 1 && !(isTablet && containsVerticalImage(images)) ? (
             <div className="year-justified-gallery">
               {images.map((img, i) => (

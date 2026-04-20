@@ -14,7 +14,6 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [eventType, setEventType] = useState('');
-    const [isHome, setIsHome] = useState(false);
 
     const dispatch = useDispatch();
     const { isLoading } = useSelector(state => state.email);
@@ -40,33 +39,27 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
     }, [dispatch]);
 
     useEffect(() => {
-        const path = location.pathname;
-        if (path === '/') {
-            setIsHome(true);
-        } else {
-            setIsHome(false);
-            switch (path) {
-                case '/service/team':
-                    setEventType('Team Events');
-                    break;
-                case '/service/quick':
-                    setEventType('WE ONLY HAVE 30 MINUTES!');
-                    break;
-                case '/service/destination':
-                    setEventType('Destination Management');
-                    break;
-                case '/service/wedding':
-                    setEventType('Fantasy Weddings');
-                    break;
-                case '/service/private':
-                    setEventType('Private Events');
-                    break;
-                default:
-                    setEventType('');
-                    break;
-            }
+        switch (location.pathname) {
+            case '/service/team':
+                setEventType('Team Events');
+                break;
+            case '/service/quick':
+                setEventType('WE ONLY HAVE 30 MINUTES!');
+                break;
+            case '/service/destination':
+                setEventType('Destination Management');
+                break;
+            case '/service/wedding':
+                setEventType('Fantasy Weddings');
+                break;
+            case '/service/private':
+                setEventType('Private Events');
+                break;
+            default:
+                setEventType('');
+                break;
         }
-    }, [location]);
+    }, [location.pathname]);
 
     useEffect(() => {
         if (!showBookNow) {
@@ -169,20 +162,6 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
                                 <label htmlFor="message">{writeSomethingText}</label>
                                 <textarea id="message" name="message" value={message} onChange={(e) => setMessage(e.target.value)} />
                             </div>
-                            {isHome &&
-                            <div className="book-now-field">
-                                <label htmlFor="service-type">Service*</label>
-                                <select id="service-type" name='service-type' value={eventType} onChange={(e) => setEventType(e.target.value)}>
-                                    <option value="">Select</option>
-                                    <option value="Team events">Team Events</option>
-                                    <option value="Private events">Private Events</option>
-                                    <option value="WE ONLY HAVE 30 MINUTES!">We only have 30 minutes!</option>
-                                    <option value="Destination Management">Destination Management</option>
-                                    <option value="Fantasy Weddings">Fantasy Weddings</option>
-                                    
-                                </select>
-                            </div>
-                            }
                         </>
                         :
                         <>

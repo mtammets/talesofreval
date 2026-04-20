@@ -508,7 +508,12 @@ function ServicePage({
         HERO_IMAGE_PREPARATION_OPTIONS
       );
       setServiceHeroImageFile(preparedFile);
-      setServiceHeroDraftImage((current) => current || { focusX: 50, focusY: 50, zoom: 1 });
+      setServiceHeroDraftImage({
+        name: preparedFile.name,
+        focusX: 50,
+        focusY: 50,
+        zoom: 1,
+      });
     } catch (error) {
       toast.error(error?.message || 'Image optimization failed.');
     } finally {

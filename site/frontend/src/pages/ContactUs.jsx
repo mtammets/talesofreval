@@ -283,7 +283,12 @@ function ContactUs({
         HERO_IMAGE_PREPARATION_OPTIONS
       );
       setContactHeroImageFile(preparedFile);
-      setContactHeroDraftImage((current) => current || { focusX: 50, focusY: 50, zoom: 1 });
+      setContactHeroDraftImage({
+        name: preparedFile.name,
+        focusX: 50,
+        focusY: 50,
+        zoom: 1,
+      });
     } catch (error) {
       toast.error(error?.message || 'Image optimization failed.');
     } finally {
@@ -437,7 +442,7 @@ function ContactUs({
       {adminToken && isHeroEditorOpen ? (
         <HeroImageEditorModal
           title="Change background image"
-          description="Upload a new background image for the contact page."
+          description={null}
           currentImage={siteSettings.contactPage.image}
           currentImageUrl={resolveSiteImage(siteSettings.contactPage.image, siteSettings.contactPage.imageKey)}
           draftImage={contactHeroDraftImage}

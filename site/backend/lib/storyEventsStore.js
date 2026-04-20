@@ -3,6 +3,16 @@ const { runtimeStoryEventsFile } = require('./storagePaths');
 
 const DATA_FILE = runtimeStoryEventsFile;
 
+const normalizeImageZoom = (value, fallback = 1) => {
+  const resolvedValue = Number(value);
+
+  if (!Number.isFinite(resolvedValue)) {
+    return fallback;
+  }
+
+  return Math.min(2.5, Math.max(1, Number(resolvedValue.toFixed(2))));
+};
+
 const imageVariantShape = (variant = {}) => ({
   src: variant.src || '',
   width: Number(variant.width) || 1200,
@@ -35,6 +45,7 @@ const defaultImageShape = (image = {}) => ({
         (variants.some((variant) => variant.width >= 2400) ? 2 : 1),
       focusX: Number(image.focusX) >= 0 ? Number(image.focusX) : 50,
       focusY: Number(image.focusY) >= 0 ? Number(image.focusY) : 50,
+      zoom: normalizeImageZoom(image.zoom, 1),
       variants,
     };
   })(),

@@ -1,6 +1,9 @@
 import ImageFocusEditor from './ImageFocusEditor';
 import AdminModalShell from './AdminModalShell';
 
+const cloneValue = (value) =>
+  value === null || value === undefined ? value : JSON.parse(JSON.stringify(value));
+
 function HeroImageEditorModal({
   title = 'Change background image',
   description = 'Upload a new background image.',
@@ -18,6 +21,22 @@ function HeroImageEditorModal({
   focusAspectRatio = '1440 / 700',
 }) {
   const activeImageUrl = previewUrl || currentImageUrl || currentImage?.src || '';
+  const filePickerStatus = isPreparingImage
+    ? 'Optimizing selected image in the browser…'
+    : selectedFile
+      ? '1 new image added'
+      : '';
+  const activeImageName =
+    selectedFile?.name ||
+    draftImage?.name ||
+    currentImage?.name ||
+    '';
+  const hasEditableImage = Boolean(activeImageUrl);
+
+  const restoreCurrentImage = () => {
+    onSelectFile?.(null);
+    onChangeImage?.(cloneValue(currentImage || null));
+  };
 
   return (
     <AdminModalShell
@@ -28,42 +47,59 @@ function HeroImageEditorModal({
     >
         <form onSubmit={onSave} className="story-admin-form">
           <label>
-            Background image
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(event) => {
-                onSelectFile?.(event.target.files?.[0] || null);
-                event.target.value = '';
-              }}
-            />
-            {currentImage?.src ? (
-              <span className="story-admin-help">Current: {currentImage.name || currentImage.src}</span>
-            ) : null}
+            <span className="story-admin-file-picker">
+              <input
+                className="story-admin-file-picker__input"
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  onSelectFile?.(event.target.files?.[0] || null);
+                  event.target.value = '';
+                }}
+              />
+              <span className="story-admin-file-picker__button">Choose file</span>
+              {filePickerStatus ? (
+                <span className="story-admin-file-picker__status">{filePickerStatus}</span>
+              ) : null}
+            </span>
           </label>
 
-          {isPreparingImage ? (
-            <p className="story-admin-help">Optimizing selected image in the browser…</p>
-          ) : null}
-
-          {selectedFile ? (
-            <p className="story-admin-help">Selected image: {selectedFile.name}</p>
-          ) : null}
-
-          <ImageFocusEditor
-            image={draftImage || currentImage}
-            imageUrl={activeImageUrl}
-            onChange={(focus) =>
-              onChangeImage?.((current) => ({
-                ...(current || currentImage || {}),
-                ...focus,
-              }))
-            }
-            aspectRatio={focusAspectRatio}
-            label="Hero preview"
-            helpText="This frame matches the live hero. Drag the photo and use zoom if needed until the visible crop looks right."
-            previewVariant="hero"
-          />
+          <div className="hero-editor-gallery hero-editor-gallery--single">
+            <div className="hero-editor-gallery__grid">
+              <div className="hero-editor-gallery__card">
+                <ImageFocusEditor
+                  image={draftImage || currentImage}
+                  imageUrl={activeImageUrl}
+                  onChange={(focus) =>
+                    onChangeImage?.((current) => ({
+                      ...(current || currentImage || {}),
+                      ...focus,
+                    }))
+                  }
+                  aspectRatio={focusAspectRatio}
+                  label={null}
+                  helpText={null}
+                  previewVariant="hero"
+                />
+                <div
+                  className={`hero-editor-gallery__meta${
+                    activeImageName ? '' : ' hero-editor-gallery__meta--actions-only'
+                  }`}
+                >
+                  {activeImageName ? <span>{activeImageName}</span> : null}
+                  {selectedFile ? (
+                    <button
+                      type="button"
+                      className="story-admin-button story-admin-button--secondary"
+                      onClick={restoreCurrentImage}
+                    >
+                      Use current
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="story-admin-actions">
             <button
@@ -72,7 +108,7 @@ function HeroImageEditorModal({
               disabled={
                 isSaving ||
                 isPreparingImage ||
-                (!selectedFile && !currentImage?.src)
+                !hasEditableImage
               }
             >
               {isSaving ? 'Saving…' : 'Save changes'}
