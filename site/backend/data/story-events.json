@@ -156,7 +156,12 @@
             "height": 3106,
             "format": "webp"
           }
-        ]
+        ],
+        "rotation": -3,
+        "layoutX": 19,
+        "layoutY": 10.9,
+        "layoutWidth": 39.01,
+        "zIndex": 4
       },
       {
         "src": "/uploads/story/1776758279676-09d76b0b-0a7b-4698-88c5-0365b1ff4a63-945w.webp",
@@ -187,7 +192,12 @@
             "height": 1890,
             "format": "webp"
           }
-        ]
+        ],
+        "rotation": 7,
+        "layoutX": 50.09,
+        "layoutY": 30.45,
+        "layoutWidth": 26.24,
+        "zIndex": 5
       }
     ],
     "video": "",
@@ -1004,7 +1014,11 @@
             "height": 1601,
             "format": "webp"
           }
-        ]
+        ],
+        "rotation": -5,
+        "layoutX": 37.41,
+        "layoutY": 42.67,
+        "layoutWidth": 52.65
       }
     ],
     "video": "",
