@@ -175,24 +175,6 @@ function StoryFeedEditorModal({
     }));
   };
 
-  const moveGalleryImageToSlot = (fromIndex, targetSlot) => {
-    setForm((current) => {
-      const images = [...(current.images || [])];
-      const [movedImage] = images.splice(fromIndex, 1);
-
-      if (!movedImage) {
-        return current;
-      }
-
-      images.splice(Math.min(targetSlot, images.length), 0, movedImage);
-
-      return {
-        ...current,
-        images,
-      };
-    });
-  };
-
   const restoreCurrentSingleImage = () => {
     setSingleImageFile(null);
     setForm((current) => ({
@@ -283,10 +265,6 @@ function StoryFeedEditorModal({
       return {
         src,
         image,
-        name:
-          image?.name ||
-          (Number.isInteger(uploadIndex) ? galleryFiles[uploadIndex]?.name : '') ||
-          `Image ${index + 1}`,
       };
     })
     .filter((item) => item.src);
@@ -496,47 +474,16 @@ function StoryFeedEditorModal({
                           aspectRatio={STORY_SINGLE_IMAGE_RATIO}
                           label={null}
                           helpText={null}
-                          allowZoom
                         />
-                        <div className="hero-editor-gallery__meta">
-                          <span>{item.name}</span>
-                          <div className="story-feed-editor__gallery-actions">
-                            <button
-                              type="button"
-                              className="story-admin-button story-admin-button--secondary story-feed-editor__layer-button"
-                              onClick={() => moveGalleryImageToSlot(index, 0)}
-                              disabled={
-                                index === 0 ||
-                                isSaving ||
-                                isDeleting ||
-                                isPreparingGallery
-                              }
-                            >
-                              Send back
-                            </button>
-                            <button
-                              type="button"
-                              className="story-admin-button story-admin-button--secondary story-feed-editor__layer-button"
-                              onClick={() => moveGalleryImageToSlot(index, 1)}
-                              disabled={
-                                index === 1 ||
-                                galleryPreviewImages.length < 2 ||
-                                isSaving ||
-                                isDeleting ||
-                                isPreparingGallery
-                              }
-                            >
-                              Bring front
-                            </button>
-                            <button
-                              type="button"
-                              className="story-admin-button story-admin-button--danger story-feed-editor__remove-image"
-                              onClick={() => removeGalleryImage(index)}
-                              disabled={isSaving || isDeleting || isPreparingGallery}
-                            >
-                              Remove
-                            </button>
-                          </div>
+                        <div className="story-feed-editor__gallery-actions">
+                          <button
+                            type="button"
+                            className="story-admin-button story-admin-button--danger story-feed-editor__remove-image"
+                            onClick={() => removeGalleryImage(index)}
+                            disabled={isSaving || isDeleting || isPreparingGallery}
+                          >
+                            Remove
+                          </button>
                         </div>
                       </div>
                     ))}

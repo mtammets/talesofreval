@@ -6879,17 +6879,15 @@ button.year-event-switch.disabled{
 
 .story-feed-editor__gallery-actions{
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 6px;
+  justify-content: stretch;
   min-width: 0;
 }
 
-.story-feed-editor__layer-button,
 .story-feed-editor__remove-image{
-  min-height: 34px;
-  padding: 8px 10px;
-  font-size: 11px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  font-size: 12px;
 }
 
 .story-feed-editor__gallery-item,
