@@ -1,4 +1,7 @@
-import { getImageObjectPosition } from '../content/siteSettingsDefaults';
+import {
+  getImageObjectPosition,
+  getImageZoom,
+} from '../content/siteSettingsDefaults';
 
 function ServicePageCard({
   card,
@@ -9,6 +12,10 @@ function ServicePageCard({
 }) {
   const isFirst = index === 0;
   const layoutClassName = card.layout === 'image-right' ? 'even' : 'odd';
+  const imageMedia = card.imageMedia || null;
+  const imageSrc = imageMedia?.src || card.imageSrc || '';
+  const imagePosition = imageMedia?.objectPosition || getImageObjectPosition(card.image);
+  const imageZoom = imageMedia?.zoom || getImageZoom(card.image);
 
   return (
     <div className="service-page-card-wrapper">
@@ -28,11 +35,19 @@ function ServicePageCard({
         }`}
       >
         <div className="service-card-image">
-          <img
-            src={card.imageSrc}
-            alt={card.title}
-            style={{ objectPosition: getImageObjectPosition(card.image) }}
-          />
+          {imageSrc ? (
+            <img
+              src={imageSrc}
+              srcSet={imageMedia?.srcSet || undefined}
+              sizes={imageMedia?.sizes || undefined}
+              alt={card.title}
+              style={{
+                objectPosition: imagePosition,
+                transform: `scale(${imageZoom})`,
+                transformOrigin: imagePosition,
+              }}
+            />
+          ) : null}
         </div>
         <div className="service-card-info">
           <h5 className="padding-20-bottom">{card.title}</h5>

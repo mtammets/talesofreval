@@ -81,6 +81,64 @@ export const editorTextToHtml = (text = '') => {
     .join('');
 };
 
+const getYouTubeStartSeconds = (url) => {
+  const start = url.searchParams.get('start');
+
+  if (start && /^\d+$/.test(start)) {
+    return start;
+  }
+
+  const time = url.searchParams.get('t');
+
+  if (time && /^\d+$/.test(time)) {
+    return time;
+  }
+
+  return '';
+};
+
+const buildYouTubeEmbedUrl = (videoId, startSeconds = '') =>
+  videoId
+    ? `https://www.youtube.com/embed/${videoId}${startSeconds ? `?start=${startSeconds}` : ''}`
+    : '';
+
+export const normalizeVideoEmbedUrl = (url = '') => {
+  const trimmed = url.trim();
+
+  if (!trimmed) {
+    return '';
+  }
+
+  try {
+    const parsedUrl = new URL(trimmed);
+    const hostname = parsedUrl.hostname.replace(/^www\./, '').replace(/^m\./, '');
+    const pathParts = parsedUrl.pathname.split('/').filter(Boolean);
+    const startSeconds = getYouTubeStartSeconds(parsedUrl);
+
+    if (hostname === 'youtube.com' || hostname === 'youtube-nocookie.com') {
+      if (pathParts[0] === 'embed' && pathParts[1]) {
+        return buildYouTubeEmbedUrl(pathParts[1], startSeconds);
+      }
+
+      if (pathParts[0] === 'watch') {
+        return buildYouTubeEmbedUrl(parsedUrl.searchParams.get('v'), startSeconds) || trimmed;
+      }
+
+      if (pathParts[0] === 'shorts' && pathParts[1]) {
+        return buildYouTubeEmbedUrl(pathParts[1], startSeconds);
+      }
+    }
+
+    if (hostname === 'youtu.be' && pathParts[0]) {
+      return buildYouTubeEmbedUrl(pathParts[0], startSeconds);
+    }
+  } catch (_error) {
+    return trimmed;
+  }
+
+  return trimmed;
+};
+
 export const createEmptyStoryEventForm = (year = new Date().getFullYear()) => ({
   _id: '',
   year,

@@ -34,6 +34,7 @@ import {
 import dmc_file from '../img/dmc_file.pdf';
 import {
   HERO_IMAGE_PREPARATION_OPTIONS,
+  SERVICE_SECTION_IMAGE_PREPARATION_OPTIONS,
   prepareImageFileForUpload,
 } from '../utils/prepareImageFilesForUpload';
 
@@ -55,6 +56,8 @@ const SERVICE_PAGE_CARD_IMAGE_KEYS = {
 };
 
 const DEFAULT_SECTION_LAYOUTS = ['image-left', 'image-right', 'image-left'];
+const SERVICE_SECTION_MEDIA_SIZES =
+  '(max-width: 768px) 100vw, (max-width: 1100px) 50vw, 550px';
 
 const mergeLocalizedValue = (base = createLocalizedValue(), override = {}) => ({
   en: override?.en || base?.en || '',
@@ -231,6 +234,7 @@ function ServicePage({
   const [pendingDeleteIndex, setPendingDeleteIndex] = useState(-1);
   const [sectionForm, setSectionForm] = useState(createEmptyServiceSection(serviceType));
   const [sectionImageFile, setSectionImageFile] = useState(null);
+  const [isPreparingSectionImage, setIsPreparingSectionImage] = useState(false);
   const [isSavingSection, setIsSavingSection] = useState(false);
 
   const servicePageContent = useMemo(
@@ -310,6 +314,7 @@ function ServicePage({
     setEditingSectionIndex(-1);
     setSectionForm(createEmptyServiceSection(serviceType));
     setSectionImageFile(null);
+    setIsPreparingSectionImage(false);
   };
 
   const closeDeleteDialog = () => {
@@ -521,6 +526,42 @@ function ServicePage({
     }
   };
 
+  const handleSectionImageFileSelected = async (file) => {
+    if (!file) {
+      setSectionImageFile(null);
+      return;
+    }
+
+    setIsPreparingSectionImage(true);
+
+    try {
+      const preparedFile = await prepareImageFileForUpload(
+        file,
+        SERVICE_SECTION_IMAGE_PREPARATION_OPTIONS
+      );
+
+      if (!preparedFile) {
+        return;
+      }
+
+      setSectionImageFile(preparedFile);
+      setSectionForm((current) => ({
+        ...current,
+        image: {
+          ...(current.image || {}),
+          name: preparedFile.name,
+          focusX: 50,
+          focusY: 50,
+          zoom: 1,
+        },
+      }));
+    } catch (error) {
+      toast.error(error?.message || 'Image optimization failed.');
+    } finally {
+      setIsPreparingSectionImage(false);
+    }
+  };
+
   const pageTitle = getLocalizedSiteText(serviceContentForm.title, language, service?.title || '');
   const intro = getLocalizedSiteText(serviceContentForm.intro, language, service?.intro || '');
   const review = getLocalizedSiteText(
@@ -564,6 +605,11 @@ function ServicePage({
     title: getLocalizedSiteText(card.title, language, ''),
     body: getLocalizedSiteText(card.body, language, ''),
     image: card.image,
+    imageMedia: resolveSiteImageMedia(
+      card.image,
+      card.imageKey,
+      SERVICE_SECTION_MEDIA_SIZES
+    ),
     imageSrc: resolveSiteImage(card.image, card.imageKey),
     layout: card.layout,
   }));
@@ -747,10 +793,24 @@ function ServicePage({
           section={sectionForm}
           setSection={setSectionForm}
           imageFile={sectionImageFile}
-          setImageFile={setSectionImageFile}
+          onSelectImageFile={handleSectionImageFileSelected}
+          currentImage={
+            sectionEditorMode === 'edit' && editingSectionIndex >= 0
+              ? serviceContentForm.cards[editingSectionIndex]?.image || null
+              : null
+          }
+          currentImageUrl={
+            sectionEditorMode === 'edit' && editingSectionIndex >= 0
+              ? resolveSiteImage(
+                  serviceContentForm.cards[editingSectionIndex]?.image,
+                  serviceContentForm.cards[editingSectionIndex]?.imageKey
+                )
+              : ''
+          }
           onSave={saveSection}
           onCancel={closeSectionEditor}
           isSaving={isSavingSection}
+          isPreparingImage={isPreparingSectionImage}
         />
       ) : null}
       <ConfirmDialog

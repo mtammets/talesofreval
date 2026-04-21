@@ -55,6 +55,11 @@ const normalizeImageZoom = (value, fallback = 1) => {
   return Math.min(2.5, Math.max(1, Number(resolvedValue.toFixed(2))));
 };
 
+const stripTransientImageFields = (image = {}) => {
+  const { uploadIndex, previewUrl, ...rest } = image;
+  return rest;
+};
+
 const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage = null) => {
   const baseImage = processedImage || fallbackImage || null;
 
@@ -62,8 +67,10 @@ const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage 
     return null;
   }
 
+  const cleanBaseImage = stripTransientImageFields(baseImage);
+
   return {
-    ...baseImage,
+    ...cleanBaseImage,
     focusX:
       Number(providedImage?.focusX) >= 0
         ? Number(providedImage.focusX)
@@ -107,6 +114,53 @@ const cleanMediaForType = async (event, files, existing = {}, body = {}) => {
   const singleFile = files?.imageFile?.[0];
   const galleryFiles = files?.galleryFiles || [];
   const providedImage = parseJsonField(body.image, existing.image || next.image || null);
+  const providedImages = parseJsonField(body.images, existing.images || next.images || []);
+  const providedGalleryImages = Array.isArray(providedImages) ? providedImages : [];
+  const findExistingGalleryImage = (image, index) => {
+    if (image?.src) {
+      const bySrc = existing.images?.find((existingImage) => existingImage?.src === image.src);
+
+      if (bySrc) {
+        return bySrc;
+      }
+    }
+
+    return existing.images?.[index] || next.images?.[index] || image || null;
+  };
+  const resolveGalleryImage = async (image, index, fallbackFileIndexRef) => {
+    if (image?.src) {
+      return mergeImageMetadata(
+        null,
+        findExistingGalleryImage(image, index),
+        image
+      );
+    }
+
+    const requestedUploadIndex = Number(image?.uploadIndex);
+    const uploadIndex = Number.isInteger(requestedUploadIndex)
+      ? requestedUploadIndex
+      : fallbackFileIndexRef.current;
+    const file = galleryFiles[uploadIndex];
+
+    if (!file) {
+      return null;
+    }
+
+    if (!Number.isInteger(requestedUploadIndex)) {
+      fallbackFileIndexRef.current += 1;
+    }
+
+    return mergeImageMetadata(
+      await processUploadedImage({
+        file,
+        outputDir: storyUploadsDir,
+        publicPathPrefix: '/uploads/story',
+        preset: IMAGE_PRESETS.storyMedia,
+      }),
+      null,
+      image
+    );
+  };
 
   if (next.mediaType === 0) {
     const processedImage = singleFile
@@ -126,18 +180,32 @@ const cleanMediaForType = async (event, files, existing = {}, body = {}) => {
     next.images = [];
     next.video = '';
   } else if (next.mediaType === 1) {
-    next.images = galleryFiles.length
-      ? await Promise.all(
-          galleryFiles.map((file) =>
-            processUploadedImage({
+    if (providedGalleryImages.length) {
+      const galleryFileIndexRef = { current: 0 };
+      next.images = (await Promise.all(
+        providedGalleryImages.map((image, index) =>
+          resolveGalleryImage(image, index, galleryFileIndexRef)
+        )
+      )).filter(Boolean);
+    } else if (galleryFiles.length) {
+      next.images = await Promise.all(
+        galleryFiles.map(async (file, index) =>
+          mergeImageMetadata(
+            await processUploadedImage({
               file,
               outputDir: storyUploadsDir,
               publicPathPrefix: '/uploads/story',
               preset: IMAGE_PRESETS.storyMedia,
-            })
+            }),
+            null,
+            providedGalleryImages[index] || null
           )
         )
-      : existing.images || next.images || [];
+      );
+    } else {
+      next.images = existing.images || next.images || [];
+    }
+
     next.image = null;
     next.video = '';
   } else if (next.mediaType === 2) {

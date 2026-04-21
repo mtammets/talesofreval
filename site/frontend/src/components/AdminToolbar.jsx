@@ -20,7 +20,7 @@ function AdminToolbar({
     await storyAdminService.logout();
     setAdminToken('');
     setEditControlsVisible?.(false);
-    toast.success('Admin mode disabled.');
+    toast.success('Editing is off.');
     navigate('/', { replace: true });
   };
 

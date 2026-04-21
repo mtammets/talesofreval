@@ -10,14 +10,31 @@
       "width": 1200,
       "height": 760,
       "format": "",
-      "pixelRatio": 1
+      "pixelRatio": 1,
+      "focusX": 50,
+      "focusY": 50,
+      "zoom": 1,
+      "variants": []
     },
     "images": [],
     "video": "",
     "title": "April",
     "title_estonian": "Aprill",
-    "description": "<p>The very first Tales of Reval walking tour. To immortalize this moment, the following poem can be found on our Facebook page:<br />Hear all ye travelers standing by Willhelm Weltwanderer am I! To the daily Merchants Walk, we’ll go! where the ancient tales of Reval I shall show. Grand stories and legends of old about our riches shall be told. So come and spare an hour accompanying me grand history, legends, and stories you shall see!</p>",
+    "description": "<p>The very first Tales of Reval walking tour. To immortalize this moment, the following poem can be found on our Facebook page:</p><p>Hear all ye travelers standing by <br />Willhelm Weltwanderer am I! <br />To the daily Merchants Walk, we’ll go! <br />where the ancient tales of Reval I shall show. <br />Grand stories and legends of old <br />about our riches shall be told. <br />So come and spare an hour accompanying me <br />grand history, legends, and stories you shall see!</p>",
     "description_estonian": "<p>The very first Tales of Reval walking tour. To immortalize this moment, the following poem can be found on our Facebook page:<br />Hear all ye travelers standing by Willhelm Weltwanderer am I! To the daily Merchants Walk, we’ll go! where the ancient tales of Reval I shall show. Grand stories and legends of old about our riches shall be told. So come and spare an hour accompanying me grand history, legends, and stories you shall see!</p>"
+  },
+  {
+    "_id": "966a22ee-cf74-4c52-9452-e763dda487df",
+    "year": 2018,
+    "order": 2,
+    "mediaType": 2,
+    "image": null,
+    "images": [],
+    "video": "https://www.youtube.com/watch?v=uMjk83r54Vg",
+    "title": "May",
+    "title_estonian": "Mai",
+    "description": "<p>Our first video project is ready - &quot;How Reval, medieval Tallinn, gets its name&quot;.</p><p>Directed by: David and Nathan Popa</p>",
+    "description_estonian": "<p>Meie esimene videoprojekt on valmis – „Kuidas Reval ehk keskaegne Tallinn oma nime sai“.</p><p>Režissöörid: David ja Nathan Popa</p>"
   },
   {
     "_id": "fallback-event-2019-1",
@@ -30,14 +47,18 @@
       "width": 1200,
       "height": 760,
       "format": "",
-      "pixelRatio": 1
+      "pixelRatio": 1,
+      "focusX": 50,
+      "focusY": 50,
+      "zoom": 1,
+      "variants": []
     },
     "images": [],
     "video": "",
-    "title": "The first live city stories",
-    "title_estonian": "Esimesed elavad linnalood",
-    "description": "<p>Tales of Reval began shaping immersive medieval storytelling walks in Tallinn, combining humour, characters and local history into a format that felt personal and theatrical.</p>",
-    "description_estonian": "<p>Tales of Reval alustas kaasavate keskaegsete jutustustuurede kujundamist Tallinnas, sidudes huumori, tegelased ja kohaliku ajaloo isiklikuks ning teatraalseks kogemuseks.</p>"
+    "title": "May",
+    "title_estonian": "Mai",
+    "description": "<p>We were visited by a television company from Northern Ireland called RTÉ. They were doing a travel series called “All Hands on Deck” with Ireland’s favorite hotelier Francis Brennan.</p><p>Master Gregorius answered the call to welcome RTÉ’s crew in Tallinn and immerse them into the medieval times.</p>",
+    "description_estonian": "<p>Meile tuli külla Põhja-Iirimaa telekanal RTÉ. Nad tegid reisisaadet pealkirjaga „All Hands on Deck“, mille saatejuhiks oli Iirimaa armastatuim hotellipidaja Francis Brennan.</p><p>Meister Gregorius võttis nad Tallinnas vastu ning viis RTÉ võttegrupi keskaega.</p>"
   },
   {
     "_id": "fallback-event-2019-2",
@@ -50,14 +71,18 @@
       "width": 1200,
       "height": 760,
       "format": "",
-      "pixelRatio": 1
+      "pixelRatio": 1,
+      "focusX": 50,
+      "focusY": 50,
+      "zoom": 1,
+      "variants": []
     },
     "images": [],
     "video": "",
-    "title": "Performers joined the format",
-    "title_estonian": "Esinejad liitusid formaadiga",
-    "description": "<p>The concept expanded from guided walks into richer live experiences, where hosts and performers helped bring medieval Tallinn to life for guests and private groups.</p>",
-    "description_estonian": "<p>Kontseptsioon laienes giidituuridelt rikkalikumateks live-elamusteks, kus hostid ja esinejad aitasid keskaegse Tallinna kulaliste ja privaatgruppide jaoks ellu aratada.</p>"
+    "title": "June",
+    "title_estonian": "Juuni",
+    "description": "<p>1st place on TripAdvisor.</p><p>Just a bit under a year full of countless lessons, improvement, and most of all fun, out of 121 excursions hosted on the platform we were honored with the #1 position by all the lovely guests of Tallinn.</p>",
+    "description_estonian": "<p>1. koht TripAdvisoris.</p><p>Veidi vähem kui aasta on olnud täis lugematuid õppetunde, arengut ja ennekõike rõõmu. 121 platvormil pakutud ekskursiooni seast on Tallinna armsad külalised tõstnud meid 1. kohale.</p>"
   },
   {
     "_id": "fallback-event-2019-3",
@@ -70,34 +95,388 @@
       "width": 1200,
       "height": 760,
       "format": "",
-      "pixelRatio": 1
+      "pixelRatio": 1,
+      "focusX": 50,
+      "focusY": 50,
+      "zoom": 1,
+      "variants": []
     },
     "images": [],
     "video": "",
-    "title": "A recognisable visual world emerged",
-    "title_estonian": "Tekkis ara tuntav visuaalne maailm",
-    "description": "<p>By the end of the year, the project had a stronger visual language, clearer service structure and a more distinctive approach to hosted medieval experiences.</p>",
-    "description_estonian": "<p>Aasta lopuks oli projektil tugevam visuaalne keel, selgem teenuseloogika ja eristuvam lahenemine korraldatud keskaegsetele elamustele.</p>"
+    "title": "November",
+    "title_estonian": "November",
+    "description": "<p>We got our very first mention in a travel blog post written by Buddy Baum <a href=\"https://www.trailingaway.com/free-walking-tour-of-tallinn/\" target=\"_blank\" rel=\"noreferrer noopener\">here</a> (photos are courtesy of Trailing Away).</p><p>If the 15th century is considered the peak of medieval Tallinn, then 2019 could easily be considered the peak of Tales of Reval. At that time, we were doing 4 shows a day, every single day, all year round, with 7 guides on our team.</p><p>One of them, Master Sebastian, caught the attention of the lovely couple, who at the end of the tour decided to dedicate a generous portion of their beautifully written blog post to him.</p>",
+    "description_estonian": "<p>Saime oma kõige esimese mainimise Buddy Baumi kirjutatud reisiblogi postituses <a href=\"https://www.trailingaway.com/free-walking-tour-of-tallinn/\" target=\"_blank\" rel=\"noreferrer noopener\">siin</a> (fotod on Trailing Away loal).</p><p>Kui 15. sajandit peetakse keskaegse Tallinna hiilgeajaks, siis 2019. aastat võib kergesti pidada Tales of Revali kõrgajaks. Sel ajal andsime aasta ringi iga päev 4 etendust ning meie meeskonda kuulus 7 giidi.</p><p>Üks neist, meister Sebastian, pälvis selle toreda paari tähelepanu, kes otsustas tuuri lõpus pühendada talle märkimisväärse osa oma kaunilt kirjutatud blogipostitusest.</p>"
   },
   {
     "_id": "81f6ddb2-072f-4e1a-bf2a-10a53a853cb9",
     "year": 2020,
     "order": 1,
-    "mediaType": 0,
-    "image": {
-      "src": "/uploads/story/1776230668296-0b2c72c9-d077-4282-b20d-9961d9289357.png",
-      "name": "2020.png",
-      "width": 1200,
-      "height": 760,
-      "format": "",
-      "pixelRatio": 1
-    },
-    "images": [],
+    "mediaType": 1,
+    "image": null,
+    "images": [
+      {
+        "src": "/uploads/story/1776758279676-82279aa3-3746-4a30-a6c2-11b833498bc4-1200w.webp",
+        "name": "6) {Taago_Heinmaa}-27.webp",
+        "width": 1200,
+        "height": 1553,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776758279676-82279aa3-3746-4a30-a6c2-11b833498bc4-600w.webp",
+            "width": 600,
+            "height": 776,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758279676-82279aa3-3746-4a30-a6c2-11b833498bc4-900w.webp",
+            "width": 900,
+            "height": 1165,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758279676-82279aa3-3746-4a30-a6c2-11b833498bc4-1200w.webp",
+            "width": 1200,
+            "height": 1553,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758279676-82279aa3-3746-4a30-a6c2-11b833498bc4-1800w.webp",
+            "width": 1800,
+            "height": 2329,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758279676-82279aa3-3746-4a30-a6c2-11b833498bc4-2400w.webp",
+            "width": 2400,
+            "height": 3106,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/story/1776758279676-09d76b0b-0a7b-4698-88c5-0365b1ff4a63-945w.webp",
+        "name": "6-2) 82883907_838959399908867_8140975621825101824_n.webp",
+        "width": 945,
+        "height": 1890,
+        "format": "webp",
+        "pixelRatio": 1,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776758279676-09d76b0b-0a7b-4698-88c5-0365b1ff4a63-600w.webp",
+            "width": 600,
+            "height": 1200,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758279676-09d76b0b-0a7b-4698-88c5-0365b1ff4a63-900w.webp",
+            "width": 900,
+            "height": 1800,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758279676-09d76b0b-0a7b-4698-88c5-0365b1ff4a63-945w.webp",
+            "width": 945,
+            "height": 1890,
+            "format": "webp"
+          }
+        ]
+      }
+    ],
     "video": "",
     "title": "January",
     "title_estonian": "Jaanuar",
-    "description": "<p>Opened with a huge surprise and very wide smiles on all of our faces, as our lovely guests on TripAdvisor had voted Tales of Reval to be the #2 thing to do in Tallinn. </p><p>Considering that the first place was dedicated to the entirety of the Old Town, this was an exceptional honor. The high praise also came with our very first awards:</p><p>The Traveller’s choice of 2020 title on TripAdvisor, and the <a href=\"https://awards.travel/europe-2020/\" target=\"_blank\" rel=\"noreferrer noopener\">Travel and Hospitality Award 2020</a> of 2020 in the category of Best tour in Estonia. </p><p>New authentic costumes on our backs, rewards rolling in, and Tallinn preparing for the biggest tourism season the town had ever seen - needless to say we were hyped and ready.   Had we only known…</p>",
+    "description": "<p>Opened with a huge surprise and very wide smiles on all of our faces, as our lovely guests on TripAdvisor had voted Tales of Reval to be the #2 thing to do in Tallinn. Considering that the first place was dedicated to the entirety of the Old Town, this was an exceptional honor. The high praise also came with our very first awards:</p><p>The Traveller’s choice of 2020 title on TripAdvisor, and the <a href=\"https://awards.travel/europe-2020/\" target=\"_blank\" rel=\"noreferrer noopener\">Travel and Hospitality Award 2020</a> of 2020 in the category of Best tour in Estonia. </p><p>New authentic costumes on our backs, rewards rolling in, and Tallinn preparing for the biggest tourism season the town had ever seen - needless to say we were hyped and ready.   Had we only known…</p>",
     "description_estonian": "<p>Avasime selle aja suure üllatuse ja väga laiade naeratustega, sest meie armsad külalised TripAdvisoris olid hääletanud Tales of Revali Tallinna tegevuste seas teisele kohale. Arvestades, et esikoht kuulus tervele vanalinnale, oli see meie jaoks erakordne au. Selle suure tunnustusega kaasnesid ka meie esimesed auhinnad:</p><p>TripAdvisori Traveller’s Choice 2020 tiitel ning Travel and Hospitality Award 2020 kategoorias Eesti parim tuur.</p><p>Seljas uued autentsed kostüümid, auhinnad saabumas ja Tallinn valmistumas suurimaks turismihooajaks, mida linn eales näinud oli — pole vist vaja öeldagi, et olime elevil ja valmis.</p><p>Kui me vaid oleks teadnud…</p><p>Kui soovid, võin teha sellest ka veidi loomulikuma ja voolavama turundusteksti eesti keeles.</p>"
+  },
+  {
+    "_id": "2e9376c4-d785-40b7-a9a2-66cfb66eece1",
+    "year": 2020,
+    "order": 2,
+    "mediaType": 1,
+    "image": null,
+    "images": [
+      {
+        "src": "/uploads/story/1776758911648-11f348e3-482d-4702-93c1-9b69875bcd7d-1200w.webp",
+        "name": "7) DSC00411.webp",
+        "width": 1200,
+        "height": 800,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776758911648-11f348e3-482d-4702-93c1-9b69875bcd7d-600w.webp",
+            "width": 600,
+            "height": 400,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758911648-11f348e3-482d-4702-93c1-9b69875bcd7d-900w.webp",
+            "width": 900,
+            "height": 600,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758911648-11f348e3-482d-4702-93c1-9b69875bcd7d-1200w.webp",
+            "width": 1200,
+            "height": 800,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758911648-11f348e3-482d-4702-93c1-9b69875bcd7d-1800w.webp",
+            "width": 1800,
+            "height": 1200,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758911648-11f348e3-482d-4702-93c1-9b69875bcd7d-2400w.webp",
+            "width": 2400,
+            "height": 1600,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/story/1776758911647-d3943753-e1f8-4342-8f59-8e3a457f5467-1200w.webp",
+        "name": "7-2).webp",
+        "width": 1200,
+        "height": 800,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776758911647-d3943753-e1f8-4342-8f59-8e3a457f5467-600w.webp",
+            "width": 600,
+            "height": 400,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758911647-d3943753-e1f8-4342-8f59-8e3a457f5467-900w.webp",
+            "width": 900,
+            "height": 600,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758911647-d3943753-e1f8-4342-8f59-8e3a457f5467-1200w.webp",
+            "width": 1200,
+            "height": 800,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758911647-d3943753-e1f8-4342-8f59-8e3a457f5467-1800w.webp",
+            "width": 1800,
+            "height": 1200,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776758911647-d3943753-e1f8-4342-8f59-8e3a457f5467-2400w.webp",
+            "width": 2400,
+            "height": 1600,
+            "format": "webp"
+          }
+        ]
+      }
+    ],
+    "video": "",
+    "title": "February",
+    "title_estonian": "veebruar",
+    "description": "<p>February was a glorious month. First, we learned that there is a tabletop battle game involving a lot of Estonian mythology, which takes place in the frozen city of Felstad - which is a town inspired by Reval. The game is created by Joseph A. McCullough, and is called Frostgrave.</p><p>Secondly, we heard that a group of ardent fans of this game are coming to Tallinn, and they want to organize an entire week full of medieval fun and, of course, their favorite game. Arranged by Geek Nation Tours we were called upon to host this mighty company and take them around Tallinn and Estonia, immersing them into the medieval times.</p>",
+    "description_estonian": "<p>Veebruar oli suurepärane kuu. Kõigepealt saime teada, et არსებობს lauamängul põhinev lahingumäng, mis ammutab rohkelt ainest Eesti mütoloogiast ja mille tegevus toimub jäätunud Felstadi linnas – linnas, mis on inspireeritud Revalist. Mängu autor on Joseph A. McCullough ja selle nimi on Frostgrave.</p><p>Teiseks kuulsime, et grupp selle mängu tulihingelisi fänne on tulemas Tallinna ning soovib korraldada terve nädala jagu keskaegseid elamusi ja loomulikult mängida ka oma lemmikmängu. Geek Nation Toursi korraldusel kutsuti meid seda vägevat seltskonda võõrustama ning viima neid Tallinnas ja Eestis ringi, et viia nad tõeliselt keskaega.</p>"
+  },
+  {
+    "_id": "226f79ea-6e53-46c0-a3ad-3fc7d3664c20",
+    "year": 2020,
+    "order": 3,
+    "mediaType": 1,
+    "image": null,
+    "images": [
+      {
+        "src": "/uploads/story/1776759936730-76970714-41c5-4383-a127-6823d7d4b693-720w.webp",
+        "name": "2020_02.webp",
+        "width": 720,
+        "height": 492,
+        "format": "webp",
+        "pixelRatio": 1,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776759936730-76970714-41c5-4383-a127-6823d7d4b693-600w.webp",
+            "width": 600,
+            "height": 410,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776759936730-76970714-41c5-4383-a127-6823d7d4b693-720w.webp",
+            "width": 720,
+            "height": 492,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/story/1776759936728-4f725dfd-1748-4433-aaf3-aa0037486147-1800w.webp",
+        "name": "2020_02_2.webp",
+        "width": 1800,
+        "height": 1004,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776759936728-4f725dfd-1748-4433-aaf3-aa0037486147-600w.webp",
+            "width": 600,
+            "height": 335,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776759936728-4f725dfd-1748-4433-aaf3-aa0037486147-900w.webp",
+            "width": 900,
+            "height": 502,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776759936728-4f725dfd-1748-4433-aaf3-aa0037486147-1200w.webp",
+            "width": 1200,
+            "height": 669,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776759936728-4f725dfd-1748-4433-aaf3-aa0037486147-1800w.webp",
+            "width": 1800,
+            "height": 1004,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776759936728-4f725dfd-1748-4433-aaf3-aa0037486147-2400w.webp",
+            "width": 2400,
+            "height": 1338,
+            "format": "webp"
+          }
+        ]
+      }
+    ],
+    "video": "",
+    "title": "March",
+    "title_estonian": "Märts",
+    "description": "<p>The 17th day was when the carpet went under and, with a strike of a pen, tourism was wiped out overnight. Completely. And thus we were left sitting around a big table at our office, which we were to free up by the end of the month.<br /> As a gentleman’s agreement we decided to empty our pockets onto the table before us to evaluate our options. We stood at 600 euros. So with all that money, a burning love in our hearts towards our capitol, and a grandiose dream we set out to produce the World’s first Live-Narrated Online Film.<br /> Our vision brought together over a 100 volunteering actors, a lot of very kind and enterprising souls, and again we turned towards the master of Medieval Visuals: Nathan Popa. Our next project: <a href=\"https://www.youtube.com/watch?v=oL84jmAchqA\" target=\"_blank\" rel=\"noreferrer noopener\">Kingdom of Thieves - Tales of Medieval Tallinn</a>.</p>",
+    "description_estonian": "<p>päev oli see, mil vaip jalge alt ära tõmmati ja üheainsa suletõmbega pühiti turism üleöö minema. Täielikult. Nii me siis istusime oma kontoris suure laua ümber — kontoris, mille pidime kuu lõpuks vabastama.</p><p>Härrasmeheliku kokkuleppena otsustasime kõik oma taskutes olnud raha enda ette lauale valada, et hinnata, millised võimalused meil üldse on. Kokku saime 600 eurot. Nii asusimegi kogu selle raha, südames põleva armastuse oma pealinna vastu ja suurejoonelise unistusega looma maailma esimest veebis toimuvat live-jutustusega filmi.</p><p>Meie visioon tõi kokku üle 100 vabatahtliku näitleja, hulga väga lahkeid ja ettevõtlikke inimesi ning taas pöördusime keskaegsete visuaalide meistri Nathan Popa poole. Meie järgmine projekt:<a href=\"https://www.youtube.com/watch?v=oL84jmAchqA\" target=\"_blank\" rel=\"noreferrer noopener\">Kingdom of Thieves - Tales of Medieval Tallinn</a>.</p>"
+  },
+  {
+    "_id": "d3d60f91-77fc-460c-bfd0-762359c06e75",
+    "year": 2020,
+    "order": 4,
+    "mediaType": 1,
+    "image": null,
+    "images": [
+      {
+        "src": "/uploads/story/1776768062578-71af81c3-ec54-442d-af8b-5c832b06df95-1800w.webp",
+        "name": "9-2) 20201007_151850-2.webp",
+        "width": 1800,
+        "height": 1013,
+        "format": "webp",
+        "pixelRatio": 1,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1.1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776768062578-71af81c3-ec54-442d-af8b-5c832b06df95-600w.webp",
+            "width": 600,
+            "height": 338,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768062578-71af81c3-ec54-442d-af8b-5c832b06df95-900w.webp",
+            "width": 900,
+            "height": 506,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768062578-71af81c3-ec54-442d-af8b-5c832b06df95-1200w.webp",
+            "width": 1200,
+            "height": 675,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768062578-71af81c3-ec54-442d-af8b-5c832b06df95-1800w.webp",
+            "width": 1800,
+            "height": 1013,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768062578-71af81c3-ec54-442d-af8b-5c832b06df95-2048w.webp",
+            "width": 2048,
+            "height": 1152,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/story/1776768062579-68882d3a-b2a9-43db-a711-0443752720f1-1200w.webp",
+        "name": "9) 20201007_154609-2.webp",
+        "width": 1200,
+        "height": 900,
+        "format": "webp",
+        "pixelRatio": 1,
+        "focusX": 71.66,
+        "focusY": 31.38,
+        "zoom": 1.3,
+        "variants": [
+          {
+            "src": "/uploads/story/1776768062579-68882d3a-b2a9-43db-a711-0443752720f1-600w.webp",
+            "width": 600,
+            "height": 450,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768062579-68882d3a-b2a9-43db-a711-0443752720f1-900w.webp",
+            "width": 900,
+            "height": 675,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768062579-68882d3a-b2a9-43db-a711-0443752720f1-1200w.webp",
+            "width": 1200,
+            "height": 900,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768062579-68882d3a-b2a9-43db-a711-0443752720f1-1800w.webp",
+            "width": 1800,
+            "height": 1350,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768062579-68882d3a-b2a9-43db-a711-0443752720f1-2048w.webp",
+            "width": 2048,
+            "height": 1536,
+            "format": "webp"
+          }
+        ]
+      }
+    ],
+    "video": "",
+    "title": "November",
+    "title_estonian": "November",
+    "description": "<p>November<br />While we were busy preparing the launch of “Kingdom of Thieves”, we had a letter from Visit Tallinn, who were doing their best to compensate for the lack of tourists, and trying to get the natives to come and visit the capitol. They decided to choose us for the tour for one of the biggest blogs in Estonia - A mida Henry teeb? </p><p>Led by master Gregorius, Henry and his family were blown away by our performance and declared it the best thing about Tallinn - both for the adults and for the children. Needless to say the smile on Gregorius’ face was wide and bright indeed. (photos are the courtesy of A mida Henry teeb?)</p>",
+    "description_estonian": "<p>November<br />While we were busy preparing the launch of “Kingdom of Thieves”, we had a letter from Visit Tallinn, who were doing their best to compensate for the lack of tourists, and trying to get the natives to come and visit the capitol. They decided to choose us for the tour for one of the biggest blogs in Estonia - A mida Henry teeb? </p><p>Led by master Gregorius, Henry and his family were blown away by our performance and declared it the best thing about Tallinn - both for the adults and for the children. Needless to say the smile on Gregorius’ face was wide and bright indeed. (photos are the courtesy of A mida Henry teeb?)</p>"
   },
   {
     "_id": "c4f9271c-8b1f-4b23-818c-c293109f5b42",
@@ -110,7 +489,11 @@
       "width": 1200,
       "height": 760,
       "format": "",
-      "pixelRatio": 1
+      "pixelRatio": 1,
+      "focusX": 50,
+      "focusY": 50,
+      "zoom": 1,
+      "variants": []
     },
     "images": [],
     "video": "",
@@ -125,11 +508,499 @@
     "order": 2,
     "mediaType": 1,
     "image": null,
-    "images": [],
+    "images": [
+      {
+        "src": "/uploads/story/1776768302005-de0dffc1-80ac-4756-a943-ae30b883f30f-1200w.webp",
+        "name": "11-3) IMG_1902.webp",
+        "width": 1200,
+        "height": 800,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776768302005-de0dffc1-80ac-4756-a943-ae30b883f30f-600w.webp",
+            "width": 600,
+            "height": 400,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768302005-de0dffc1-80ac-4756-a943-ae30b883f30f-900w.webp",
+            "width": 900,
+            "height": 600,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768302005-de0dffc1-80ac-4756-a943-ae30b883f30f-1200w.webp",
+            "width": 1200,
+            "height": 800,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768302005-de0dffc1-80ac-4756-a943-ae30b883f30f-1800w.webp",
+            "width": 1800,
+            "height": 1200,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768302005-de0dffc1-80ac-4756-a943-ae30b883f30f-2400w.webp",
+            "width": 2400,
+            "height": 1600,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/story/1776768302006-6026427c-1eed-4330-b752-c1544821becd-1200w.webp",
+        "name": "12) Copy of Copy of Kaupo Rebane jutustamas _Varaste kuningriigi_ lugusid.webp",
+        "width": 1200,
+        "height": 1800,
+        "format": "webp",
+        "pixelRatio": 1,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776768302006-6026427c-1eed-4330-b752-c1544821becd-600w.webp",
+            "width": 600,
+            "height": 900,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768302006-6026427c-1eed-4330-b752-c1544821becd-900w.webp",
+            "width": 900,
+            "height": 1350,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768302006-6026427c-1eed-4330-b752-c1544821becd-1200w.webp",
+            "width": 1200,
+            "height": 1800,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768302006-6026427c-1eed-4330-b752-c1544821becd-1667w.webp",
+            "width": 1667,
+            "height": 2500,
+            "format": "webp"
+          }
+        ]
+      }
+    ],
     "video": "",
     "title": "February",
     "title_estonian": "Veebruar",
     "description": "<p>It was time of bringing all our efforts together. As Nathan Popa was hard at work editing the Kingdom of Thieves, we undertook the ambitious task of transforming a humble 1.5 cubic meter room in a Soviet era bomb shelter (the home to the best VR salon in town) into a cozy medieval lounge with a fireplace.</p>",
     "description_estonian": "<p>Oli aeg koondada kõik meie pingutused ühte. Samal ajal kui Nathan Popa töötas suure hoolega Kingdom of Thievesi monteerimise kallal, võtsime ette ambitsioonika ülesande muuta tagasihoidlik 1,5 kuupmeetri suurune ruum nõukogudeaegses pommivarjendis — mis oli ühtlasi linna parima VR-salongi kodu — hubaseks keskaegseks puhkeruumiks kaminaga.</p>"
+  },
+  {
+    "_id": "61146328-00dc-4400-9e38-b3287986abea",
+    "year": 2021,
+    "order": 3,
+    "mediaType": 2,
+    "image": null,
+    "images": [],
+    "video": "https://www.youtube.com/embed/oL84jmAchqA",
+    "title": "April",
+    "title_estonian": "Aprill",
+    "description": "<p>saw the birth of an entirely new entertainment genre: the World’s First Live-Narrated Online Film, which fused together elements of classic cinematography and storytelling. That’s right, we narrated the film live on Zoom, and in between the 6 chapters of the movie, we filled in the historical blanks, gave context to what was going on on the screen, asked and answered questions, and created a cozy atmosphere for all our viewers.<br /> Kingdom of Thieves: Tales of Medieval Tallinn was welcomed with stellar reviews and was even praised by veterans of hundreds of online experiences. Although a great product, it wasn’t quite as successful on Airbnb as we had hoped, and thus, a year later, we made the film available for everyone on Youtube.</p>",
+    "description_estonian": "<p>sündis täiesti uus meelelahutusžanr: maailma esimene veebis toimuv live-jutustusega film, mis ühendas klassikalise filmikunsti ja jutustamise elemendid. Just nii — me jutustasime filmi Zoomis otseülekandes ning filmi 6 peatüki vahel täitsime ajaloolisi lünki, andsime ekraanil toimuvale tausta, küsisime ja vastasime küsimustele ning lõime kõigile vaatajatele mõnusa ja hubase õhkkonna. Kingdom of Thieves: Tales of Medieval Tallinn was welcomed with stellar reviews and was even praised by veterans of hundreds of online experiences. Although a great product, it wasn’t quite as successful on Airbnb as we had hoped, and thus, a year later, we made the film available for everyone on Youtube.</p>"
+  },
+  {
+    "_id": "6e5389f9-a370-4b1e-9dbf-70bc7e305451",
+    "year": 2021,
+    "order": 4,
+    "mediaType": 1,
+    "image": null,
+    "images": [
+      {
+        "src": "/uploads/story/1776768742331-134076ec-d012-4781-bca1-f72d1775d978-1200w.webp",
+        "name": "13-3) Copy of DSC_7955.webp",
+        "width": 1200,
+        "height": 799,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776768742331-134076ec-d012-4781-bca1-f72d1775d978-600w.webp",
+            "width": 600,
+            "height": 400,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768742331-134076ec-d012-4781-bca1-f72d1775d978-900w.webp",
+            "width": 900,
+            "height": 599,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768742331-134076ec-d012-4781-bca1-f72d1775d978-1200w.webp",
+            "width": 1200,
+            "height": 799,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768742331-134076ec-d012-4781-bca1-f72d1775d978-1800w.webp",
+            "width": 1800,
+            "height": 1199,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768742331-134076ec-d012-4781-bca1-f72d1775d978-2400w.webp",
+            "width": 2400,
+            "height": 1598,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/story/1776768742331-25d86610-debd-4287-b61b-c54557f18fd4-1200w.webp",
+        "name": "13) IMG20210926130955.webp",
+        "width": 1200,
+        "height": 900,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776768742331-25d86610-debd-4287-b61b-c54557f18fd4-600w.webp",
+            "width": 600,
+            "height": 450,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768742331-25d86610-debd-4287-b61b-c54557f18fd4-900w.webp",
+            "width": 900,
+            "height": 675,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768742331-25d86610-debd-4287-b61b-c54557f18fd4-1200w.webp",
+            "width": 1200,
+            "height": 900,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768742331-25d86610-debd-4287-b61b-c54557f18fd4-1800w.webp",
+            "width": 1800,
+            "height": 1350,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768742331-25d86610-debd-4287-b61b-c54557f18fd4-2400w.webp",
+            "width": 2400,
+            "height": 1800,
+            "format": "webp"
+          }
+        ]
+      }
+    ],
+    "video": "",
+    "title": "September",
+    "title_estonian": "September",
+    "description": "<p>was the month in which a grand event took place. AcademyS held a big conference on Perfect Permanent Make-up, hosted by maestro Sviatoslav Otchenash. The culmination of that conference was a huge medieval party in the Viking Village, which our friends from Celebrate Group asked us to host.<br /> Masters Gregorius and Cedric took up the call and put together an evening full of medieval entertainment - starting from a vicious battle that transformed into a haka-style dance routine, to teaching all the party guests medieval etiquette of drinking and dining, and ending the evening by inviting to the stage the premier folk-metal band Metsatöll.</p>",
+    "description_estonian": "<p>oli kuu, mil leidis aset üks suurejooneline sündmus. AcademyS korraldas suure konverentsi teemal Perfect Permanent Make-up, mille võõrustajaks oli maestro Sviatoslav Otchenash. Selle konverentsi kulminatsiooniks oli võimas keskaegne pidu Viikingite Külas, mille juhtimist palusid meie sõbrad Celebrate Groupist meil enda peale võtta.</p><p>Meistrid Gregorius ja Cedric vastasid kutsele ning panid kokku õhtu, mis oli täis keskaegset meelelahutust — alustades ägedast lahingust, mis kasvas üle haka-stiilis tantsunumbriks, jätkates peokülalistele keskaegse söögi- ja joogietiketi õpetamisega ning lõpetades õhtu sellega, et lavale kutsuti Eesti esinduslik folk-metali bänd Metsatöll.</p>"
+  },
+  {
+    "_id": "3d55307e-b1d9-40cb-9699-f8dc23be8bc0",
+    "year": 2022,
+    "order": 1,
+    "mediaType": 1,
+    "image": null,
+    "images": [
+      {
+        "src": "/uploads/story/1776768927310-68edab5b-fbb4-4ce1-b6c2-4a7c1fd38ca3-1200w.webp",
+        "name": "14) 20220408_442.webp",
+        "width": 1200,
+        "height": 800,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776768927310-68edab5b-fbb4-4ce1-b6c2-4a7c1fd38ca3-600w.webp",
+            "width": 600,
+            "height": 400,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768927310-68edab5b-fbb4-4ce1-b6c2-4a7c1fd38ca3-900w.webp",
+            "width": 900,
+            "height": 600,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768927310-68edab5b-fbb4-4ce1-b6c2-4a7c1fd38ca3-1200w.webp",
+            "width": 1200,
+            "height": 800,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768927310-68edab5b-fbb4-4ce1-b6c2-4a7c1fd38ca3-1800w.webp",
+            "width": 1800,
+            "height": 1200,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768927310-68edab5b-fbb4-4ce1-b6c2-4a7c1fd38ca3-2400w.webp",
+            "width": 2400,
+            "height": 1600,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/story/1776768927310-f985b6ec-e2cb-4cc5-ac90-07c7e70fdfd6-1200w.webp",
+        "name": "14) 20220408_353.webp",
+        "width": 1200,
+        "height": 800,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776768927310-f985b6ec-e2cb-4cc5-ac90-07c7e70fdfd6-600w.webp",
+            "width": 600,
+            "height": 400,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768927310-f985b6ec-e2cb-4cc5-ac90-07c7e70fdfd6-900w.webp",
+            "width": 900,
+            "height": 600,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768927310-f985b6ec-e2cb-4cc5-ac90-07c7e70fdfd6-1200w.webp",
+            "width": 1200,
+            "height": 800,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768927310-f985b6ec-e2cb-4cc5-ac90-07c7e70fdfd6-1800w.webp",
+            "width": 1800,
+            "height": 1200,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776768927310-f985b6ec-e2cb-4cc5-ac90-07c7e70fdfd6-2400w.webp",
+            "width": 2400,
+            "height": 1600,
+            "format": "webp"
+          }
+        ]
+      }
+    ],
+    "video": "",
+    "title": "April",
+    "title_estonian": "Aprill",
+    "description": "<p>n the month of April exactly 600 years ago the doors of the Town Hall Pharmacy opened to the public, and until this day those doors remain open and exactly in the same place.</p><p>Masters Wilhelm and Gregorius had the honor of doing their small part in the hosting of the jubilee celebrations of the oldest pharmacy in the world, which is still operating from the same rooms.</p>",
+    "description_estonian": "<p>Täpselt 600 aastat tagasi, aprillikuus, avas Raeapteek oma uksed rahvale — ja need uksed on tänaseni avatud täpselt samas paigas.</p><p>Meistritel Wilhelmil ja Gregoriusel oli au anda oma väike panus maailma vanima, siiani samades ruumides tegutseva apteegi juubelipidustuste korraldamisse.</p>"
+  },
+  {
+    "_id": "71d3f833-fffd-4e62-a572-3753eb778eef",
+    "year": 2022,
+    "order": 2,
+    "mediaType": 2,
+    "image": null,
+    "images": [],
+    "video": "https://www.youtube.com/embed/oL84jmAchqA",
+    "title": "June",
+    "title_estonian": "Juuni",
+    "description": "<p>ur friends from Visit Tallinn contacted us once more and asked us to help them out with the creation of a shiny new promotional clip for the town we adore! Have a look:</p>",
+    "description_estonian": "<p>Meie sõbrad Visit Tallinnast võtsid meiega taas ühendust ja palusid meil aidata luua uue särava reklaamklipi linnale, mida me väga armastame! Vaata järele:</p>"
+  },
+  {
+    "_id": "e7863b92-2e71-45c8-8f14-4872bd19a434",
+    "year": 2022,
+    "order": 3,
+    "mediaType": 2,
+    "image": null,
+    "images": [],
+    "video": "https://www.youtube.com/embed/oL84jmAchqA",
+    "title": "August",
+    "title_estonian": "August",
+    "description": "<p>Promotional video for the Town Hall Pharmacy</p>",
+    "description_estonian": "<p>Raeapteegi reklaamvideo</p>"
+  },
+  {
+    "_id": "c242da2d-6d00-494d-9808-ffae81d3065e",
+    "year": 2022,
+    "order": 4,
+    "mediaType": 2,
+    "image": null,
+    "images": [],
+    "video": "https://www.youtube.com/embed/oL84jmAchqA",
+    "title": "October",
+    "title_estonian": "Oktoober",
+    "description": "<p>Tales of Reval tour trailer Youtube video:</p>",
+    "description_estonian": "<p>„Tales of Reval” tuuri treilervideo YouTube’is</p>"
+  },
+  {
+    "_id": "92aedb83-42e4-4f89-aad0-8ae1dbb49d05",
+    "year": 2023,
+    "order": 1,
+    "mediaType": 0,
+    "image": {
+      "src": "/uploads/story/1776769348500-1e3ddd13-2ea0-4614-90fd-6c43d1f5a11e-1200w.webp",
+      "name": "18) Team Events - Spirit of Teamwork.webp",
+      "width": 1200,
+      "height": 900,
+      "format": "webp",
+      "pixelRatio": 2,
+      "focusX": 50,
+      "focusY": 50,
+      "zoom": 1,
+      "variants": [
+        {
+          "src": "/uploads/story/1776769348500-1e3ddd13-2ea0-4614-90fd-6c43d1f5a11e-600w.webp",
+          "width": 600,
+          "height": 450,
+          "format": "webp"
+        },
+        {
+          "src": "/uploads/story/1776769348500-1e3ddd13-2ea0-4614-90fd-6c43d1f5a11e-900w.webp",
+          "width": 900,
+          "height": 675,
+          "format": "webp"
+        },
+        {
+          "src": "/uploads/story/1776769348500-1e3ddd13-2ea0-4614-90fd-6c43d1f5a11e-1200w.webp",
+          "width": 1200,
+          "height": 900,
+          "format": "webp"
+        },
+        {
+          "src": "/uploads/story/1776769348500-1e3ddd13-2ea0-4614-90fd-6c43d1f5a11e-1800w.webp",
+          "width": 1800,
+          "height": 1350,
+          "format": "webp"
+        },
+        {
+          "src": "/uploads/story/1776769348500-1e3ddd13-2ea0-4614-90fd-6c43d1f5a11e-2400w.webp",
+          "width": 2400,
+          "height": 1800,
+          "format": "webp"
+        }
+      ]
+    },
+    "images": [],
+    "video": "",
+    "title": "June",
+    "title_estonian": "Juuni",
+    "description": "<p>Wise, Merily ja Celebrate, Yolo</p>",
+    "description_estonian": "<p>Wise’i suvepäevad</p>"
+  },
+  {
+    "_id": "d3bc888f-143c-413c-ae20-0e8663523543",
+    "year": 2023,
+    "order": 2,
+    "mediaType": 1,
+    "image": null,
+    "images": [
+      {
+        "src": "/uploads/story/1776769503385-fac522f4-307e-42d7-85c4-72f1ef966e68-1200w.webp",
+        "name": "19-2) Weddings - Tournaments, Champions and Winners.webp",
+        "width": 1200,
+        "height": 801,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776769503385-fac522f4-307e-42d7-85c4-72f1ef966e68-600w.webp",
+            "width": 600,
+            "height": 400,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776769503385-fac522f4-307e-42d7-85c4-72f1ef966e68-900w.webp",
+            "width": 900,
+            "height": 600,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776769503385-fac522f4-307e-42d7-85c4-72f1ef966e68-1200w.webp",
+            "width": 1200,
+            "height": 801,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776769503385-fac522f4-307e-42d7-85c4-72f1ef966e68-1800w.webp",
+            "width": 1800,
+            "height": 1201,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776769503385-fac522f4-307e-42d7-85c4-72f1ef966e68-2400w.webp",
+            "width": 2400,
+            "height": 1601,
+            "format": "webp"
+          }
+        ]
+      },
+      {
+        "src": "/uploads/story/1776769503385-3040c1a6-f079-4d8c-b251-afd452ad9026-1200w.webp",
+        "name": "19) Weddings - Seasoned Hosts.webp",
+        "width": 1200,
+        "height": 800,
+        "format": "webp",
+        "pixelRatio": 2,
+        "focusX": 50,
+        "focusY": 50,
+        "zoom": 1,
+        "variants": [
+          {
+            "src": "/uploads/story/1776769503385-3040c1a6-f079-4d8c-b251-afd452ad9026-600w.webp",
+            "width": 600,
+            "height": 400,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776769503385-3040c1a6-f079-4d8c-b251-afd452ad9026-900w.webp",
+            "width": 900,
+            "height": 600,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776769503385-3040c1a6-f079-4d8c-b251-afd452ad9026-1200w.webp",
+            "width": 1200,
+            "height": 800,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776769503385-3040c1a6-f079-4d8c-b251-afd452ad9026-1800w.webp",
+            "width": 1800,
+            "height": 1200,
+            "format": "webp"
+          },
+          {
+            "src": "/uploads/story/1776769503385-3040c1a6-f079-4d8c-b251-afd452ad9026-2400w.webp",
+            "width": 2400,
+            "height": 1601,
+            "format": "webp"
+          }
+        ]
+      }
+    ],
+    "video": "",
+    "title": "Medieval Wedding",
+    "title_estonian": "Keskaegne pulm",
+    "description": "<p>Raudsilla</p>",
+    "description_estonian": "<p>Raudsilla</p>"
   }
 ]

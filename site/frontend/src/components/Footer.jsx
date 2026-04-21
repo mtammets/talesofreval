@@ -9,6 +9,10 @@ import { FALLBACK_FOOTER_TEXTS, hasTextEntries } from '../content/fallbackConten
 import HomeFooterEditorModal from './HomeFooterEditorModal';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
+import {
+  FOOTER_GPS_IMAGE_PREPARATION_OPTIONS,
+  prepareImageFileForUpload,
+} from '../utils/prepareImageFilesForUpload';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 
@@ -25,6 +29,7 @@ function Footer({
   const [isFooterEditorOpen, setIsFooterEditorOpen] = useState(false);
   const [footerForm, setFooterForm] = useState(cloneValue(siteSettings?.footer || {}));
   const [gpsImageFile, setGpsImageFile] = useState(null);
+  const [isPreparingGpsImage, setIsPreparingGpsImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -77,6 +82,7 @@ function Footer({
 
       formData.append('openMapUrl', footerForm.openMapUrl || '');
       formData.append('gpsUrl', footerForm.gpsUrl || '');
+      formData.append('gpsImage', JSON.stringify(footerForm.gpsImage || null));
       formData.append('companyName', footerForm.companyName || '');
       formData.append('companyReg', footerForm.companyReg || '');
       formData.append('email', footerForm.email || '');
@@ -89,6 +95,7 @@ function Footer({
       const nextSettings = await siteSettingsService.updateFooterSiteSettings(adminToken, formData);
       setSiteSettings(nextSettings);
       setGpsImageFile(null);
+      setIsPreparingGpsImage(false);
       setIsFooterEditorOpen(false);
       toast.success('Footer updated.');
     } catch (error) {
@@ -102,6 +109,42 @@ function Footer({
       }
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleGpsImageFileSelected = async (file) => {
+    if (!file) {
+      setGpsImageFile(null);
+      return;
+    }
+
+    setIsPreparingGpsImage(true);
+
+    try {
+      const preparedFile = await prepareImageFileForUpload(
+        file,
+        FOOTER_GPS_IMAGE_PREPARATION_OPTIONS
+      );
+
+      if (!preparedFile) {
+        return;
+      }
+
+      setGpsImageFile(preparedFile);
+      setFooterForm((current) => ({
+        ...current,
+        gpsImage: {
+          ...(current.gpsImage || {}),
+          name: preparedFile.name,
+          focusX: 50,
+          focusY: 50,
+          zoom: 1,
+        },
+      }));
+    } catch (error) {
+      toast.error(error?.message || 'Image optimization failed.');
+    } finally {
+      setIsPreparingGpsImage(false);
     }
   };
 
@@ -126,14 +169,18 @@ function Footer({
           footer={footerForm}
           setFooter={setFooterForm}
           gpsImageFile={gpsImageFile}
-          setGpsImageFile={setGpsImageFile}
+          onSelectGpsImageFile={handleGpsImageFileSelected}
+          currentGpsImage={siteSettings?.footer?.gpsImage || null}
+          currentGpsImageUrl=""
           onSave={saveFooter}
           onCancel={() => {
             setIsFooterEditorOpen(false);
             setGpsImageFile(null);
+            setIsPreparingGpsImage(false);
             setFooterForm(cloneValue(siteSettings?.footer || {}));
           }}
           isSaving={isSaving}
+          isPreparingImage={isPreparingGpsImage}
         />
       ) : null}
     </div>

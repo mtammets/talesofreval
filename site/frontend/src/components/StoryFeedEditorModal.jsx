@@ -7,12 +7,15 @@ import {
   prepareImageFileForUpload,
   prepareImageFilesForUpload,
 } from '../utils/prepareImageFilesForUpload';
+import { normalizeVideoEmbedUrl } from '../features/events/storyAdminUtils';
 import AdminModalShell from './AdminModalShell';
 import ImageFocusEditor from './ImageFocusEditor';
 
 const STORY_SINGLE_IMAGE_RATIO = '30 / 19';
 
 const cloneImage = (image) => (image ? JSON.parse(JSON.stringify(image)) : null);
+const cloneImages = (images = []) =>
+  Array.isArray(images) ? images.map(cloneImage).filter(Boolean) : [];
 
 function StoryFeedEditorModal({
   form,
@@ -35,6 +38,7 @@ function StoryFeedEditorModal({
   const [isPreparingSingleImage, setIsPreparingSingleImage] = useState(false);
   const [isPreparingGallery, setIsPreparingGallery] = useState(false);
   const [singleImageSnapshot, setSingleImageSnapshot] = useState(null);
+  const [gallerySnapshot, setGallerySnapshot] = useState(null);
 
   useEffect(() => {
     if (!singleImageFile) {
@@ -67,6 +71,7 @@ function StoryFeedEditorModal({
   useEffect(() => {
     if (!form._id) {
       setSingleImageSnapshot(null);
+      setGallerySnapshot(null);
     }
   }, [form._id]);
 
@@ -100,6 +105,90 @@ function StoryFeedEditorModal({
     }));
   };
 
+  const updateGalleryImageFocus = (index, focus) => {
+    setForm((current) => ({
+      ...current,
+      images: (current.images || []).map((image, imageIndex) =>
+        imageIndex === index
+          ? {
+              ...(image || {}),
+              ...focus,
+            }
+          : image
+      ),
+    }));
+  };
+
+  const appendGalleryImagesEditorState = (files = [], startUploadIndex = 0) => {
+    setForm((current) => ({
+      ...current,
+      images: [
+        ...(current.images || []),
+        ...files.map((file, index) => ({
+          name: file.name,
+          focusX: 50,
+          focusY: 50,
+          zoom: 1,
+          uploadIndex: startUploadIndex + index,
+        })),
+      ],
+    }));
+  };
+
+  const removeGalleryImage = (removeIndex) => {
+    const imageToRemove = form.images?.[removeIndex] || null;
+    const removedUploadIndex = Number(imageToRemove?.uploadIndex);
+
+    if (Number.isInteger(removedUploadIndex)) {
+      setGalleryFiles((current) =>
+        current.filter((_file, index) => index !== removedUploadIndex)
+      );
+      setGalleryPreviewUrls((current) =>
+        current.filter((_url, index) => index !== removedUploadIndex)
+      );
+    }
+
+    setForm((current) => ({
+      ...current,
+      images: (current.images || [])
+        .filter((_image, index) => index !== removeIndex)
+        .map((image) => {
+          const uploadIndex = Number(image?.uploadIndex);
+
+          if (!Number.isInteger(uploadIndex)) {
+            return image;
+          }
+
+          if (Number.isInteger(removedUploadIndex) && uploadIndex > removedUploadIndex) {
+            return {
+              ...image,
+              uploadIndex: uploadIndex - 1,
+            };
+          }
+
+          return image;
+        }),
+    }));
+  };
+
+  const moveGalleryImageToSlot = (fromIndex, targetSlot) => {
+    setForm((current) => {
+      const images = [...(current.images || [])];
+      const [movedImage] = images.splice(fromIndex, 1);
+
+      if (!movedImage) {
+        return current;
+      }
+
+      images.splice(Math.min(targetSlot, images.length), 0, movedImage);
+
+      return {
+        ...current,
+        images,
+      };
+    });
+  };
+
   const restoreCurrentSingleImage = () => {
     setSingleImageFile(null);
     setForm((current) => ({
@@ -107,6 +196,15 @@ function StoryFeedEditorModal({
       image: cloneImage(singleImageSnapshot),
     }));
     setSingleImageSnapshot(null);
+  };
+
+  const restoreCurrentGallery = () => {
+    setGalleryFiles([]);
+    setForm((current) => ({
+      ...current,
+      images: cloneImages(gallerySnapshot),
+    }));
+    setGallerySnapshot(null);
   };
 
   const handleSingleImageSelected = async (file) => {
@@ -148,7 +246,12 @@ function StoryFeedEditorModal({
         files,
         HERO_IMAGE_PREPARATION_OPTIONS
       );
-      setGalleryFiles(preparedFiles);
+
+      const nextUploadIndex = galleryFiles.length;
+
+      setGallerySnapshot((current) => current || cloneImages(form.images));
+      setGalleryFiles((current) => [...current, ...preparedFiles]);
+      appendGalleryImagesEditorState(preparedFiles, nextUploadIndex);
     } catch (error) {
       toast.error(error?.message || 'Gallery image optimization failed.');
     } finally {
@@ -165,20 +268,34 @@ function StoryFeedEditorModal({
       : 'Create year';
   const isPreparingMedia = isPreparingSingleImage || isPreparingGallery;
   const singleImageUrl = singleImagePreviewUrl || resolveSiteImage(form.image, '');
-  const galleryPreviewImages = galleryPreviewUrls.length
-    ? galleryPreviewUrls
-    : (form.images || [])
-        .map((image) => resolveSiteImage(image, ''))
-        .filter(Boolean);
+  const galleryPreviewImages = (form.images || [])
+    .map((image, index) => {
+      const uploadIndex = Number(image?.uploadIndex);
+      const uploadedPreviewUrl = Number.isInteger(uploadIndex)
+        ? galleryPreviewUrls[uploadIndex] || ''
+        : '';
+      const src = uploadedPreviewUrl || resolveSiteImage(image, '');
+
+      return {
+        src,
+        image,
+        name:
+          image?.name ||
+          (Number.isInteger(uploadIndex) ? galleryFiles[uploadIndex]?.name : '') ||
+          `Image ${index + 1}`,
+      };
+    })
+    .filter((item) => item.src);
   const singleImageStatus = isPreparingSingleImage
     ? 'Optimizing selected image…'
     : singleImageFile
       ? '1 new image added'
       : '';
+  const galleryImageCount = Array.isArray(form.images) ? form.images.length : 0;
   const galleryStatus = isPreparingGallery
-    ? 'Optimizing selected images…'
+    ? 'Optimizing selected images...'
     : galleryFiles.length
-      ? `${galleryFiles.length} new image${galleryFiles.length === 1 ? '' : 's'} added`
+      ? `${galleryImageCount} image${galleryImageCount === 1 ? '' : 's'} in gallery`
       : '';
 
   return (
@@ -354,7 +471,7 @@ function StoryFeedEditorModal({
                     <button
                       type="button"
                       className="story-admin-button story-admin-button--secondary"
-                      onClick={() => setGalleryFiles([])}
+                      onClick={restoreCurrentGallery}
                     >
                       Use current
                     </button>
@@ -363,9 +480,60 @@ function StoryFeedEditorModal({
 
                 {galleryPreviewImages.length ? (
                   <div className="story-feed-editor__gallery-grid">
-                    {galleryPreviewImages.map((src, index) => (
-                      <div key={`${src}-${index}`} className="story-feed-editor__gallery-item">
-                        <img src={src} alt="" aria-hidden="true" />
+                    {galleryPreviewImages.map((item, index) => (
+                      <div
+                        key={`${item.src}-${index}`}
+                        className="story-feed-editor__gallery-card"
+                      >
+                        <ImageFocusEditor
+                          image={item.image}
+                          imageUrl={item.src}
+                          onChange={(focus) => updateGalleryImageFocus(index, focus)}
+                          aspectRatio={STORY_SINGLE_IMAGE_RATIO}
+                          label={null}
+                          helpText={null}
+                          allowZoom
+                        />
+                        <div className="hero-editor-gallery__meta">
+                          <span>{item.name}</span>
+                          <div className="story-feed-editor__gallery-actions">
+                            <button
+                              type="button"
+                              className="story-admin-button story-admin-button--secondary story-feed-editor__layer-button"
+                              onClick={() => moveGalleryImageToSlot(index, 0)}
+                              disabled={
+                                index === 0 ||
+                                isSaving ||
+                                isDeleting ||
+                                isPreparingGallery
+                              }
+                            >
+                              Send back
+                            </button>
+                            <button
+                              type="button"
+                              className="story-admin-button story-admin-button--secondary story-feed-editor__layer-button"
+                              onClick={() => moveGalleryImageToSlot(index, 1)}
+                              disabled={
+                                index === 1 ||
+                                galleryPreviewImages.length < 2 ||
+                                isSaving ||
+                                isDeleting ||
+                                isPreparingGallery
+                              }
+                            >
+                              Bring front
+                            </button>
+                            <button
+                              type="button"
+                              className="story-admin-button story-admin-button--danger story-feed-editor__remove-image"
+                              onClick={() => removeGalleryImage(index)}
+                              disabled={isSaving || isDeleting || isPreparingGallery}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -393,7 +561,7 @@ function StoryFeedEditorModal({
                   <div className="story-feed-editor__video-preview">
                     <iframe
                       title="Story video preview"
-                      src={form.video}
+                      src={normalizeVideoEmbedUrl(form.video)}
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen

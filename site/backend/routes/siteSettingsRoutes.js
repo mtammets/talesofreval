@@ -536,6 +536,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const settings = await readSiteSettings();
     const imageFile = req.files?.gpsImageFile?.[0];
+    const providedGpsImage = parseJsonField(req.body.gpsImage, settings.footer.gpsImage);
     const processedGpsImage = imageFile
       ? await processUploadedImage({
           file: imageFile,
@@ -544,6 +545,11 @@ router.put(
           preset: IMAGE_PRESETS.footerGps,
         })
       : null;
+    const nextGpsImage = processedGpsImage
+      ? mergeImageMetadata(processedGpsImage, settings.footer.gpsImage, providedGpsImage)
+      : providedGpsImage
+        ? mergeImageMetadata(null, settings.footer.gpsImage, providedGpsImage)
+        : settings.footer.gpsImage;
 
     const nextSettings = {
       ...settings,
@@ -565,7 +571,7 @@ router.put(
         gpsCopy: parseJsonField(req.body.gpsCopy, settings.footer.gpsCopy),
         gpsButtonLabel: parseJsonField(req.body.gpsButtonLabel, settings.footer.gpsButtonLabel),
         gpsUrl: req.body.gpsUrl || settings.footer.gpsUrl,
-        gpsImage: processedGpsImage || settings.footer.gpsImage,
+        gpsImage: nextGpsImage,
         followUsHeading: parseJsonField(req.body.followUsHeading, settings.footer.followUsHeading),
         contactHeading: parseJsonField(req.body.contactHeading, settings.footer.contactHeading),
         companyName: req.body.companyName || settings.footer.companyName,

@@ -71,6 +71,22 @@ export const HERO_IMAGE_PREPARATION_OPTIONS = {
   qualitySteps: DEFAULT_QUALITY_STEPS,
 };
 
+export const SERVICE_SECTION_IMAGE_PREPARATION_OPTIONS = {
+  ...HERO_IMAGE_PREPARATION_OPTIONS,
+  maxInputBytes: 6 * 1024 * 1024,
+  targetBytes: 4 * 1024 * 1024,
+  maxWidth: 2200,
+  maxHeight: 2200,
+};
+
+export const FOOTER_GPS_IMAGE_PREPARATION_OPTIONS = {
+  ...HERO_IMAGE_PREPARATION_OPTIONS,
+  maxInputBytes: 6 * 1024 * 1024,
+  targetBytes: 4 * 1024 * 1024,
+  maxWidth: 1800,
+  maxHeight: 1800,
+};
+
 export const prepareImageFileForUpload = async (file, options = {}) => {
   if (!file) {
     return null;

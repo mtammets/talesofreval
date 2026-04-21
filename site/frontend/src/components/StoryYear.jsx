@@ -7,8 +7,27 @@ import {
   getImageZoom,
   resolveSiteImageMedia,
 } from '../content/siteSettingsDefaults';
+import { normalizeVideoEmbedUrl } from '../features/events/storyAdminUtils';
 
 const STORY_MEDIA_SIZES = '(max-width: 768px) 100vw, 55vw';
+
+const getImageOrientation = (width, height) => {
+  if (!width || !height) {
+    return 'landscape';
+  }
+
+  const ratio = width / height;
+
+  if (ratio < 0.88) {
+    return 'portrait';
+  }
+
+  if (ratio > 1.12) {
+    return 'landscape';
+  }
+
+  return 'square';
+};
 
 function StoryYear({
   events,
@@ -335,16 +354,73 @@ function StoryYear({
     </div>
   );
 
+  const renderGalleryItem = (item, itemIndex) => {
+    const imageWidth = item.width || 4;
+    const imageHeight = item.height || 3;
+
+    return (
+      <div
+        key={`${item.src}-${itemIndex}`}
+        className={`year-gallery-frame year-gallery-frame--${itemIndex} year-gallery-frame--${item.orientation}`}
+        style={{
+          '--story-gallery-ratio': `${imageWidth} / ${imageHeight}`,
+        }}
+      >
+        <img
+          src={item.src}
+          srcSet={item.media?.srcSet || undefined}
+          sizes={item.media?.sizes || undefined}
+          alt=""
+          className="year-gallery-image"
+          style={{
+            objectPosition: item.position,
+            transform: `scale(${item.zoom})`,
+            transformOrigin: item.position,
+          }}
+        />
+      </div>
+    );
+  };
+
   const renderSlide = (event, slideIndex, options = {}) => {
     const { isTarget = false, isMeasure = false, slideStyle, layerKey, hideControls = false } = options;
     const { mediaType, image, images, video } = event;
     const { title, description } = getEventCopy(event);
+    const videoEmbedUrl = normalizeVideoEmbedUrl(video);
     const singleImageMedia =
       mediaType === 0 && image ? resolveSiteImageMedia(image, '', STORY_MEDIA_SIZES) : null;
     const singleImageSrc = singleImageMedia?.src || image?.src || '';
     const singleImagePosition =
       singleImageMedia?.objectPosition || getImageObjectPosition(image);
     const singleImageZoom = singleImageMedia?.zoom || getImageZoom(image);
+    const galleryMediaItems =
+      mediaType === 1 && Array.isArray(images)
+        ? images
+            .map((galleryImage) => {
+              const media = resolveSiteImageMedia(galleryImage, '', STORY_MEDIA_SIZES);
+              const src = media?.src || galleryImage?.src || '';
+              const width = Number(galleryImage?.width || media?.width) || 0;
+              const height = Number(galleryImage?.height || media?.height) || 0;
+
+              return src
+                ? {
+                    image: galleryImage,
+                    media,
+                    src,
+                    width,
+                    height,
+                    orientation: getImageOrientation(width, height),
+                    position: media?.objectPosition || getImageObjectPosition(galleryImage),
+                    zoom: media?.zoom || getImageZoom(galleryImage),
+                  }
+                : null;
+            })
+            .filter(Boolean)
+        : [];
+    const galleryOrientationClass =
+      mediaType === 1 && galleryMediaItems.length
+        ? ` year-media--gallery year-media--gallery-${galleryMediaItems[0].orientation}`
+        : '';
 
     return (
       <div
@@ -353,7 +429,7 @@ function StoryYear({
         style={slideStyle}
         aria-hidden={isMeasure ? 'true' : undefined}
       >
-        <div className="year-media">
+        <div className={`year-media${galleryOrientationClass}`}>
           {mediaType === 0 && singleImageSrc ? (
             <img
               className="year-media__single"
@@ -369,23 +445,22 @@ function StoryYear({
               }}
             />
           ) : null}
-          {mediaType === 1 && !(isTablet && containsVerticalImage(images)) ? (
-            <div className="year-justified-gallery">
-              {images.map((img, i) => (
-                <img key={i} src={img.src} alt="" className={`img-${i}`} />
-              ))}
+          {mediaType === 1 && galleryMediaItems.length ? (
+            <div
+              className={`year-justified-gallery year-justified-gallery--count-${Math.min(
+                galleryMediaItems.length,
+                4
+              )}${isTablet && containsVerticalImage(images) ? ' year-justified-gallery--has-vertical' : ''}`}
+            >
+              {galleryMediaItems.slice(0, 4).map(renderGalleryItem)}
             </div>
           ) : (
-            mediaType === 1 && (
-              <div className="year-justified-gallery">
-                <img key={images[0].src} src={images[0].src} alt="" className="img-vertical" />
-              </div>
-            )
+            null
           )}
           {mediaType === 2 && (
             <iframe
               title="video"
-              src={video}
+              src={videoEmbedUrl}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

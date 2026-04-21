@@ -54,7 +54,7 @@ function AdminLoginPage({ adminToken, setAdminToken, setEditControlsVisible }) {
       setAdminToken('active');
       setEditControlsVisible?.(true);
       setPassword('');
-      toast.success('Edit mode enabled.');
+      toast.success('Edit mode is on.');
       navigate(nextPath, { replace: true });
     } catch (error) {
       toast.error(getLoginErrorMessage(error));

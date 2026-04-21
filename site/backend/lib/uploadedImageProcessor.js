@@ -14,6 +14,7 @@ const IMAGE_PRESETS = {
     variantWidths: [768, 1024, 1280, 1440, 1920, 2560, 2880],
     maxWidth: 2880,
     resizeMode: 'preserve',
+    allowUndersized: true,
   },
   serviceCard: {
     label: 'Service card',
@@ -21,6 +22,9 @@ const IMAGE_PRESETS = {
     height: 520,
     quality: 80,
     variantWidths: [320, 480, 640, 960, 1280],
+    maxWidth: 1600,
+    resizeMode: 'preserve',
+    allowUndersized: true,
   },
   teamMember: {
     label: 'Team image',
@@ -28,6 +32,7 @@ const IMAGE_PRESETS = {
     height: 520,
     quality: 80,
     variantWidths: [260, 520, 780, 1040],
+    allowUndersized: true,
   },
   contactTeamMember: {
     label: 'Contact team image',
@@ -35,6 +40,7 @@ const IMAGE_PRESETS = {
     height: 420,
     quality: 80,
     variantWidths: [260, 520, 780, 1040],
+    allowUndersized: true,
   },
   footerGps: {
     label: 'GPS image',
@@ -42,6 +48,7 @@ const IMAGE_PRESETS = {
     height: 560,
     quality: 80,
     variantWidths: [400, 800, 1200, 1600],
+    allowUndersized: true,
   },
   storyMedia: {
     label: 'Story image',
@@ -49,6 +56,9 @@ const IMAGE_PRESETS = {
     height: 760,
     quality: 82,
     variantWidths: [600, 900, 1200, 1800, 2400],
+    maxWidth: 2400,
+    resizeMode: 'preserve',
+    allowUndersized: true,
   },
 };
 
@@ -56,7 +66,30 @@ const canCover = (sourceWidth, sourceHeight, targetWidth, targetHeight) =>
   Math.max(targetWidth / sourceWidth, targetHeight / sourceHeight) <= 1;
 
 const buildTooSmallMessage = (preset) =>
-  `${preset.label} image is too small. Upload at least ${preset.width}x${preset.height}px. For retina sharpness, use at least ${preset.width * 2}x${preset.height * 2}px.`;
+  `${preset.label} image is too small. Upload at least ${preset.width}x${preset.height}px.`;
+
+const resolveUndersizedOutputSize = (sourceWidth, sourceHeight, preset) => {
+  if (shouldPreserveAspectRatio(preset)) {
+    return {
+      width: sourceWidth,
+      height: sourceHeight,
+      pixelRatio: 1,
+    };
+  }
+
+  const targetAspectRatio = preset.width / preset.height;
+  const width = Math.max(
+    1,
+    Math.floor(Math.min(sourceWidth, sourceHeight * targetAspectRatio, preset.width))
+  );
+  const height = Math.max(1, Math.round(width / targetAspectRatio));
+
+  return {
+    width,
+    height,
+    pixelRatio: 1,
+  };
+};
 
 const resolveOutputSize = (metadata, preset) => {
   const sourceWidth = Number(metadata.width) || 0;
@@ -82,6 +115,10 @@ const resolveOutputSize = (metadata, preset) => {
       height: preset.height,
       pixelRatio: 1,
     };
+  }
+
+  if (preset.allowUndersized) {
+    return resolveUndersizedOutputSize(sourceWidth, sourceHeight, preset);
   }
 
   throw new Error(buildTooSmallMessage(preset));

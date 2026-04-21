@@ -21,6 +21,7 @@ import {
   createEmptyStoryEventForm,
   editorTextToHtml,
   mapStoryEventToForm,
+  normalizeVideoEmbedUrl,
 } from '../features/events/storyAdminUtils';
 import {
   DEFAULT_SITE_SETTINGS,
@@ -262,10 +263,14 @@ function StoryPage({
     payload.append('title_estonian', editorForm.title_estonian);
     payload.append('description', editorTextToHtml(editorForm.description));
     payload.append('description_estonian', editorTextToHtml(editorForm.description_estonian));
-    payload.append('video', editorForm.video);
+    payload.append('video', normalizeVideoEmbedUrl(editorForm.video));
 
     if (Number(editorForm.mediaType) === 0) {
       payload.append('image', JSON.stringify(editorForm.image || null));
+    }
+
+    if (Number(editorForm.mediaType) === 1) {
+      payload.append('images', JSON.stringify(editorForm.images || []));
     }
 
     if (singleImageFile) {

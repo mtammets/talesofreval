@@ -1,15 +1,40 @@
+import { useEffect, useState } from 'react';
+
 import { resolveSiteImage } from '../content/siteSettingsDefaults';
 import AdminModalShell from './AdminModalShell';
+import ImageFocusEditor from './ImageFocusEditor';
+
+const cloneValue = (value) =>
+  value === null || value === undefined ? value : JSON.parse(JSON.stringify(value));
 
 function HomeFooterEditorModal({
   footer,
   setFooter,
   gpsImageFile,
-  setGpsImageFile,
+  onSelectGpsImageFile,
+  currentGpsImage = null,
+  currentGpsImageUrl = '',
   onSave,
   onCancel,
   isSaving,
+  isPreparingImage = false,
 }) {
+  const [gpsPreviewUrl, setGpsPreviewUrl] = useState('');
+
+  useEffect(() => {
+    if (!gpsImageFile) {
+      setGpsPreviewUrl('');
+      return undefined;
+    }
+
+    const nextUrl = URL.createObjectURL(gpsImageFile);
+    setGpsPreviewUrl(nextUrl);
+
+    return () => {
+      URL.revokeObjectURL(nextUrl);
+    };
+  }, [gpsImageFile]);
+
   const updateLocalized = (key, language, value) => {
     setFooter((current) => ({
       ...current,
@@ -36,6 +61,37 @@ function HomeFooterEditorModal({
       },
     }));
   };
+
+  const updateGpsImageFocus = (focus) => {
+    setFooter((current) => ({
+      ...current,
+      gpsImage: {
+        ...(current.gpsImage || {}),
+        ...focus,
+      },
+    }));
+  };
+
+  const restoreCurrentGpsImage = () => {
+    onSelectGpsImageFile?.(null);
+    setFooter((current) => ({
+      ...current,
+      gpsImage: cloneValue(currentGpsImage || null),
+    }));
+  };
+
+  const gpsImageUrl =
+    gpsPreviewUrl ||
+    resolveSiteImage(footer.gpsImage, footer.gpsImageKey) ||
+    currentGpsImageUrl;
+  const gpsImageName = gpsImageFile?.name || footer.gpsImage?.name || currentGpsImage?.name || '';
+  const gpsImageStatus = isPreparingImage
+    ? 'Optimizing selected image in the browser...'
+    : gpsImageFile
+      ? '1 new image added'
+      : gpsImageUrl
+        ? 'Choose a replacement image'
+        : 'Choose an image';
 
   return (
     <AdminModalShell
@@ -164,22 +220,54 @@ function HomeFooterEditorModal({
             GPS URL
             <input type="text" value={footer.gpsUrl} onChange={(event) => updateValue('gpsUrl', event.target.value)} />
           </label>
-          <label>
-            GPS image
-            <input type="file" accept="image/*" onChange={(event) => setGpsImageFile(event.target.files?.[0] || null)} />
-            {resolveSiteImage(footer.gpsImage, footer.gpsImageKey) ? (
-              <div className="editor-inline-preview">
-                <span className="story-admin-help">Current image</span>
-                <div
-                  className="editor-inline-preview__image"
-                  style={{
-                    backgroundImage: `url(${resolveSiteImage(footer.gpsImage, footer.gpsImageKey)})`,
+          <div className="footer-gps-editor hero-editor-gallery hero-editor-gallery--single">
+            <label>
+              GPS image
+              <span className="story-admin-file-picker">
+                <input
+                  className="story-admin-file-picker__input"
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) => {
+                    onSelectGpsImageFile?.(event.target.files?.[0] || null);
+                    event.target.value = '';
                   }}
                 />
+                <span className="story-admin-file-picker__button">Choose file</span>
+                <span className="story-admin-file-picker__status">{gpsImageStatus}</span>
+              </span>
+            </label>
+
+            <div className="hero-editor-gallery__grid">
+              <div className="hero-editor-gallery__card">
+                <ImageFocusEditor
+                  image={footer.gpsImage || currentGpsImage}
+                  imageUrl={gpsImageUrl}
+                  onChange={updateGpsImageFocus}
+                  aspectRatio="800 / 560"
+                  label={null}
+                  helpText={null}
+                  allowZoom
+                />
+                <div
+                  className={`hero-editor-gallery__meta${
+                    gpsImageName ? '' : ' hero-editor-gallery__meta--actions-only'
+                  }`}
+                >
+                  {gpsImageName ? <span>{gpsImageName}</span> : null}
+                  {gpsImageFile ? (
+                    <button
+                      type="button"
+                      className="story-admin-button story-admin-button--secondary"
+                      onClick={restoreCurrentGpsImage}
+                    >
+                      Use current
+                    </button>
+                  ) : null}
+                </div>
               </div>
-            ) : null}
-            {gpsImageFile ? <span className="story-admin-help">Selected: {gpsImageFile.name}</span> : null}
-          </label>
+            </div>
+          </div>
           <div className="story-admin-grid two">
             <label>
               Follow us heading (EN)
@@ -255,7 +343,7 @@ function HomeFooterEditorModal({
             <button
               type="submit"
               className="story-admin-button story-admin-button--primary"
-              disabled={isSaving}
+              disabled={isSaving || isPreparingImage}
             >
               {isSaving ? 'Saving…' : 'Save changes'}
             </button>
