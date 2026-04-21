@@ -13,6 +13,48 @@ const normalizeImageZoom = (value, fallback = 1) => {
   return Math.min(2.5, Math.max(1, Number(resolvedValue.toFixed(2))));
 };
 
+const hasNumericField = (object, key) =>
+  Object.prototype.hasOwnProperty.call(object || {}, key) &&
+  Number.isFinite(Number(object[key]));
+
+const normalizeImageRotation = (value) =>
+  Math.min(45, Math.max(-45, Number(Number(value).toFixed(2))));
+
+const normalizeLayoutPosition = (value) =>
+  Math.min(115, Math.max(-20, Number(Number(value).toFixed(2))));
+
+const normalizeLayoutWidth = (value) =>
+  Math.min(100, Math.max(12, Number(Number(value).toFixed(2))));
+
+const normalizeImageZIndex = (value) =>
+  Math.min(999, Math.max(0, Math.round(Number(value))));
+
+const optionalImageTransformShape = (image = {}) => {
+  const transform = {};
+
+  if (hasNumericField(image, 'rotation')) {
+    transform.rotation = normalizeImageRotation(image.rotation);
+  }
+
+  if (hasNumericField(image, 'layoutX')) {
+    transform.layoutX = normalizeLayoutPosition(image.layoutX);
+  }
+
+  if (hasNumericField(image, 'layoutY')) {
+    transform.layoutY = normalizeLayoutPosition(image.layoutY);
+  }
+
+  if (hasNumericField(image, 'layoutWidth')) {
+    transform.layoutWidth = normalizeLayoutWidth(image.layoutWidth);
+  }
+
+  if (hasNumericField(image, 'zIndex')) {
+    transform.zIndex = normalizeImageZIndex(image.zIndex);
+  }
+
+  return transform;
+};
+
 const imageVariantShape = (variant = {}) => ({
   src: variant.src || '',
   width: Number(variant.width) || 1200,
@@ -47,6 +89,7 @@ const defaultImageShape = (image = {}) => ({
       focusY: Number(image.focusY) >= 0 ? Number(image.focusY) : 50,
       zoom: normalizeImageZoom(image.zoom, 1),
       variants,
+      ...optionalImageTransformShape(image),
     };
   })(),
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
@@ -72,6 +72,9 @@ function StoryPage({
   const [isDeleting, setIsDeleting] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState('');
   const [isSavingHero, setIsSavingHero] = useState(false);
+  const [isSavingInlineImage, setIsSavingInlineImage] = useState(false);
+  const adminEventsRef = useRef([]);
+  const inlineImageSaveVersionRef = useRef(0);
 
   useEffect(() => {
     if (isError) {
@@ -152,6 +155,10 @@ function StoryPage({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [adminToken]);
+
+  useEffect(() => {
+    adminEventsRef.current = adminEvents;
+  }, [adminEvents]);
 
   const displayEvents = useMemo(() => {
     if (adminToken && didLoadAdminEvents) {
@@ -280,6 +287,106 @@ function StoryPage({
     galleryFiles.forEach((file) => payload.append('galleryFiles', file));
 
     return payload;
+  };
+
+  const buildInlineEventFormData = (storyEvent) => {
+    const payload = new FormData();
+    const mediaType = Number(storyEvent.mediaType) || 0;
+
+    payload.append('year', String(storyEvent.year));
+    payload.append('order', String(storyEvent.order));
+    payload.append('mediaType', String(mediaType));
+    payload.append('title', storyEvent.title || '');
+    payload.append('title_estonian', storyEvent.title_estonian || '');
+    payload.append('description', storyEvent.description || '');
+    payload.append('description_estonian', storyEvent.description_estonian || '');
+    payload.append('video', normalizeVideoEmbedUrl(storyEvent.video || ''));
+
+    if (mediaType === 0) {
+      payload.append('image', JSON.stringify(storyEvent.image || null));
+    }
+
+    if (mediaType === 1) {
+      payload.append('images', JSON.stringify(storyEvent.images || []));
+    }
+
+    return payload;
+  };
+
+  const saveInlineStoryEvent = useCallback(
+    async (storyEvent) => {
+      if (!adminToken || !storyEvent?._id) {
+        return;
+      }
+
+      const saveVersion = inlineImageSaveVersionRef.current + 1;
+      inlineImageSaveVersionRef.current = saveVersion;
+      setIsSavingInlineImage(true);
+
+      try {
+        const data = await storyAdminService.updateStoryEvent(
+          adminToken,
+          storyEvent._id,
+          buildInlineEventFormData(storyEvent)
+        );
+
+        if (inlineImageSaveVersionRef.current === saveVersion) {
+          setAdminEvents(data);
+          setDidLoadAdminEvents(true);
+        }
+      } catch (error) {
+        handleAdminAuthError(error);
+        loadAdminEvents(adminToken);
+      } finally {
+        if (inlineImageSaveVersionRef.current === saveVersion) {
+          setIsSavingInlineImage(false);
+        }
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [adminToken]
+  );
+
+  const handleInlineImageTransformChange = ({ eventId, mediaType, imageIndex, patch, commit }) => {
+    if (!adminToken || !eventId || !patch) {
+      return;
+    }
+
+    const applyImagePatch = (storyEvent) => {
+      const nextEvent = { ...storyEvent };
+
+      if (Number(mediaType) === 1) {
+        nextEvent.images = (storyEvent.images || []).map((image, index) =>
+          index === imageIndex
+            ? {
+                ...(image || {}),
+                ...patch,
+              }
+            : image
+        );
+      } else {
+        nextEvent.image = {
+          ...(storyEvent.image || {}),
+          ...patch,
+        };
+      }
+
+      return nextEvent;
+    };
+
+    const nextEvents = adminEventsRef.current.map((storyEvent) =>
+        storyEvent._id === eventId ? applyImagePatch(storyEvent) : storyEvent
+    );
+    const eventToSave = commit
+      ? nextEvents.find((storyEvent) => storyEvent._id === eventId)
+      : null;
+
+    adminEventsRef.current = nextEvents;
+    setAdminEvents(nextEvents);
+
+    if (commit && eventToSave?._id) {
+      saveInlineStoryEvent(eventToSave);
+    }
   };
 
   const saveStoryEvent = async (event) => {
@@ -489,7 +596,8 @@ function StoryPage({
               onEditEvent={openEditEditor}
               onAddPage={openCreateEditorForYear}
               onDeleteEvent={openDeleteDialog}
-              isMutating={isSaving || isDeleting}
+              onChangeImageTransform={handleInlineImageTransformChange}
+              isMutating={isSaving || isDeleting || isSavingInlineImage}
             />
           ))
         ) : (

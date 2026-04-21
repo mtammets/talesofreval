@@ -78,6 +78,8 @@ const HERO_MEDIA_FRAME = {
 };
 export const MIN_IMAGE_ZOOM = 1;
 export const MAX_IMAGE_ZOOM = 2.5;
+export const MIN_IMAGE_ROTATION = -45;
+export const MAX_IMAGE_ROTATION = 45;
 
 export const DEFAULT_SITE_SETTINGS = {
   homeHero: {
@@ -346,6 +348,9 @@ const pickPreferredVariant = (variants = [], preferredWidth = 0) =>
 const clampImageZoom = (value) =>
   Math.min(MAX_IMAGE_ZOOM, Math.max(MIN_IMAGE_ZOOM, Number(value) || MIN_IMAGE_ZOOM));
 
+const clampImageRotation = (value) =>
+  Math.min(MAX_IMAGE_ROTATION, Math.max(MIN_IMAGE_ROTATION, Number(value) || 0));
+
 const resolveResponsiveSizes = (sizes = '100vw', width = 0, height = 0, zoom = MIN_IMAGE_ZOOM) => {
   if (sizes !== HERO_MEDIA_SIZES || !width || !height) {
     return sizes;
@@ -374,6 +379,21 @@ export const getImageFocusPoint = (image = null) => ({
 });
 
 export const getImageZoom = (image = null) => clampImageZoom(image?.zoom);
+
+export const getImageRotation = (image = null) => clampImageRotation(image?.rotation);
+
+export const hasImageLayout = (image = null) =>
+  Number.isFinite(Number(image?.layoutX)) ||
+  Number.isFinite(Number(image?.layoutY)) ||
+  Number.isFinite(Number(image?.layoutWidth)) ||
+  Number.isFinite(Number(image?.rotation));
+
+export const getImageLayout = (image = null) => ({
+  layoutX: Number.isFinite(Number(image?.layoutX)) ? Number(image.layoutX) : null,
+  layoutY: Number.isFinite(Number(image?.layoutY)) ? Number(image.layoutY) : null,
+  layoutWidth: Number.isFinite(Number(image?.layoutWidth)) ? Number(image.layoutWidth) : null,
+  rotation: getImageRotation(image),
+});
 
 export const getImageObjectPosition = (image = null) => {
   const focus = getImageFocusPoint(image);
@@ -425,6 +445,7 @@ export const resolveSiteImageMedia = (image, imageKey = '', sizes = '100vw') => 
     focusX: focus.focusX,
     focusY: focus.focusY,
     zoom,
+    rotation: getImageRotation(image),
   };
 };
 
@@ -477,6 +498,7 @@ export const createPreviewMediaAsset = (src, sizes = '100vw', image = null) =>
           focusX: focus.focusX,
           focusY: focus.focusY,
           zoom,
+          rotation: getImageRotation(image),
         };
       })()
     : null;

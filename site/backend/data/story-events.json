@@ -757,7 +757,12 @@
             "height": 1600,
             "format": "webp"
           }
-        ]
+        ],
+        "rotation": 1.11,
+        "layoutX": 10.28,
+        "layoutY": 12.89,
+        "layoutWidth": 55.93,
+        "zIndex": 14
       },
       {
         "src": "/uploads/story/1776768927310-f985b6ec-e2cb-4cc5-ac90-07c7e70fdfd6-1200w.webp",
@@ -800,7 +805,12 @@
             "height": 1600,
             "format": "webp"
           }
-        ]
+        ],
+        "rotation": -6.67,
+        "layoutX": 39.36,
+        "layoutY": 39.11,
+        "layoutWidth": 49.04,
+        "zIndex": 15
       }
     ],
     "video": "",

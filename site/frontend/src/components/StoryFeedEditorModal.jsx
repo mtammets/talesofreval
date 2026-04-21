@@ -101,6 +101,10 @@ function StoryFeedEditorModal({
         focusX: 50,
         focusY: 50,
         zoom: 1,
+        rotation: 0,
+        layoutX: undefined,
+        layoutY: undefined,
+        layoutWidth: undefined,
       },
     }));
   };

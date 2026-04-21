@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from 'react';
 import {
   getImageFocusPoint,
   getImageObjectPosition,
+  getImageRotation,
   getImageZoom,
 } from '../content/siteSettingsDefaults';
 
@@ -25,6 +26,7 @@ function ImageFocusEditor({
   const [intrinsicSize, setIntrinsicSize] = useState({ width: 0, height: 0 });
   const focus = useMemo(() => getImageFocusPoint(image), [image]);
   const zoom = useMemo(() => getImageZoom(image), [image]);
+  const rotation = useMemo(() => getImageRotation(image), [image]);
   const focusPosition = useMemo(() => getImageObjectPosition(image), [image]);
   const showZoomControls = allowZoom || previewVariant === 'hero';
 
@@ -158,7 +160,7 @@ function ImageFocusEditor({
           }}
           style={{
             objectPosition: focusPosition,
-            transform: `scale(${zoom})`,
+            transform: `scale(${Number((zoom * (1 + Math.abs(rotation) / 140)).toFixed(4))}) rotate(${rotation}deg)`,
             transformOrigin: focusPosition,
           }}
         />

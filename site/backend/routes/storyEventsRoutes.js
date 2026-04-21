@@ -55,6 +55,90 @@ const normalizeImageZoom = (value, fallback = 1) => {
   return Math.min(2.5, Math.max(1, Number(resolvedValue.toFixed(2))));
 };
 
+const hasNumericField = (object, key) =>
+  Object.prototype.hasOwnProperty.call(object || {}, key) &&
+  Number.isFinite(Number(object[key]));
+
+const normalizeImageRotation = (value) =>
+  Math.min(45, Math.max(-45, Number(Number(value).toFixed(2))));
+
+const normalizeLayoutPosition = (value) =>
+  Math.min(115, Math.max(-20, Number(Number(value).toFixed(2))));
+
+const normalizeLayoutWidth = (value) =>
+  Math.min(100, Math.max(12, Number(Number(value).toFixed(2))));
+
+const normalizeImageZIndex = (value) =>
+  Math.min(999, Math.max(0, Math.round(Number(value))));
+
+const resolveOptionalImageTransform = (key, providedImage, fallbackImage, normalizeValue) => {
+  if (hasNumericField(providedImage, key)) {
+    return normalizeValue(providedImage[key]);
+  }
+
+  if (hasNumericField(fallbackImage, key)) {
+    return normalizeValue(fallbackImage[key]);
+  }
+
+  return undefined;
+};
+
+const mergeImageTransformMetadata = (providedImage = null, fallbackImage = null) => {
+  const transform = {};
+  const rotation = resolveOptionalImageTransform(
+    'rotation',
+    providedImage,
+    fallbackImage,
+    normalizeImageRotation
+  );
+  const layoutX = resolveOptionalImageTransform(
+    'layoutX',
+    providedImage,
+    fallbackImage,
+    normalizeLayoutPosition
+  );
+  const layoutY = resolveOptionalImageTransform(
+    'layoutY',
+    providedImage,
+    fallbackImage,
+    normalizeLayoutPosition
+  );
+  const layoutWidth = resolveOptionalImageTransform(
+    'layoutWidth',
+    providedImage,
+    fallbackImage,
+    normalizeLayoutWidth
+  );
+  const zIndex = resolveOptionalImageTransform(
+    'zIndex',
+    providedImage,
+    fallbackImage,
+    normalizeImageZIndex
+  );
+
+  if (rotation !== undefined) {
+    transform.rotation = rotation;
+  }
+
+  if (layoutX !== undefined) {
+    transform.layoutX = layoutX;
+  }
+
+  if (layoutY !== undefined) {
+    transform.layoutY = layoutY;
+  }
+
+  if (layoutWidth !== undefined) {
+    transform.layoutWidth = layoutWidth;
+  }
+
+  if (zIndex !== undefined) {
+    transform.zIndex = zIndex;
+  }
+
+  return transform;
+};
+
 const stripTransientImageFields = (image = {}) => {
   const { uploadIndex, previewUrl, ...rest } = image;
   return rest;
@@ -87,6 +171,7 @@ const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage 
       providedImage?.zoom,
       normalizeImageZoom(fallbackImage?.zoom, 1)
     ),
+    ...mergeImageTransformMetadata(providedImage, fallbackImage),
   };
 };
 

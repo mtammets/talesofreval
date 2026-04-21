@@ -4,10 +4,14 @@ import { ArrowLeft } from '../icons/ArrowLeft.tsx';
 import { ArrowRight } from '../icons/ArrowRight.tsx';
 import {
   getImageObjectPosition,
+  getImageRotation,
   getImageZoom,
+  getImageLayout,
+  hasImageLayout,
   resolveSiteImageMedia,
 } from '../content/siteSettingsDefaults';
 import { normalizeVideoEmbedUrl } from '../features/events/storyAdminUtils';
+import StoryImageTransformEditor from './StoryImageTransformEditor.jsx';
 
 const STORY_MEDIA_SIZES = '(max-width: 768px) 100vw, 55vw';
 
@@ -29,6 +33,21 @@ const getImageOrientation = (width, height) => {
   return 'square';
 };
 
+const getSingleImageScale = (zoom, rotation) =>
+  Number((zoom * (1 + Math.abs(rotation) / 140)).toFixed(4));
+
+const DEFAULT_GALLERY_Z_INDEX = [1, 3, 2, 0];
+
+const getGalleryItemZIndex = (image, itemIndex) => {
+  const storedZIndex = Number(image?.zIndex);
+
+  if (Number.isFinite(storedZIndex)) {
+    return storedZIndex;
+  }
+
+  return DEFAULT_GALLERY_Z_INDEX[itemIndex] ?? itemIndex;
+};
+
 function StoryYear({
   events,
   language = 'en',
@@ -36,6 +55,7 @@ function StoryYear({
   onEditEvent,
   onAddPage,
   onDeleteEvent,
+  onChangeImageTransform,
   isMutating = false,
 }) {
   const SWIPE_TRANSITION_MS = 360;
@@ -354,17 +374,123 @@ function StoryYear({
     </div>
   );
 
+  const getGalleryFrameStyle = (image, baseStyle = {}) => {
+    const layout = getImageLayout(image);
+    const hasLayoutMetadata = hasImageLayout(image);
+    const hasPositionMetadata =
+      layout.layoutX !== null || layout.layoutY !== null || layout.layoutWidth !== null;
+    const frameStyle = {
+      ...baseStyle,
+    };
+    const storedZIndex = Number(image?.zIndex);
+
+    if (Number.isFinite(storedZIndex)) {
+      frameStyle.zIndex = storedZIndex;
+    }
+
+    if (!hasLayoutMetadata) {
+      return frameStyle;
+    }
+
+    if (layout.layoutX !== null) {
+      frameStyle.left = `${layout.layoutX}%`;
+    }
+
+    if (layout.layoutY !== null) {
+      frameStyle.top = `${layout.layoutY}%`;
+    }
+
+    if (layout.layoutWidth !== null) {
+      frameStyle.width = `${layout.layoutWidth}%`;
+    }
+
+    if (hasPositionMetadata) {
+      frameStyle.right = 'auto';
+      frameStyle.bottom = 'auto';
+      frameStyle.height = 'auto';
+    }
+
+    frameStyle.transform = `rotate(${layout.rotation}deg)`;
+
+    return frameStyle;
+  };
+
+  const handleImageTransformChange = (event, imageIndex, patch, options = {}) => {
+    if (!event?._id) {
+      return;
+    }
+
+    onChangeImageTransform?.({
+      eventId: event._id,
+      mediaType: Number(event.mediaType) || 0,
+      imageIndex,
+      patch,
+      commit: Boolean(options.commit),
+    });
+  };
+
+  const handleGalleryImageActivate = (event, imageIndex, galleryItems) => {
+    if (!event?._id || !Array.isArray(galleryItems) || !galleryItems.length) {
+      return;
+    }
+
+    const activeZIndex = getGalleryItemZIndex(galleryItems[imageIndex]?.image, imageIndex);
+    const maxZIndex = Math.max(
+      ...galleryItems.map((item, index) => getGalleryItemZIndex(item.image, index))
+    );
+
+    if (activeZIndex >= maxZIndex) {
+      return;
+    }
+
+    handleImageTransformChange(
+      event,
+      imageIndex,
+      {
+        zIndex: maxZIndex + 1,
+      },
+      {
+        commit: true,
+      }
+    );
+  };
+
   const renderGalleryItem = (item, itemIndex) => {
     const imageWidth = item.width || 4;
     const imageHeight = item.height || 3;
+    const frameClassName = `year-gallery-frame year-gallery-frame--${itemIndex} year-gallery-frame--${item.orientation}`;
+    const frameStyle = getGalleryFrameStyle(item.image, {
+      '--story-gallery-ratio': `${imageWidth} / ${imageHeight}`,
+    });
+
+    if (item.canEdit) {
+      return (
+        <StoryImageTransformEditor
+          key={`${item.src}-${itemIndex}`}
+          mode="gallery"
+          image={item.image}
+          src={item.src}
+          srcSet={item.media?.srcSet || undefined}
+          sizes={item.media?.sizes || undefined}
+          alt=""
+          className={frameClassName}
+          imageClassName="year-gallery-image"
+          style={frameStyle}
+          onActivate={() =>
+            handleGalleryImageActivate(item.event, itemIndex, item.galleryItems)
+          }
+          onChange={(patch, options) =>
+            handleImageTransformChange(item.event, itemIndex, patch, options)
+          }
+        />
+      );
+    }
 
     return (
       <div
         key={`${item.src}-${itemIndex}`}
-        className={`year-gallery-frame year-gallery-frame--${itemIndex} year-gallery-frame--${item.orientation}`}
-        style={{
-          '--story-gallery-ratio': `${imageWidth} / ${imageHeight}`,
-        }}
+        className={frameClassName}
+        style={frameStyle}
       >
         <img
           src={item.src}
@@ -393,10 +519,12 @@ function StoryYear({
     const singleImagePosition =
       singleImageMedia?.objectPosition || getImageObjectPosition(image);
     const singleImageZoom = singleImageMedia?.zoom || getImageZoom(image);
+    const singleImageRotation = getImageRotation(image);
+    const canEditMedia = isEditable && !isMeasure && !isTarget && !isMobile;
     const galleryMediaItems =
       mediaType === 1 && Array.isArray(images)
         ? images
-            .map((galleryImage) => {
+            .map((galleryImage, galleryIndex) => {
               const media = resolveSiteImageMedia(galleryImage, '', STORY_MEDIA_SIZES);
               const src = media?.src || galleryImage?.src || '';
               const width = Number(galleryImage?.width || media?.width) || 0;
@@ -404,6 +532,7 @@ function StoryYear({
 
               return src
                 ? {
+                    event,
                     image: galleryImage,
                     media,
                     src,
@@ -412,11 +541,16 @@ function StoryYear({
                     orientation: getImageOrientation(width, height),
                     position: media?.objectPosition || getImageObjectPosition(galleryImage),
                     zoom: media?.zoom || getImageZoom(galleryImage),
+                    canEdit: canEditMedia,
+                    zIndex: getGalleryItemZIndex(galleryImage, galleryIndex),
                   }
                 : null;
             })
             .filter(Boolean)
         : [];
+    galleryMediaItems.forEach((item) => {
+      item.galleryItems = galleryMediaItems;
+    });
     const galleryOrientationClass =
       mediaType === 1 && galleryMediaItems.length
         ? ` year-media--gallery year-media--gallery-${galleryMediaItems[0].orientation}`
@@ -431,19 +565,36 @@ function StoryYear({
       >
         <div className={`year-media${galleryOrientationClass}`}>
           {mediaType === 0 && singleImageSrc ? (
-            <img
-              className="year-media__single"
-              src={singleImageSrc}
-              srcSet={singleImageMedia?.srcSet || undefined}
-              sizes={singleImageMedia?.sizes || undefined}
-              alt=""
-              aria-hidden="true"
-              style={{
-                objectPosition: singleImagePosition,
-                transform: `scale(${singleImageZoom})`,
-                transformOrigin: singleImagePosition,
-              }}
-            />
+            canEditMedia ? (
+              <StoryImageTransformEditor
+                mode="single"
+                image={image}
+                src={singleImageSrc}
+                srcSet={singleImageMedia?.srcSet || undefined}
+                sizes={singleImageMedia?.sizes || undefined}
+                alt=""
+                ariaHidden="true"
+                className="year-media__single-editor"
+                imageClassName="year-media__single"
+                onChange={(patch, options) =>
+                  handleImageTransformChange(event, null, patch, options)
+                }
+              />
+            ) : (
+              <img
+                className="year-media__single"
+                src={singleImageSrc}
+                srcSet={singleImageMedia?.srcSet || undefined}
+                sizes={singleImageMedia?.sizes || undefined}
+                alt=""
+                aria-hidden="true"
+                style={{
+                  objectPosition: singleImagePosition,
+                  transform: `scale(${getSingleImageScale(singleImageZoom, singleImageRotation)}) rotate(${singleImageRotation}deg)`,
+                  transformOrigin: singleImagePosition,
+                }}
+              />
+            )
           ) : null}
           {mediaType === 1 && galleryMediaItems.length ? (
             <div
