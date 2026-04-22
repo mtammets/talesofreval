@@ -8,7 +8,7 @@ LOGFILE="/data01/virt72693/domeenid/www.talesofreval.ee/deploy.log"
 
 # Pull the latest changes from the repository
 echo "Starting deployment at $(date)" >> $LOGFILE
-git pull origin master >> $LOGFILE 2>&1
+git pull origin main >> $LOGFILE 2>&1
 
 # Build the application
 cd /data01/virt72693/domeenid/www.talesofreval.ee/tor-full-stack/frontend || exit

@@ -123,11 +123,78 @@ Püsiv salvestus Zone'is:
 - esimese käivituse ajal kopeerib backend vaikimisi JSON algandmed sinna automaatselt
 - nii ei kirjuta järgmine `git pull` ega deploy edititud sisu üle
 
+## Preview aadress Zone'is
+
+Preview sait on seadistatud kliendile kontrollimiseks enne päris live'i vahetust:
+- avalik aadress: `https://preview.talesofreval.ee`
+- Zone alamdomeen: `preview.talesofreval.ee`
+- DNS/veebiserver: Zone alamdomeen, mitte käsitsi lisatud eraldi A-kirje
+- subdomain proxy: `mod_proxy` port `5021`
+- PM2 rakendus: `tales-preview`
+- PM2 script: `/data01/virt72693/domeenid/www.talesofreval.ee/tor-preview/backend/server.js`
+- rakenduse kaust: `/data01/virt72693/domeenid/www.talesofreval.ee/tor-preview`
+- preview storage: `/data01/virt72693/domeenid/www.talesofreval.ee/preview-storage`
+- Zone loopback IP: `127.1.67.5`
+
+Preview `.env` olulised väärtused:
+
+```env
+PORT=5021
+NODE_ENV=production
+APP_STORAGE_DIR=/data01/virt72693/domeenid/www.talesofreval.ee/preview-storage
+PREVIEW_NOINDEX=true
+BIND_HOST=127.1.67.5
+MAIL_TO=mtammets@gmail.com
+MAIL_FROM=infotest@talesofreval.ee
+MAIL_WEBSITE=https://preview.talesofreval.ee
+```
+
+Preview server kasutab `BIND_HOST` muutujat, sest Zone Node.js rakendus peab kuulama virtuaalserveri loopback IP peal. Koodis on ka `PREVIEW_NOINDEX`, mis lisab preview vastustele:
+- `X-Robots-Tag: noindex, nofollow, noarchive`
+- `/robots.txt`, kus `Disallow: /`
+
+Preview seadistuse käigus leitud probleemid:
+- alguses andis `preview.talesofreval.ee` `503 Service Unavailable`
+- põhjus ei olnud DNS ega SSL, vaid PM2 `tales-preview` oli `errored`
+- PM2 logid olid Zone UI kaudu praktiliselt nähtamatud, sest preview protsessi log path oli `/dev/null`
+- käsitsi serveris käivitades tuli välja viga `Cannot find module 'multer'`
+- lahendus: `/tor-preview` kaustas käivitati `npm install --omit=dev`
+- pärast seda `tales-preview` läks PM2-s `online`
+- käivitati `pm2 save`, et protsess jääks serveri restartide järel alles
+
+Preview piltide probleem:
+- preview andmetes olid piltide URL-id olemas, aga `preview-storage/uploads` oli tühi
+- backend teenindab pilte `APP_STORAGE_DIR` alt, mitte `/tor-preview/backend/uploads` alt
+- olemasolevad pildid kopeeriti:
+  - `/tor-preview/backend/uploads/site` -> `/preview-storage/uploads/site`
+  - `/tor-preview/backend/uploads/story` -> `/preview-storage/uploads/story`
+- kontrolli tulemus: `uploadRefs=135`, `missingUploadFiles=0`
+
+Preview admin:
+- admin URL: `https://preview.talesofreval.ee/login`
+- login-vorm kontrollib ainult parooli; kasutajanime backend ei kontrolli
+- kontrollitud:
+  - admin login vastab `200`
+  - `GET /api/admin/me` vastab sisselogitult `200`
+  - sisu salvestuse endpoint vastab `200`
+  - pildi upload töötab, server töötleb uploadi `webp` failiks ja teenindab selle `/uploads/site/...` alt
+
+Preview e-mailid:
+- `Book now`, `Contact us` ja `Free tour` sisemised teavitused lähevad preview's `MAIL_TO` aadressile `mtammets@gmail.com`
+- kliendile saadetakse koopia/kinnitus tema vormi sisestatud aadressile
+- preview saatja on `infotest@talesofreval.ee`
+- live `talesofreval.ee` vana `tor-full` rakendus saadab `Book now` kirjad koodis hardcoded aadressile `info@talesofreval.ee`
+
 ## Homme edasi
 
 Järgmine loogiline samm:
 
-1. Kontrollida Zone serveris, et `localhost:25` kaudu maili saatmine toimib päriselt
-2. Kontrollida, et `Book now`, `Contact us` ja `Free tour` jõuavad `info@talesofreval.ee`
-3. Vajadusel viia `Free tour` kuupäevad eraldi serveri JSON faili, kui neid on vaja muuta ilma redeploy'ta
-4. Soovi korral eemaldada järgmises passis ka Stripe/Virtual Tour välisteenus, kui eesmärk on täiesti minimaalne Zone-lahendus
+1. Lasta kliendil kontrollida `https://preview.talesofreval.ee` sisu, vorme ja admini edit-mode'i
+2. Enne live'i muutmist vahetada admini ajutine parool tugevama vastu
+3. Kui klient kinnitab, tõsta preview/live muudatused päris `talesofreval.ee` alla
+4. Live'i vahetuse ajal panna päris production `.env` väärtused üle:
+   - `MAIL_TO=info@talesofreval.ee`
+   - `MAIL_FROM=info@talesofreval.ee`
+   - `MAIL_WEBSITE=https://www.talesofreval.ee`
+   - `PREVIEW_NOINDEX=false` või eemalda see
+5. Kontrollida Zone serveris, et päris live `Book now`, `Contact us` ja `Free tour` jõuavad `info@talesofreval.ee`

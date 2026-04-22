@@ -29,6 +29,8 @@ const uploadStaticOptions = {
 };
 
 const port = process.env.PORT || 3000;
+const bindHost = process.env.BIND_HOST;
+const previewNoIndex = process.env.PREVIEW_NOINDEX === 'true';
 const adminRoutes = require('./routes/adminRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 const storyEventsRoutes = require('./routes/storyEventsRoutes');
@@ -36,6 +38,17 @@ const siteSettingsRoutes = require('./routes/siteSettingsRoutes');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+if (previewNoIndex) {
+  app.use((_req, res, next) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    next();
+  });
+
+  app.get('/robots.txt', (_req, res) => {
+    res.type('text/plain').send('User-agent: *\nDisallow: /\n');
+  });
+}
 
 app.use('/email', emailRoutes);
 app.use('/uploads/story', express.static(runtimeStoryUploadsDir, uploadStaticOptions));
@@ -64,6 +77,12 @@ if (process.env.NODE_ENV === 'production') {
   app.get('/', (req, res) => res.send('Please set to production'));
 }
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+if (bindHost) {
+  app.listen(port, bindHost, () => {
+    console.log(`Server listening on http://${bindHost}:${port}`);
+  });
+} else {
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
+}
