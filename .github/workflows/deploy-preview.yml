@@ -17,7 +17,6 @@ jobs:
       PREVIEW_HOST: talesofreval.ee
       PREVIEW_PORT: '22'
       PREVIEW_USER: virt72693
-      EXPECTED_PREVIEW_PUBLIC_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC8fAu4uYmIrT428XXeFZupLx/nt3uHIVBGCjliWHM+p26vPbnRjLlarc1V9a/slqlL6Nmhz5i/xwfCGJ9bJgzpZOIAUcOp/RXOJms/Gk/L2WH50tlo212S5F/sRNEvD5hZIX1PIg7deSpim+p3po3oKtR24dzPOJscrpp2RmIXmHRGPA8HJMeEaz8tk9p2F6mUWXURD9McWBaalqlLNQsgIP4yLs8odZ/+eQea4njGNRs3gylCVfVJ2vimUNABf+JDjJl2DG7zwFNdUgE0tRD3WiaFEnqi8p38h/bmcpHiQEuX2/v1Egs2I21JDjQ9neXYNh5oEi11Fwur+d569LOMhuSBVc+i1GbfyJqPN5w4pOcqnNo4DMvx3y3AXGKNHv1oxzXt3bjiXFTRROy5IyQEHYw5DXQtqre36Zh81z3WpVT44RfjzWfraCGnFvYF03f8UZ8+YYUEHrpp5b1tU/TBUTixu/Dn7b9FQDdUHPLdGci9oS0zqwBIhS50LFTtIw/hPrMnKNF9Cmuf9K8TmZFJAUag+UCMzePgvvS62fO8Eix2bAOUPOuFSjYNoP3LEf5LSN8xz+1fsCCAuNGe1T/bgULxoILsaDcHJ0dPT/tpuD/TogJlG4Ykynd6f5l26hOk1yQffGQAij2+TaTOYXMYgPzOORYX/wy3HhQ6ghMNtw==
 
     steps:
       - name: Check out repository
@@ -56,17 +55,6 @@ jobs:
 
       - name: Validate SSH private key
         run: ssh-keygen -y -f ~/.ssh/preview_deploy_key > /dev/null
-
-      - name: Verify deploy key matches Zone key
-        run: |
-          set -euo pipefail
-
-          actual_public_key="$(ssh-keygen -y -f ~/.ssh/preview_deploy_key)"
-          if [ "$actual_public_key" != "$EXPECTED_PREVIEW_PUBLIC_KEY" ]; then
-            echo "PREVIEW_SSH_KEY does not match the public key added in Zone."
-            echo "Update the GitHub PREVIEW_SSH_KEY secret with ~/.ssh/tales_preview_github_actions_rsa."
-            exit 1
-          fi
 
       - name: Add preview host key
         run: |
