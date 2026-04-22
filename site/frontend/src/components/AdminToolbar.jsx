@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -11,6 +12,7 @@ function AdminToolbar({
 }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [toolbarExpanded, setToolbarExpanded] = useState(false);
 
   if (!adminToken || location.pathname === '/login') {
     return null;
@@ -25,7 +27,19 @@ function AdminToolbar({
   };
 
   return (
-    <div className="admin-toolbar">
+    <div className={`admin-toolbar ${toolbarExpanded ? 'admin-toolbar--expanded' : 'admin-toolbar--collapsed'}`}>
+      <button
+        type="button"
+        className="admin-toolbar__toggle"
+        aria-expanded={toolbarExpanded}
+        aria-label={toolbarExpanded ? 'Minimize edit mode panel' : 'Open edit mode panel'}
+        onClick={() => setToolbarExpanded((current) => !current)}
+      >
+        <span className="admin-toolbar__eyebrow">Edit Mode</span>
+        <span className="admin-toolbar__toggle-icon" aria-hidden="true">
+          {toolbarExpanded ? '-' : '+'}
+        </span>
+      </button>
       <div className="admin-toolbar__meta">
         <span className="admin-toolbar__eyebrow">Edit Mode</span>
       </div>

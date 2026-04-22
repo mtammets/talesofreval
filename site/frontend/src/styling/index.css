@@ -3000,7 +3000,7 @@ body.book-now-modal-open{
   position: absolute;
   overflow: hidden;
   aspect-ratio: var(--story-gallery-ratio, 4 / 3);
-  background: rgba(244, 239, 232, 0.08);
+  background: transparent;
   box-shadow: 0 22px 44px rgba(8, 10, 18, 0.22);
 }
 
@@ -3008,7 +3008,7 @@ body.book-now-modal-open{
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .story-image-transform-editor{
@@ -4422,7 +4422,7 @@ h2.virtual{
 .year-data{
   display: flex;
   flex-direction: column;
-  min-height: none;
+  min-height: 0;
 }
 
 .year-swipe-viewport{
@@ -4454,7 +4454,7 @@ h2.virtual{
 }
 
 .year-media--gallery-portrait{
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
 }
 
 .year-media--gallery-square{
@@ -4462,7 +4462,7 @@ h2.virtual{
 }
 
 .year-media--gallery-landscape{
-  aspect-ratio: 5 / 3;
+  aspect-ratio: 4 / 3;
 }
 
 .year-media iframe{
@@ -4498,6 +4498,42 @@ h2.virtual{
   width: 34%;
   height: 48%;
   transform: rotate(6deg);
+}
+
+.year-justified-gallery--count-2 .year-gallery-frame--0.year-gallery-frame--landscape{
+  top: 13%;
+  left: 8%;
+  width: 59%;
+  height: auto;
+  transform: rotate(3deg);
+}
+
+.year-justified-gallery--count-2 .year-gallery-frame--1.year-gallery-frame--landscape{
+  top: 32%;
+  left: 30%;
+  right: auto;
+  bottom: auto;
+  width: 59%;
+  height: auto;
+  transform: rotate(-5deg);
+}
+
+.year-data--mobile .year-justified-gallery--count-2 .year-gallery-frame--0.year-gallery-frame--portrait{
+  top: 6% !important;
+  left: 13% !important;
+  width: 48% !important;
+  height: auto !important;
+  transform: rotate(-3deg) !important;
+}
+
+.year-data--mobile .year-justified-gallery--count-2 .year-gallery-frame--1.year-gallery-frame--portrait{
+  top: 26% !important;
+  left: 47% !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 33% !important;
+  height: auto !important;
+  transform: rotate(7deg) !important;
 }
 
 .year-gallery-frame--2,
@@ -4819,13 +4855,17 @@ button.year-event-switch.disabled{
     top: 12%;
     left: 13%;
     width: 52%;
+    height: auto;
     transform: rotate(-3deg);
   }
   
   .year-gallery-frame--1{
     top: 35%;
     left: 41%;
+    right: auto;
+    bottom: auto;
     width: 33%;
+    height: auto;
     transform: rotate(7deg);
   }
 
@@ -4833,13 +4873,17 @@ button.year-event-switch.disabled{
     top: 13%;
     left: 8%;
     width: 59%;
+    height: auto;
     transform: rotate(3deg);
   }
 
   .year-justified-gallery--count-2 .year-gallery-frame--1.year-gallery-frame--landscape{
     top: 32%;
     left: 30%;
+    right: auto;
+    bottom: auto;
     width: 59%;
+    height: auto;
     transform: rotate(-5deg);
   }
 
@@ -6249,6 +6293,10 @@ button.year-event-switch.disabled{
   backdrop-filter: blur(12px);
 }
 
+.admin-toolbar__toggle{
+  display: none;
+}
+
 .admin-toolbar__meta{
   display: grid;
   gap: 6px;
@@ -7055,6 +7103,65 @@ button.year-event-switch.disabled{
     flex-direction: column;
     align-items: stretch;
     padding: 14px;
+  }
+
+  .admin-toolbar__toggle{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    width: 100%;
+    min-height: 42px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    color: var(--cream);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .admin-toolbar__toggle .admin-toolbar__eyebrow{
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .admin-toolbar__toggle-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(244, 239, 232, 0.9);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .admin-toolbar__meta{
+    display: none;
+  }
+
+  .admin-toolbar--collapsed{
+    left: auto;
+    width: auto;
+    max-width: calc(100vw - 24px);
+    flex-direction: row;
+    align-items: center;
+    padding: 0 16px;
+    border-radius: 999px;
+  }
+
+  .admin-toolbar--collapsed .admin-toolbar__toggle{
+    min-height: 46px;
+    padding: 0;
+  }
+
+  .admin-toolbar--collapsed .admin-toolbar__actions{
+    display: none;
   }
 
   .story-page-admin-toolbar,
