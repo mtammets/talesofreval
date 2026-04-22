@@ -128,6 +128,18 @@ function AppShell() {
   }, []);
 
   useEffect(() => {
+    const preventContextMenu = (event) => {
+      event.preventDefault();
+    };
+
+    document.addEventListener('contextmenu', preventContextMenu);
+
+    return () => {
+      document.removeEventListener('contextmenu', preventContextMenu);
+    };
+  }, []);
+
+  useEffect(() => {
     const root = document.documentElement;
     const body = document.body;
     const isAdminActive = Boolean(adminToken);
