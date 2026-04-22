@@ -36,25 +36,32 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y rsync
 
-      - name: Configure SSH
+      - name: Write SSH key
         env:
-          PREVIEW_HOST: ${{ secrets.PREVIEW_HOST }}
-          PREVIEW_PORT: ${{ secrets.PREVIEW_PORT }}
           PREVIEW_SSH_KEY: ${{ secrets.PREVIEW_SSH_KEY }}
-          PREVIEW_USER: ${{ secrets.PREVIEW_USER }}
         run: |
           set -euo pipefail
 
-          : "${PREVIEW_HOST:?Missing PREVIEW_HOST secret}"
           : "${PREVIEW_SSH_KEY:?Missing PREVIEW_SSH_KEY secret}"
-          : "${PREVIEW_USER:?Missing PREVIEW_USER secret}"
-
-          PREVIEW_PORT="${PREVIEW_PORT:-22}"
 
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           printf '%s\n' "$PREVIEW_SSH_KEY" > ~/.ssh/preview_deploy_key
           chmod 600 ~/.ssh/preview_deploy_key
+
+      - name: Validate SSH private key
+        run: ssh-keygen -y -f ~/.ssh/preview_deploy_key > /dev/null
+
+      - name: Add preview host key
+        env:
+          PREVIEW_HOST: ${{ secrets.PREVIEW_HOST }}
+          PREVIEW_PORT: ${{ secrets.PREVIEW_PORT }}
+        run: |
+          set -euo pipefail
+
+          : "${PREVIEW_HOST:?Missing PREVIEW_HOST secret}"
+
+          PREVIEW_PORT="${PREVIEW_PORT:-22}"
           ssh-keyscan -p "$PREVIEW_PORT" "$PREVIEW_HOST" >> ~/.ssh/known_hosts
 
       - name: Test SSH connection
