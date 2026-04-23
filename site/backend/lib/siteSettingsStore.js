@@ -140,6 +140,60 @@ const normalizeSocialLinks = (links = {}) => ({
   airbnb: links.airbnb || '',
 });
 
+const TOUR_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const TOUR_TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+const normalizeFreeTourSlots = (slots = []) => {
+  const seen = new Set();
+
+  return (Array.isArray(slots) ? slots : [])
+    .map((slot) => {
+      const date = String(slot?.date || '').trim();
+      const time = String(slot?.time || '').trim();
+
+      if (!TOUR_DATE_PATTERN.test(date) || !TOUR_TIME_PATTERN.test(time)) {
+        return null;
+      }
+
+      const id = `${date}-${time}`;
+
+      if (seen.has(id)) {
+        return null;
+      }
+
+      seen.add(id);
+
+      return {
+        id,
+        date,
+        time,
+        bookings: Number.isFinite(Number(slot?.bookings)) ? Number(slot.bookings) : 0,
+      };
+    })
+    .filter(Boolean)
+    .sort((left, right) => {
+      if (left.date === right.date) {
+        return left.time.localeCompare(right.time);
+      }
+
+      return left.date.localeCompare(right.date);
+    });
+};
+
+const normalizeFreeTourSchedule = (schedule = {}) => {
+  if (Array.isArray(schedule)) {
+    return {
+      isCustomized: true,
+      slots: normalizeFreeTourSlots(schedule),
+    };
+  }
+
+  return {
+    isCustomized: schedule?.isCustomized === true,
+    slots: normalizeFreeTourSlots(schedule?.slots),
+  };
+};
+
 const normalizeSiteSettings = (settings = {}) => {
   const homeHeroImages = normalizeImageGallery(
     settings.homeHero?.images,
@@ -244,6 +298,7 @@ const normalizeSiteSettings = (settings = {}) => {
       address: localized(settings.footer?.address),
       socialLinks: normalizeSocialLinks(settings.footer?.socialLinks),
     },
+    freeTourSchedule: normalizeFreeTourSchedule(settings.freeTourSchedule),
   };
 };
 

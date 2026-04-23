@@ -7,8 +7,10 @@ import FooterColumnMiddle from './footer-components/FooterColumnMiddle.jsx';
 import FooterColumnRight from './footer-components/FooterColumnRight.jsx';
 import { FALLBACK_FOOTER_TEXTS, hasTextEntries } from '../content/fallbackContent';
 import HomeFooterEditorModal from './HomeFooterEditorModal';
+import FreeTourScheduleEditorModal from './FreeTourScheduleEditorModal';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
+import { toEditableFreeTourSchedule } from '../utils/freeTourSchedule';
 import {
   FOOTER_GPS_IMAGE_PREPARATION_OPTIONS,
   prepareImageFileForUpload,
@@ -28,9 +30,14 @@ function Footer({
   const { footer_texts, isError, message } = useSelector((state) => state.texts);
   const [isFooterEditorOpen, setIsFooterEditorOpen] = useState(false);
   const [footerForm, setFooterForm] = useState(cloneValue(siteSettings?.footer || {}));
+  const [freeTourScheduleForm, setFreeTourScheduleForm] = useState(
+    cloneValue(toEditableFreeTourSchedule(siteSettings?.freeTourSchedule))
+  );
   const [gpsImageFile, setGpsImageFile] = useState(null);
   const [isPreparingGpsImage, setIsPreparingGpsImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isCalendarEditorOpen, setIsCalendarEditorOpen] = useState(false);
+  const [isSavingCalendar, setIsSavingCalendar] = useState(false);
 
   useEffect(() => {
     dispatch(getFooterTexts());
@@ -52,6 +59,7 @@ function Footer({
 
   useEffect(() => {
     setFooterForm(cloneValue(siteSettings?.footer || {}));
+    setFreeTourScheduleForm(cloneValue(toEditableFreeTourSchedule(siteSettings?.freeTourSchedule)));
   }, [siteSettings]);
 
   const saveFooter = async (event) => {
@@ -112,6 +120,36 @@ function Footer({
     }
   };
 
+  const saveFreeTourSchedule = async (event) => {
+    event.preventDefault();
+    setIsSavingCalendar(true);
+
+    try {
+      const nextSettings = await siteSettingsService.updateFreeTourScheduleSiteSettings(
+        adminToken,
+        {
+          freeTourSchedule: freeTourScheduleForm,
+        }
+      );
+      setSiteSettings(nextSettings);
+      setIsCalendarEditorOpen(false);
+      toast.success('Free tour calendar updated.');
+    } catch (error) {
+      if (error?.response?.status === 401) {
+        setStoredStoryAdminAuth('');
+        setAdminToken('');
+        setIsCalendarEditorOpen(false);
+        toast.error('Admin session expired. Please log in again.');
+      } else {
+        toast.error(
+          error?.response?.data?.message || error?.message || 'Free tour calendar update failed.'
+        );
+      }
+    } finally {
+      setIsSavingCalendar(false);
+    }
+  };
+
   const handleGpsImageFileSelected = async (file) => {
     if (!file) {
       setGpsImageFile(null);
@@ -156,6 +194,13 @@ function Footer({
             <button type="button" className="section-edit-button" onClick={() => setIsFooterEditorOpen(true)}>
               Edit
             </button>
+            <button
+              type="button"
+              className="section-edit-button"
+              onClick={() => setIsCalendarEditorOpen(true)}
+            >
+              Edit calendar
+            </button>
           </div>
         ) : null}
         <div className="footer-columns">
@@ -181,6 +226,18 @@ function Footer({
           }}
           isSaving={isSaving}
           isPreparingImage={isPreparingGpsImage}
+        />
+      ) : null}
+      {adminToken && isCalendarEditorOpen ? (
+        <FreeTourScheduleEditorModal
+          schedule={freeTourScheduleForm}
+          setSchedule={setFreeTourScheduleForm}
+          onSave={saveFreeTourSchedule}
+          onCancel={() => {
+            setIsCalendarEditorOpen(false);
+            setFreeTourScheduleForm(cloneValue(toEditableFreeTourSchedule(siteSettings?.freeTourSchedule)));
+          }}
+          isSaving={isSavingCalendar}
         />
       ) : null}
     </div>

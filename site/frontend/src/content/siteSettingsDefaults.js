@@ -312,6 +312,10 @@ export const DEFAULT_SITE_SETTINGS = {
       airbnb: 'https://www.airbnb.co.uk/experiences/1096623',
     },
   },
+  freeTourSchedule: {
+    isCustomized: true,
+    slots: [],
+  },
 };
 
 export const getLocalizedSiteText = (value, language = 'en', fallback = '') => {

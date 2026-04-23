@@ -1,9 +1,15 @@
+export const DEFAULT_FREE_TOUR_DAYS = 30;
+export const DEFAULT_FREE_TOUR_TIMES = ['10:00', '13:00'];
+
 const pad = (value) => String(value).padStart(2, '0');
 
-const toIsoDate = (date) =>
+export const toIsoDate = (date) =>
   `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 
-export const getFallbackTours = (days = 30, times = ['10:00', '13:00']) => {
+export const getFallbackTours = (
+  days = DEFAULT_FREE_TOUR_DAYS,
+  times = DEFAULT_FREE_TOUR_TIMES
+) => {
   const tours = [];
 
   for (let offset = 1; offset <= days; offset += 1) {

@@ -10,6 +10,7 @@ import { getMiscTexts, reset as resetTexts } from '../features/texts/textSlice';
 import { getDates, reset as resetDates } from '../features/tour/tourSlice';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { parseFreeTourDate, toFreeTourDateKey } from '../utils/freeTourSchedule';
 
 function FreeBookNow({ showBookNow, setShowBookNow }) {
     const [submitted, setSubmitted] = useState(false);
@@ -44,8 +45,8 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
 
     useEffect(() => {
         if (selectedDate) {
-            const formattedDate = selectedDate.toDateString();
-            const times = dates.filter(d => new Date(d.date).toDateString() === formattedDate).map(d => d.time);
+            const formattedDate = toFreeTourDateKey(selectedDate);
+            const times = dates.filter(d => d.date === formattedDate).map(d => d.time);
             setAvailableTimes(times);
         } else {
             setAvailableTimes([]);
@@ -76,13 +77,13 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
             return false;
         }
     
-        const formattedDate = date.toDateString();
-        const isAvailable = dates.some(d => new Date(d.date).toDateString() === formattedDate);
+        const formattedDate = toFreeTourDateKey(date);
+        const isAvailable = dates.some(d => d.date === formattedDate);
         return isAvailable;
     };
 
     const getDateObject = (date, time) => {
-        const dateObj = dates.find(d => new Date(d.date).toDateString() === date.toDateString() && d.time === time);
+        const dateObj = dates.find(d => d.date === toFreeTourDateKey(date) && d.time === time);
         return dateObj;
     };
 
@@ -108,7 +109,7 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
             return;
         }
     
-        const localDate = selectedDate.toISOString().split('T')[0]; // Use the selected date directly
+        const localDate = toFreeTourDateKey(selectedDate);
         const dateObj = getDateObject(selectedDate, selectedTime);
     
         const data = {
@@ -175,7 +176,8 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
                                 selected={selectedDate}
                                 onChange={(date) => setSelectedDate(date)}
                                 highlightDates={dates
-                                    .map(d => new Date(d.date))
+                                    .map(d => parseFreeTourDate(d.date))
+                                    .filter(Boolean)
                                     .filter(date => {
                                         const today = new Date();
                                         today.setHours(0, 0, 0, 0);

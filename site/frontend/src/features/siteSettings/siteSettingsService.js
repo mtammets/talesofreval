@@ -105,6 +105,15 @@ export const updateFooterSiteSettings = async (tokenOrFormData, maybeFormData) =
   return response.data;
 };
 
+export const updateFreeTourScheduleSiteSettings = async (tokenOrPayload, maybePayload) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/free-tour-schedule`,
+    data: resolvePayload(tokenOrPayload, maybePayload),
+  });
+  return response.data;
+};
+
 const siteSettingsService = {
   getSiteSettings,
   updateHeroSiteSettings,
@@ -116,6 +125,7 @@ const siteSettingsService = {
   updateReviewSiteSettings,
   updateContactPageSiteSettings,
   updateFooterSiteSettings,
+  updateFreeTourScheduleSiteSettings,
 };
 
 export default siteSettingsService;

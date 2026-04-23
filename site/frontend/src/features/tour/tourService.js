@@ -1,8 +1,14 @@
 import axios from 'axios';
 import { getFallbackTours } from '../../content/fallbackTours';
+import { getEffectiveFreeTourSlots } from '../../utils/freeTourSchedule';
 
 const getDates = async () => {
-  return getFallbackTours();
+  try {
+    const response = await axios.get('/api/site-settings');
+    return getEffectiveFreeTourSlots(response.data?.freeTourSchedule);
+  } catch (_error) {
+    return getFallbackTours();
+  }
 };
 
 const initiateSripe = async () => {

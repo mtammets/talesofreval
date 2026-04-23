@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ButtonPrimary from '../style-components/ButtonPrimary';
 import { getLocalizedSiteText } from '../../content/siteSettingsDefaults';
+import { ArrowRight } from '../../icons/ArrowRight.tsx';
 
 const MOBILE_BREAKPOINT = 768;
 
-function FooterColumnLeft({ texts, content = null }) {
+function FooterColumnLeft({ texts, content = null, setShowFreeBookNow }) {
   const language = localStorage.getItem('language') || 'en';
   const [isMobileScreen, setIsMobileScreen] = useState(window.innerWidth < MOBILE_BREAKPOINT);
   const markerPosition = {
@@ -50,7 +51,13 @@ function FooterColumnLeft({ texts, content = null }) {
   const openMapText = content?.openMapLabel
     ? getLocalizedSiteText(content.openMapLabel, language)
     : texts && texts["open-map"] ? texts["open-map"].text : '';
+  const bookNowText = texts && texts["book-now"] ? texts["book-now"].text : 'Book now';
   const footerTimeText = `${footerFirstTimeText} ${footerSecondTimeText}`.trim();
+  const handleOpenFreeTourBooking = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setShowFreeBookNow?.(true);
+  };
 
     return (
       <div className="footer-column footer-column-left">
@@ -64,6 +71,18 @@ function FooterColumnLeft({ texts, content = null }) {
           <li>{distanceText[0]}: <span className="bold">{distanceText[1]}</span></li>
           <li>{startingPointText[0]}: <span className="bold">{startingPointText[1]}</span></li>
         </ul>
+        <div className="footer-free-tour-cta">
+          <button
+            type="button"
+            className="footer-free-tour-book button-primary"
+            onClick={handleOpenFreeTourBooking}
+          >
+            <span className="button-text">{bookNowText}</span>
+            <span className="icon-span-right" aria-hidden="true">
+              <ArrowRight />
+            </span>
+          </button>
+        </div>
         {isMobileScreen ? null : (
           <div className="footer-map-card">
             <iframe

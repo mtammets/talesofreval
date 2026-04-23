@@ -38,8 +38,12 @@ const servicePageContentUpload = upload.any();
 const servicePageKeys = new Set(['team', 'private', 'quick', 'destination', 'wedding']);
 
 const parseJsonField = (value, fallback) => {
-  if (!value) {
+  if (value === undefined || value === null || value === '') {
     return fallback;
+  }
+
+  if (typeof value !== 'string') {
+    return value;
   }
 
   try {
@@ -522,6 +526,22 @@ router.put(
         email: req.body.email || settings.contactPage.email,
         phone: req.body.phone || settings.contactPage.phone,
       },
+    };
+
+    const saved = await writeSiteSettings(nextSettings);
+    res.json(saved);
+  })
+);
+
+router.put(
+  '/admin/free-tour-schedule',
+  adminAuth,
+  asyncHandler(async (req, res) => {
+    const settings = await readSiteSettings();
+
+    const nextSettings = {
+      ...settings,
+      freeTourSchedule: parseJsonField(req.body.freeTourSchedule, settings.freeTourSchedule),
     };
 
     const saved = await writeSiteSettings(nextSettings);
