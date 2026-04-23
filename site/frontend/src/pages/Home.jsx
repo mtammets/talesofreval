@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import HomeLanding from '../components/HomeLanding';
 import HomeHeroEditorModal from '../components/HomeHeroEditorModal';
+import HomeExploreBanner from '../components/HomeExploreBanner';
 import HomeReviewEditorModal from '../components/HomeReviewEditorModal';
 import HomeTeamEditorModal from '../components/HomeTeamEditorModal';
 import ManagedServicesSection from '../components/ManagedServicesSection';
@@ -399,6 +400,7 @@ function Home({
             ) : null
           }
         />
+        <HomeExploreBanner readMoreUrl={siteSettings.footer?.gpsUrl} />
       </div>
 
       {adminToken && isHeroEditorOpen ? (
