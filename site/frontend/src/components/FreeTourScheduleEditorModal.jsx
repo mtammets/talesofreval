@@ -153,7 +153,7 @@ function FreeTourScheduleEditorModal({
 
   return (
     <AdminModalShell
-      title="Edit free tour calendar"
+      title="Edit calendar"
       onClose={onCancel}
       wide
     >
