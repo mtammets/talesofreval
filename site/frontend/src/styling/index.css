@@ -5688,6 +5688,10 @@ button.year-event-switch.disabled{
     aspect-ratio: 360 / 276;
   }
 
+  .home-page .home-explore-banner{
+    margin-top: 18px;
+  }
+
   .home-explore-banner__background{
     top: 4%;
     height: 90%;
