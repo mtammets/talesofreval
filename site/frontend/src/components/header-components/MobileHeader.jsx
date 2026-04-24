@@ -5,7 +5,7 @@ import BookNow from '../style-components/BookNow';
 import MobileDropdown from './MobileDropdown';
 import { useLocation, useNavigate } from 'react-router-dom';
 import baloon_icon from '../../img/baloon-icon.png';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { scrollViewportTop } from '../../utils/scrollViewportTop';
 
 const LOGO_LOGIN_TAP_WINDOW_MS = 1800;
@@ -20,7 +20,6 @@ function MobileHeader({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [hideOnScroll, setHideOnScroll] = useState(false);
   const logoTapCount = useRef(0);
   const logoTapTimer = useRef(null);
 
@@ -71,19 +70,7 @@ function MobileHeader({
     texts && texts["eesti-keeles"] ? texts["eesti-keeles"].text : "Eesti keeles";
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 150) {
-        setHideOnScroll(true);
-      } else {
-        setHideOnScroll(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    // Cleanup the event listener on component unmount
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       if (logoTapTimer.current) {
         window.clearTimeout(logoTapTimer.current);
       }
@@ -97,7 +84,7 @@ function MobileHeader({
       </div>
       {
         virtual ? 
-        <div className={`virtual-bar ${hideOnScroll ? 'hide' : ''}`}>
+        <div className="virtual-bar">
           <img src={baloon_icon} alt="" />
         </div>
         :

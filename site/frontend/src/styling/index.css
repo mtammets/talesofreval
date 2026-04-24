@@ -8189,6 +8189,24 @@ button.year-event-switch.disabled{
     z-index: 103;
   }
 
+  .mobile-header .virtual-bar{
+    position: fixed;
+    top: 18px;
+    left: 92px;
+    width: auto;
+    height: auto;
+    display: flex;
+    align-items: flex-start;
+    z-index: 103;
+    pointer-events: none;
+  }
+
+  .mobile-header .virtual-bar img{
+    display: block;
+    height: 38px;
+    width: auto;
+  }
+
   .mobile-header--menu-open .header-logo{
     opacity: 0;
     visibility: hidden;
