@@ -5788,16 +5788,28 @@ button.year-event-switch.disabled{
     justify-content: flex-start;
   }
 
+  .footer-free-tour-cta,
+  .footer-map-actions{
+    width: min(100%, 220px);
+    max-width: 100%;
+  }
+
   .footer-map-actions a,
   .footer-gps-actions a{
-    display: inline-block;
-    width: auto;
+    display: block;
+    width: 100%;
     max-width: 100%;
+  }
+
+  .footer-free-tour-book,
+  .footer-map-actions .button-primary{
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .footer-map-actions .button-primary,
   .footer-gps-actions .button-primary{
-    width: auto;
+    width: 100%;
     min-width: 0;
     min-height: 56px;
     padding: 0 20px;
@@ -8032,18 +8044,28 @@ button.year-event-switch.disabled{
   .footer-map-actions{
     margin-top: 12px;
     justify-content: flex-start;
+    width: min(100%, 220px);
   }
 
   .footer-free-tour-cta{
     margin-top: 18px;
+    width: min(100%, 220px);
   }
 
   .footer-free-tour-book{
+    width: 100%;
+    box-sizing: border-box;
     font-size: 14px;
+  }
+
+  .footer-map-actions a{
+    display: block;
+    width: 100%;
   }
 
   .footer-map-actions .button-primary,
   .footer-gps-actions .button-primary{
+    width: 100%;
     min-height: 56px;
     padding: 0 16px;
     font-size: 14px;
