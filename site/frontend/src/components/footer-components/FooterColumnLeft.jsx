@@ -21,9 +21,6 @@ function FooterColumnLeft({ texts, content = null, setShowFreeBookNow }) {
     ? getLocalizedSiteText(content.openMapLabel, language)
     : texts && texts["open-map"] ? texts["open-map"].text : '';
   const bookNowText = texts && texts["book-now"] ? texts["book-now"].text : 'Book now';
-  const openMapButtonText = isMobileScreen
-    ? (language === 'ee' ? 'Kaart' : 'Map')
-    : openMapText;
 
   useEffect(() => {
     const handleResize = () => {
@@ -77,7 +74,7 @@ function FooterColumnLeft({ texts, content = null, setShowFreeBookNow }) {
 
       window.removeEventListener('resize', updateMobileCtaWidth);
     };
-  }, [bookNowText, isMobileScreen, openMapButtonText]);
+  }, [bookNowText, isMobileScreen, openMapText]);
 
   const joinFreeTourText = content?.freeTourHeading
     ? getLocalizedSiteText(content.freeTourHeading, language)
@@ -152,7 +149,7 @@ function FooterColumnLeft({ texts, content = null, setShowFreeBookNow }) {
           />
         </div>
         <div className="footer-map-actions" ref={openMapActionRef} style={mobileCtaStyle}>
-          <ButtonPrimary text={openMapButtonText} icon="ArrowRightUp" link={mapLink} />
+          <ButtonPrimary text={openMapText} icon="ArrowRightUp" link={mapLink} />
         </div>
       </div>
   );
