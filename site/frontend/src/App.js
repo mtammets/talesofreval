@@ -269,7 +269,7 @@ function AppShell() {
                 />
               }
             />
-            <Route path="/virtual" element={<VirtualTour />} />
+            <Route path="/virtual" element={<VirtualTour siteSettings={siteSettings} />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Suspense>

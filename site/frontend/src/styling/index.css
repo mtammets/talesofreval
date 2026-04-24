@@ -565,6 +565,17 @@ a.dark:hover{
   display: block;
 }
 
+.virtual-bar a{
+  color: var(--cream);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.virtual-bar a:hover{
+  color: var(--cream);
+  opacity: 0.82;
+}
+
 .light{
   font-weight: 400;
 }
@@ -3726,9 +3737,13 @@ h2.virtual{
 .read-more-action{
   display: flex;
   align-items: center;
+  gap: 8px;
+  padding: 60px 0 0;
+  border: 0;
+  background: transparent;
   color: var(--turquoise);
+  font: inherit;
   cursor: pointer;
-  padding-top: 60px;
 }
 
 .other-actions{
@@ -5284,22 +5299,30 @@ button.year-event-switch.disabled{
   transform: translateY(-1px);
 }
 
+.home-explore-banner--interactive{
+  cursor: pointer;
+}
+
 .home-explore-banner{
   position: relative;
   width: min(784px, 100%);
-  aspect-ratio: 618 / 247;
+  aspect-ratio: 784 / 270;
   margin: 0 auto;
   color: #f0eee8;
   overflow: visible;
   isolation: isolate;
 }
 
+.home-page .home-explore-banner{
+  margin: 40px auto 56px;
+}
+
 .home-explore-banner__background{
   position: absolute;
   left: 0;
-  top: 15.79%;
+  top: 0;
   width: 100%;
-  height: 67.21%;
+  height: 100%;
   overflow: hidden;
   z-index: 0;
   background: #202533;
@@ -5310,7 +5333,7 @@ button.year-event-switch.disabled{
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 58% center;
+  object-position: 58% 8%;
   filter: brightness(0.9) saturate(0.82) contrast(0.96);
   transform: none;
 }
@@ -5333,16 +5356,17 @@ button.year-event-switch.disabled{
 .home-explore-banner__phone{
   position: absolute;
   left: 5.4%;
-  top: 6.88%;
-  width: 16.7%;
+  top: -6.6%;
+  width: 19.5%;
   height: auto;
   z-index: 2;
 }
 
 .home-explore-banner__copy{
   position: absolute;
-  left: 24.35%;
-  top: 34.9%;
+  left: 31%;
+  top: 28.5%;
+  max-width: 48%;
   z-index: 2;
 }
 
@@ -5350,38 +5374,44 @@ button.year-event-switch.disabled{
   margin: 0;
   color: #f0eee8;
   font-family: "Cardo", serif;
-  font-size: 29px;
+  font-size: 32px;
   font-weight: 400;
-  line-height: 1;
+  line-height: 0.98;
   letter-spacing: 0;
+  white-space: nowrap;
 }
 
-.home-explore-banner__copy h3 span,
-.home-explore-banner__copy p span{
-  display: block;
+.home-explore-banner__copy h3 span{
+  display: inline;
 }
 
 .home-explore-banner__copy p{
-  margin-top: 11px;
+  margin-top: 12px;
   color: #d8e2dc;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.04;
   letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .home-explore-banner__read-more{
   position: absolute;
-  left: 24.5%;
-  top: 69.6%;
+  left: 31%;
+  bottom: 12.6%;
   z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: #f0eee8;
-  font-size: 14px;
+  font-size: 15px;
+  font-family: inherit;
   font-weight: 500;
   line-height: 1;
+  cursor: pointer;
 }
 
 .home-explore-banner__read-more svg{
@@ -5391,35 +5421,239 @@ button.year-event-switch.disabled{
 
 .home-explore-banner__balloon{
   position: absolute;
-  left: 62.8%;
-  top: 65.2%;
-  height: 16.2%;
+  right: calc(3% + 238px);
+  bottom: 10.8%;
+  height: 30px;
   width: auto;
   z-index: 2;
 }
 
 .home-explore-banner__store{
   position: absolute;
-  top: 67.2%;
+  bottom: 10.6%;
   z-index: 2;
-  display: block;
+  display: flex;
+  align-items: center;
   line-height: 0;
+  width: 104px;
+  height: 31px;
 }
 
 .home-explore-banner__store img{
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 .home-explore-banner__store--google{
-  left: 69%;
-  width: 14.56%;
+  right: calc(3% + 116px);
 }
 
 .home-explore-banner__store--apple{
-  left: 84%;
-  width: 12.3%;
+  right: 3%;
+}
+
+.virtual-tour-page{
+  width: 100%;
+  color: var(--cream);
+}
+
+.virtual-tour-page__hero{
+  width: min(calc(100% - 48px), 1440px);
+  min-height: 920px;
+  margin: 0 auto;
+  padding: 132px 56px 56px;
+  box-sizing: border-box;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.virtual-tour-page__frame{
+  max-width: 1184px;
+  margin: 0 auto;
+}
+
+.virtual-tour-page__intro{
+  max-width: 468px;
+  margin: 0 0 56px 338px;
+}
+
+.virtual-tour-page__title{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  font-size: clamp(3.8rem, 5vw, 4.9rem);
+  line-height: 0.92;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  text-transform: none;
+}
+
+.virtual-tour-page__subtitle{
+  display: none;
+}
+
+.virtual-tour-page__hero-body{
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(320px, 0.8fr);
+  align-items: center;
+  gap: 44px;
+}
+
+.virtual-tour-page__phones{
+  width: min(100%, 560px);
+  margin-left: 56px;
+}
+
+.virtual-tour-page__phones img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.virtual-tour-page__content{
+  max-width: 372px;
+  padding-bottom: 34px;
+}
+
+.virtual-tour-page__content-title{
+  max-width: 360px;
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 2.2rem;
+  line-height: 1.08;
+  font-weight: 700;
+  color: var(--cream);
+}
+
+.virtual-tour-page__feature-list{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 20px 0 30px;
+}
+
+.virtual-tour-page__feature-item{
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--cream);
+  font-size: 1.12rem;
+  line-height: 1.42;
+}
+
+.virtual-tour-page__feature-icon{
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.virtual-tour-page__pay-button{
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-width: 248px;
+  min-height: 64px;
+  padding: 0 30px;
+  box-sizing: border-box;
+  border: 0;
+  background: var(--salmon);
+  color: var(--dark-blue);
+  font-size: 1.05rem;
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.virtual-tour-page__pay-button:hover{
+  background: var(--darker-salmon);
+}
+
+.virtual-tour-page__pay-button svg{
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.virtual-tour-page__pay-price{
+  font-weight: 700;
+}
+
+.virtual-tour-page__stores{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.virtual-tour-page__store{
+  display: block;
+  line-height: 0;
+  overflow: hidden;
+  border: 1px solid rgba(240, 238, 232, 0.72);
+  border-radius: 12px;
+  box-sizing: border-box;
+  background: #0b0c10;
+}
+
+.virtual-tour-page__store img{
+  display: block;
+  width: 118px;
+  height: auto;
+}
+
+.virtual-tour-page__store--apple img{
+  width: 114px;
+}
+
+.virtual-tour-page__about{
+  max-width: 610px;
+  margin: 86px auto 0;
+  text-align: center;
+}
+
+.virtual-tour-page__about-title{
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 2.45rem;
+  line-height: 1.05;
+  font-weight: 700;
+  color: var(--cream);
+}
+
+.virtual-tour-page__about p{
+  margin-top: 18px;
+  color: var(--cream);
+  font-size: 1.06rem;
+  line-height: 1.42;
+}
+
+.virtual-tour-page__about a{
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--cream);
+  font-size: 1rem;
+  line-height: 1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.virtual-tour-page__about a:hover{
+  color: var(--cream);
+  opacity: 0.82;
+}
+
+.virtual-tour-page + .footer{
+  margin-top: 0;
+  padding-top: 52px !important;
+}
+
+.virtual-tour-page + .footer.padding-80-top{
+  padding-top: 52px !important;
 }
 
 .large-dropdown .our-services-grid.mobile{
@@ -5530,6 +5764,41 @@ button.year-event-switch.disabled{
   .home-page .our-team-grid{
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
+  }
+
+  .virtual-tour-page__hero{
+    width: min(calc(100% - 32px), 1040px);
+    min-height: auto;
+    padding: 124px 32px 52px;
+  }
+
+  .virtual-tour-page__intro{
+    margin: 0 auto 44px;
+    text-align: center;
+  }
+
+  .virtual-tour-page__hero-body{
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .virtual-tour-page__phones{
+    width: min(100%, 520px);
+    margin: 0 auto;
+  }
+
+  .virtual-tour-page__content{
+    max-width: 420px;
+    margin: 0 auto;
+    padding-bottom: 0;
+  }
+
+  .virtual-tour-page__pay-button{
+    min-width: 228px;
+  }
+
+  .virtual-tour-page__about{
+    margin-top: 68px;
   }
 
   .footer{
@@ -5677,6 +5946,123 @@ button.year-event-switch.disabled{
     margin-left: auto;
   }
 
+  .virtual-tour-page__hero{
+    width: 100%;
+    padding: 118px 0 0;
+    min-height: auto;
+    background-position: 58% center;
+  }
+
+  .virtual-tour-page__frame{
+    max-width: none;
+  }
+
+  .virtual-tour-page__intro{
+    margin: 0 auto;
+    padding: 0 28px;
+    max-width: 340px;
+    text-align: center;
+  }
+
+  .virtual-tour-page__title{
+    font-size: clamp(2.9rem, 12vw, 4rem);
+    line-height: 0.94;
+  }
+
+  .virtual-tour-page__subtitle{
+    display: block;
+    margin-top: 10px;
+    color: var(--cream);
+    font-size: 1.18rem;
+    line-height: 1.2;
+  }
+
+  .virtual-tour-page__hero-body{
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    margin-top: 26px;
+    padding: 0 28px;
+  }
+
+  .virtual-tour-page__phones{
+    width: min(100%, 312px);
+    margin: 0 auto;
+  }
+
+  .virtual-tour-page__content{
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .virtual-tour-page__content-title{
+    max-width: 300px;
+    font-size: 1.9rem;
+    line-height: 1.05;
+  }
+
+  .virtual-tour-page__feature-list{
+    gap: 12px;
+    margin: 18px 0 24px;
+  }
+
+  .virtual-tour-page__feature-item{
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+
+  .virtual-tour-page__feature-icon{
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+  }
+
+  .virtual-tour-page__pay-button{
+    width: 100%;
+  }
+
+  .virtual-tour-page__stores{
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .virtual-tour-page__store{
+    flex: 1 1 0;
+  }
+
+  .virtual-tour-page__store img,
+  .virtual-tour-page__store--apple img{
+    width: 100%;
+  }
+
+  .virtual-tour-page__about{
+    max-width: 340px;
+    margin: 48px auto 0;
+    padding: 0 28px 36px;
+  }
+
+  .virtual-tour-page__about-title{
+    font-size: 1.95rem;
+  }
+
+  .virtual-tour-page__about p{
+    margin-top: 16px;
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+
+  .virtual-tour-page__about a{
+    margin-top: 14px;
+  }
+
+  .virtual-tour-page + .footer,
+  .virtual-tour-page + .footer.padding-80-top{
+    padding-top: 40px !important;
+    padding-bottom: 48px;
+  }
+
   .home-explore-banner__copy{
     left: 8%;
     top: 18%;
@@ -5689,7 +6075,7 @@ button.year-event-switch.disabled{
   }
 
   .home-page .home-explore-banner{
-    margin-top: 18px;
+    margin: 18px auto 0;
   }
 
   .home-explore-banner__background{
@@ -5727,10 +6113,15 @@ button.year-event-switch.disabled{
     line-height: 0.96;
   }
 
+  .home-explore-banner__copy h3 span{
+    display: block;
+  }
+
   .home-explore-banner__copy p{
     margin-top: 14px;
     font-size: clamp(1rem, 3.7vw, 1.22rem);
     line-height: 1.04;
+    white-space: normal;
   }
 
   .home-explore-banner__read-more{

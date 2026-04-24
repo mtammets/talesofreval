@@ -400,7 +400,7 @@ function Home({
             ) : null
           }
         />
-        <HomeExploreBanner readMoreUrl={siteSettings.footer?.gpsUrl} />
+        <HomeExploreBanner />
       </div>
 
       {adminToken && isHeroEditorOpen ? (

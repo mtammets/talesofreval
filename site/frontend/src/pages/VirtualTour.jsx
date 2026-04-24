@@ -1,84 +1,112 @@
-import virtual_bg from '../img/virtual-bg.webp';
-import virtual_image_phones from '../img/virtual-image-phones.webp';
-import check_icon from '../img/check-icon.svg';
-import PayNow from '../components/style-components/PayNow';
-import google_store from '../img/google-store.png';
-import apple_store from '../img/apple-store.png';
-import { initiateStripe } from '../features/tour/tourSlice';
 import { useDispatch } from 'react-redux';
-import { ArrowRightUp } from '../icons/ArrowRightUp.tsx';
+import virtualBg from '../img/virtual-bg.webp';
+import phonesImage from '../img/phones-transparent-background.png';
+import checkIcon from '../img/check-icon.svg';
+import googleStore from '../img/google-store.png';
+import appleStore from '../img/apple-store.png';
+import { initiateStripe } from '../features/tour/tourSlice';
+import { ArrowRight } from '../icons/ArrowRight.tsx';
 
-function VirtualTour() {
+const GOOGLE_PLAY_URL = 'https://play.google.com/store/apps/details?id=com.leplace.global&pli=1';
+const APP_STORE_URL = 'https://apps.apple.com/ee/app/leplace-world/id1496776027';
+const DEFAULT_READ_MORE_URL = 'https://connect.leplace.online/storyline-talesofreval';
+
+const FEATURE_ITEMS = [
+  'Your time, your pace!',
+  'Interactive quizzes',
+  'Photo Challenges',
+  'In-depth tour with storytelling',
+];
+
+function VirtualTour({ siteSettings = null }) {
   const dispatch = useDispatch();
-
-  const initiateStripeFunction = () => {
-    dispatch(initiateStripe());
-  }
+  const readMoreUrl = siteSettings?.footer?.gpsUrl || DEFAULT_READ_MORE_URL;
 
   return (
-        <div className="virtual-tour" style={{ backgroundImage: `url(${virtual_bg})` }}>
-          <div className="container">
-            <h2 className="virtual light">
-              Explore Alone,
-              <br />
-              Discover More!
-            </h2>
-            <h3 className="cardo light padding-20-top">Location based app guided tour</h3>
-            <div className="two-columns">
-              <div className="column image-column">
-                <img src={virtual_image_phones} alt="Virtual Tour" className="virtual-phones-image" />
-              </div>
-              <div className="column virtual-info">
-                <h4>Medieval adventure at your fingertips</h4>
-                <ul className="padding-20-top padding-10-bottom">
-                  <li>
-                    <img className="check-icon padding-10-right" src={check_icon} alt="" />
-                    Your time, your pace!
-                  </li>
-                  <li>
-                    <img className="check-icon padding-10-right" src={check_icon} alt="" />
-                    Interactive quizzes
-                  </li>
-                  <li>
-                    <img className="check-icon padding-10-right" src={check_icon} alt="" />
-                    Photo Challenges
-                  </li>
-                  <li>
-                    <img className="check-icon padding-10-right" src={check_icon} alt="" />
-                    In-depth tour with storytelling
-                  </li>
-                </ul>
-                <PayNow onClick={initiateStripeFunction}/>
-                <div className="google-apple-stores padding-10-top flex gap-10">
-                  <a href="https://play.google.com/store/apps/details?id=com.leplace.global&pli=1" target="_blank" rel="noopener noreferrer">
-                    <img src={google_store} alt="Google and Apple stores" />
-                  </a>
-                  <a  href="https://apps.apple.com/ee/app/leplace-world/id1496776027" target="_blank" rel="noopener noreferrer">
-                    <img src={apple_store} alt="Google and Apple stores" />
-                  </a>
-                </div>
-              </div>
+    <main className="virtual-tour-page">
+      <section
+        className="virtual-tour-page__hero"
+        style={{ backgroundImage: `url(${virtualBg})` }}
+      >
+        <div className="virtual-tour-page__frame">
+          <div className="virtual-tour-page__intro">
+            <h1 className="virtual-tour-page__title cardo">
+              <span>Explore Alone,</span>
+              <span>Discover More!</span>
+            </h1>
+            <p className="virtual-tour-page__subtitle cardo">Location based app guided tours</p>
+          </div>
+
+          <div className="virtual-tour-page__hero-body">
+            <div className="virtual-tour-page__phones">
+              <img src={phonesImage} alt="LePlace mobile experience previews" />
             </div>
-            <div className="width-40 padding-40-top padding-40-bottom" style={{ textAlign: 'center' }}>
-              <h4 className="light">What is Leplace</h4>
-              <p className="padding-20-top padding-20-bottom">
-                Leplace transforms local tourism with the most interactive outdoor exploration games on your mobile
-                phone and connects local creators and organizations with people and places worldwide!
-              </p>
-              <a
-                className="dark virtual-tour__learn-more"
-                href="https://connect.leplace.online/#/storyline?storyId=401&token=H1Z6AC1YVPJITQFYZMFWRN8AHFSJBJZT3GYES7ZU3PWKQFHLSQ"
-                target="_blank"
-                rel="noopener noreferrer"
+
+            <div className="virtual-tour-page__content">
+              <h2 className="virtual-tour-page__content-title">
+                Medieval adventure at your fingertips
+              </h2>
+
+              <ul className="virtual-tour-page__feature-list">
+                {FEATURE_ITEMS.map((item) => (
+                  <li key={item} className="virtual-tour-page__feature-item">
+                    <img
+                      className="virtual-tour-page__feature-icon"
+                      src={checkIcon}
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                type="button"
+                className="virtual-tour-page__pay-button"
+                onClick={() => dispatch(initiateStripe())}
               >
-                <span>Read more</span>
-                <ArrowRightUp size="1rem" />
-              </a>
+                <span className="virtual-tour-page__pay-price">3.99 €</span>
+                <span>Pay now</span>
+                <ArrowRight size="1.35rem" />
+              </button>
+
+              <div className="virtual-tour-page__stores">
+                <a
+                  className="virtual-tour-page__store virtual-tour-page__store--google"
+                  href={GOOGLE_PLAY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src={googleStore} alt="Get it on Google Play" />
+                </a>
+                <a
+                  className="virtual-tour-page__store virtual-tour-page__store--apple"
+                  href={APP_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src={appleStore} alt="Download on the App Store" />
+                </a>
+              </div>
             </div>
           </div>
-        </div>
 
-    );
-  }
-  
-  export default VirtualTour;
+          <div className="virtual-tour-page__about">
+            <h2 className="virtual-tour-page__about-title">What is LePlace</h2>
+            <p>
+              Leplace transforms local tourism with the most interactive outdoor exploration
+              games on your mobile phone and connects local creators and organizations with
+              people and places worldwide!
+            </p>
+            <a href={readMoreUrl} target="_blank" rel="noopener noreferrer">
+              Read more
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+export default VirtualTour;
