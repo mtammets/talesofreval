@@ -1,6 +1,6 @@
 import { getLocalizedSiteText } from '../../content/siteSettingsDefaults';
 
-function FooterContactDetails({ texts, content = null }) {
+function FooterContactDetails({ texts, content = null, className = '' }) {
   const language = localStorage.getItem('language') || 'en';
   const contactUsText = content?.contactHeading
     ? getLocalizedSiteText(content.contactHeading, language)
@@ -8,9 +8,12 @@ function FooterContactDetails({ texts, content = null }) {
   const taxAddressText = content?.address
     ? getLocalizedSiteText(content.address, language)
     : texts && texts["tax-address"] ? texts["tax-address"].text : '';
+  const sectionClassName = ['footer-right-section', 'footer-contact-section', className]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div className="footer-right-section footer-contact-section">
+    <div className={sectionClassName}>
       <h3 className="cardo footer-title">{contactUsText}</h3>
       <div className="footer-contact-links">
         <a className="mail" href={`mailto:${content?.email || "info@talesofreval.ee"}`}>

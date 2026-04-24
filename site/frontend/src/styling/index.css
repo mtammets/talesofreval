@@ -1599,6 +1599,10 @@ p.line-height-spaced{
   margin-top: 0;
 }
 
+.footer-contact-section-mobile-only{
+  display: none;
+}
+
 .footer-contact-links{
   display: flex;
   flex-direction: column;
@@ -5555,6 +5559,10 @@ button.year-event-switch.disabled{
 
   .footer-column-right{
     max-width: 420px;
+  }
+
+  .footer-contact-section-mobile-only{
+    display: flex;
   }
 
   .our-services-grid{

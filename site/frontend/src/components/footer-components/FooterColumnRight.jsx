@@ -19,7 +19,11 @@ function FooterColumnRight({ texts, content = null }) {
           <SocialButton icon="AirBnB" text="Airbnb" link={content?.socialLinks?.airbnb || "https://www.airbnb.co.uk/experiences/1096623"} />
         </div>
       </div>
-      <FooterContactDetails texts={texts} content={content} />
+      <FooterContactDetails
+        texts={texts}
+        content={content}
+        className="footer-contact-section-mobile-only"
+      />
     </div>
   );
 }
