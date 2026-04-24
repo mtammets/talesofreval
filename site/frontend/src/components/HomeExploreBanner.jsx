@@ -23,8 +23,14 @@ function HomeExploreBanner({ readMoreUrl = DEFAULT_READ_MORE_URL }) {
       />
 
       <div className="home-explore-banner__copy">
-        <h3>Explore Alone, Discover More!</h3>
-        <p>Medieval adventure at your fingertips</p>
+        <h3>
+          <span>Explore Alone,</span>
+          <span>Discover More!</span>
+        </h3>
+        <p>
+          <span>Medieval adventure at</span>
+          <span>your fingertips</span>
+        </p>
       </div>
 
       <a
