@@ -5432,17 +5432,15 @@ button.year-event-switch.disabled{
   position: absolute;
   bottom: 10.6%;
   z-index: 2;
-  display: flex;
-  align-items: center;
+  display: block;
   line-height: 0;
   width: 104px;
-  height: 31px;
 }
 
 .home-explore-banner__store img{
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 
 .home-explore-banner__store--google{
@@ -5604,10 +5602,6 @@ button.year-event-switch.disabled{
   display: block;
   width: 118px;
   height: auto;
-}
-
-.virtual-tour-page__store--apple img{
-  width: 114px;
 }
 
 .virtual-tour-page__about{
@@ -6138,16 +6132,15 @@ button.year-event-switch.disabled{
   .home-explore-banner__store{
     left: 8%;
     top: auto;
+    width: 35.5%;
   }
 
   .home-explore-banner__store--google{
-    width: 35.5%;
     bottom: 30%;
   }
 
   .home-explore-banner__store--apple{
     left: 8%;
-    width: 31.5%;
     bottom: 11%;
   }
 
