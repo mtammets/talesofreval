@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 
 import AdminModalShell from './AdminModalShell';
@@ -14,15 +14,14 @@ import {
 
 import 'react-datepicker/dist/react-datepicker.css';
 
-const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 const WEEKDAY_OPTIONS = [
-  { value: 0, label: 'Su' },
   { value: 1, label: 'Mo' },
   { value: 2, label: 'Tu' },
   { value: 3, label: 'We' },
   { value: 4, label: 'Th' },
   { value: 5, label: 'Fr' },
   { value: 6, label: 'Sa' },
+  { value: 0, label: 'Su' },
 ];
 
 const createTomorrow = () => {
@@ -37,6 +36,41 @@ const formatMonthLabel = (date) =>
     month: 'long',
     year: 'numeric',
   }).format(date);
+
+const normalizeCalendarDate = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  date.setHours(12, 0, 0, 0);
+  return date;
+};
+
+const sortDateKeys = (dateKeys) => [...new Set(dateKeys)].sort((left, right) => left.localeCompare(right));
+
+const getSelectableDateKeyFromTarget = (target) => {
+  if (!(target instanceof Element)) {
+    return null;
+  }
+
+  const dayElement = target.closest('.react-datepicker__day');
+
+  if (!dayElement || dayElement.classList.contains('react-datepicker__day--disabled')) {
+    return null;
+  }
+
+  const dateElement =
+    target.closest('[data-free-tour-date-key]') ||
+    dayElement.querySelector('[data-free-tour-date-key]');
+
+  return dateElement?.getAttribute('data-free-tour-date-key') || null;
+};
 
 function FreeTourScheduleEditorModal({
   schedule,
@@ -57,32 +91,41 @@ function FreeTourScheduleEditorModal({
     () => groupFreeTourSlotsByDate(effectiveSlots),
     [effectiveSlots]
   );
-  const highlightedDates = useMemo(
-    () => groupedSchedule.map((day) => parseFreeTourDate(day.date)).filter(Boolean),
-    [groupedSchedule]
-  );
   const [visibleMonth, setVisibleMonth] = useState(() => {
     const firstDate = groupedSchedule[0]?.date;
     return parseFreeTourDate(firstDate) || createTomorrow();
   });
-  const [selectedDateKey, setSelectedDateKey] = useState(() => {
+  const [activeDate, setActiveDate] = useState(() => {
     const firstDate = groupedSchedule[0]?.date;
-    return firstDate || toFreeTourDateKey(createTomorrow());
+    return parseFreeTourDate(firstDate) || createTomorrow();
   });
-  const [customTime, setCustomTime] = useState('');
+  const [isBulkSelectionMode, setIsBulkSelectionMode] = useState(false);
+  const [bulkSelectedDateKeys, setBulkSelectedDateKeys] = useState(() => {
+    const firstDate = groupedSchedule[0]?.date;
+    const initialDate = parseFreeTourDate(firstDate) || createTomorrow();
+    return [toFreeTourDateKey(initialDate)];
+  });
+  const [isDraggingBulkSelection, setIsDraggingBulkSelection] = useState(false);
+  const dragSelectionRef = useRef({
+    pointerId: null,
+    shouldMark: true,
+    touchedDateKeys: new Set(),
+  });
 
-  const selectedDate = useMemo(
-    () => parseFreeTourDate(selectedDateKey) || createTomorrow(),
-    [selectedDateKey]
+  const activeDateKey = toFreeTourDateKey(activeDate);
+  const bulkSelectedDateKeySet = useMemo(
+    () => new Set(bulkSelectedDateKeys),
+    [bulkSelectedDateKeys]
   );
-  const selectedTimes = useMemo(
-    () => groupedSchedule.find((day) => day.date === selectedDateKey)?.times || [],
-    [groupedSchedule, selectedDateKey]
+  const workingDateKeys = useMemo(
+    () => (isBulkSelectionMode ? bulkSelectedDateKeys : [activeDateKey]),
+    [activeDateKey, bulkSelectedDateKeys, isBulkSelectionMode]
   );
   const configuredDateKeySet = useMemo(
     () => new Set(groupedSchedule.map((day) => day.date)),
     [groupedSchedule]
   );
+  const todayDateKey = toFreeTourDateKey(new Date());
 
   const updateSlots = (nextSlots) => {
     setSchedule({
@@ -94,11 +137,151 @@ function FreeTourScheduleEditorModal({
     });
   };
 
-  const getWorkingDateKeys = () => [selectedDateKey];
+  const markDateKey = (dateKey, shouldMark) => {
+    if (!dateKey) {
+      return;
+    }
+
+    setBulkSelectedDateKeys((currentDateKeys) => {
+      const nextDateKeys = new Set(currentDateKeys);
+
+      if (shouldMark) {
+        nextDateKeys.add(dateKey);
+      } else {
+        nextDateKeys.delete(dateKey);
+      }
+
+      return sortDateKeys(nextDateKeys);
+    });
+
+    const nextDate = parseFreeTourDate(dateKey);
+
+    if (nextDate) {
+      setActiveDate(nextDate);
+    }
+  };
+
+  const stopBulkSelectionDrag = (currentTarget, pointerId) => {
+    if (pointerId != null && currentTarget?.hasPointerCapture?.(pointerId)) {
+      currentTarget.releasePointerCapture(pointerId);
+    }
+
+    dragSelectionRef.current = {
+      pointerId: null,
+      shouldMark: true,
+      touchedDateKeys: new Set(),
+    };
+    setIsDraggingBulkSelection(false);
+  };
+
+  const handleDateSelection = (nextDate) => {
+    const normalizedDate = normalizeCalendarDate(nextDate);
+
+    if (!normalizedDate) {
+      return;
+    }
+
+    const nextDateKey = toFreeTourDateKey(normalizedDate);
+
+    setActiveDate(normalizedDate);
+    setVisibleMonth(normalizedDate);
+
+    if (!isBulkSelectionMode) {
+      setBulkSelectedDateKeys([nextDateKey]);
+    }
+  };
+
+  const handleBulkSelectionToggle = () => {
+    if (isBulkSelectionMode) {
+      const fallbackDateKey = bulkSelectedDateKeys[bulkSelectedDateKeys.length - 1] || activeDateKey;
+      const fallbackDate = parseFreeTourDate(fallbackDateKey) || activeDate || createTomorrow();
+
+      setIsBulkSelectionMode(false);
+      setBulkSelectedDateKeys([toFreeTourDateKey(fallbackDate)]);
+      setActiveDate(fallbackDate);
+      setVisibleMonth(fallbackDate);
+      stopBulkSelectionDrag(null, null);
+      return;
+    }
+
+    stopBulkSelectionDrag(null, null);
+    setIsBulkSelectionMode(true);
+    setBulkSelectedDateKeys([]);
+  };
+
+  const handleCalendarPointerDown = (event) => {
+    if (!isBulkSelectionMode || (event.pointerType === 'mouse' && event.button !== 0)) {
+      return;
+    }
+
+    const dateKey = getSelectableDateKeyFromTarget(event.target);
+
+    if (!dateKey) {
+      return;
+    }
+
+    const shouldMark = !bulkSelectedDateKeySet.has(dateKey);
+
+    dragSelectionRef.current = {
+      pointerId: event.pointerId,
+      shouldMark,
+      touchedDateKeys: new Set([dateKey]),
+    };
+
+    setIsDraggingBulkSelection(true);
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    event.preventDefault();
+    markDateKey(dateKey, shouldMark);
+  };
+
+  const handleCalendarPointerMove = (event) => {
+    if (!isBulkSelectionMode || !isDraggingBulkSelection) {
+      return;
+    }
+
+    const { pointerId, shouldMark, touchedDateKeys } = dragSelectionRef.current;
+
+    if (pointerId !== event.pointerId) {
+      return;
+    }
+
+    const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
+    const hoveredDateKey = getSelectableDateKeyFromTarget(hoveredElement);
+
+    if (!hoveredDateKey || touchedDateKeys.has(hoveredDateKey)) {
+      return;
+    }
+
+    touchedDateKeys.add(hoveredDateKey);
+    event.preventDefault();
+    markDateKey(hoveredDateKey, shouldMark);
+  };
+
+  const handleCalendarPointerUp = (event) => {
+    if (!isBulkSelectionMode || !isDraggingBulkSelection) {
+      return;
+    }
+
+    if (dragSelectionRef.current.pointerId !== event.pointerId) {
+      return;
+    }
+
+    stopBulkSelectionDrag(event.currentTarget, event.pointerId);
+  };
+
+  const handleCalendarPointerCancel = (event) => {
+    if (!isBulkSelectionMode || !isDraggingBulkSelection) {
+      return;
+    }
+
+    if (dragSelectionRef.current.pointerId !== event.pointerId) {
+      return;
+    }
+
+    stopBulkSelectionDrag(event.currentTarget, event.pointerId);
+  };
 
   const toggleTime = (time) => {
-    const workingDateKeys = getWorkingDateKeys();
-
     if (!workingDateKeys.length) {
       return;
     }
@@ -124,54 +307,32 @@ function FreeTourScheduleEditorModal({
     );
   };
 
-  const addCustomTime = () => {
-    const nextTime = customTime.trim();
-
-    if (!TIME_PATTERN.test(nextTime)) {
-      return;
-    }
-
-    if (!getWorkingDateKeys().length) {
-      return;
-    }
-
-    updateSlots([
-      ...effectiveSlots,
-      ...getWorkingDateKeys()
-        .filter(
-          (dateKey) =>
-            !effectiveSlots.some((slot) => slot.date === dateKey && slot.time === nextTime)
-        )
-        .map((dateKey) => ({ date: dateKey, time: nextTime, bookings: 0 })),
-    ]);
-    setCustomTime('');
-  };
-
-  const clearCurrentSelection = () => {
-    updateSlots(effectiveSlots.filter((slot) => slot.date !== selectedDateKey));
-  };
-
   return (
     <AdminModalShell
-      title="Edit calendar"
+      eyebrow={null}
+      title={null}
       onClose={onCancel}
       wide
+      hideClose
     >
-      <form onSubmit={onSave} className="story-admin-form">
+      <form onSubmit={onSave} className="story-admin-form free-tour-calendar-editor">
         <div className="free-tour-calendar-editor__layout">
           <section className="free-tour-calendar-editor__panel free-tour-calendar-editor__panel--calendar">
-            <div className="free-tour-calendar-editor__date-picker">
+            <div
+              className={`free-tour-calendar-editor__date-picker${
+                isBulkSelectionMode ? ' free-tour-calendar-editor__date-picker--bulk' : ''
+              }${
+                isDraggingBulkSelection ? ' free-tour-calendar-editor__date-picker--dragging' : ''
+              }`}
+              onPointerDownCapture={handleCalendarPointerDown}
+              onPointerMoveCapture={handleCalendarPointerMove}
+              onPointerUpCapture={handleCalendarPointerUp}
+              onPointerCancelCapture={handleCalendarPointerCancel}
+            >
               <DatePicker
                 inline
-                selected={selectedDate}
-                onChange={(date) => {
-                  if (!date) {
-                    return;
-                  }
-
-                  setSelectedDateKey(toFreeTourDateKey(date));
-                  setVisibleMonth(date);
-                }}
+                onChange={handleDateSelection}
+                calendarStartDay={1}
                 renderCustomHeader={({
                   date,
                   decreaseMonth,
@@ -181,25 +342,47 @@ function FreeTourScheduleEditorModal({
                 }) => (
                   <div className="free-tour-calendar-editor__calendar-header">
                     <div className="free-tour-calendar-editor__calendar-nav">
-                      <button
-                        type="button"
-                        className="free-tour-calendar-editor__calendar-nav-button"
-                        onClick={decreaseMonth}
-                        disabled={prevMonthButtonDisabled}
-                        aria-label="Previous month"
-                      >
-                        ‹
-                      </button>
-                      <strong>{formatMonthLabel(date)}</strong>
-                      <button
-                        type="button"
-                        className="free-tour-calendar-editor__calendar-nav-button"
-                        onClick={increaseMonth}
-                        disabled={nextMonthButtonDisabled}
-                        aria-label="Next month"
-                      >
-                        ›
-                      </button>
+                      <div className="free-tour-calendar-editor__calendar-nav-side free-tour-calendar-editor__calendar-nav-side--left">
+                        <button
+                          type="button"
+                          className="free-tour-calendar-editor__calendar-nav-button"
+                          onClick={decreaseMonth}
+                          disabled={prevMonthButtonDisabled}
+                          aria-label="Previous month"
+                        >
+                          ‹
+                        </button>
+                      </div>
+                      <div className="free-tour-calendar-editor__calendar-month" aria-live="polite">
+                        {formatMonthLabel(date)}
+                      </div>
+                      <div className="free-tour-calendar-editor__calendar-nav-side free-tour-calendar-editor__calendar-nav-side--right">
+                        <button
+                          type="button"
+                          className={`free-tour-calendar-editor__selection-toggle${
+                            isBulkSelectionMode
+                              ? ' free-tour-calendar-editor__selection-toggle--active'
+                              : ''
+                          }`}
+                          aria-label="Toggle multi-day selection"
+                          aria-pressed={isBulkSelectionMode}
+                          onClick={handleBulkSelectionToggle}
+                        >
+                          <span />
+                          <span />
+                          <span />
+                          <span />
+                        </button>
+                        <button
+                          type="button"
+                          className="free-tour-calendar-editor__calendar-nav-button"
+                          onClick={increaseMonth}
+                          disabled={nextMonthButtonDisabled}
+                          aria-label="Next month"
+                        >
+                          ›
+                        </button>
+                      </div>
                     </div>
                     <div className="free-tour-calendar-editor__calendar-weekdays">
                       {WEEKDAY_OPTIONS.map((option) => (
@@ -213,42 +396,60 @@ function FreeTourScheduleEditorModal({
                 onMonthChange={(date) => {
                   const nextVisibleMonth = date || visibleMonth || createTomorrow();
                   setVisibleMonth(nextVisibleMonth);
+
+                  if (isBulkSelectionMode) {
+                    stopBulkSelectionDrag(null, null);
+                    setBulkSelectedDateKeys([]);
+                  }
                 }}
                 minDate={createTomorrow()}
-                highlightDates={highlightedDates}
                 dayClassName={(date) => {
                   const classNames = [];
+                  const dateKey = toFreeTourDateKey(date);
 
-                  if (configuredDateKeySet.has(toFreeTourDateKey(date))) {
-                    classNames.push('free-tour-calendar-editor__calendar-day--batch');
+                  if (configuredDateKeySet.has(dateKey)) {
+                    classNames.push('free-tour-calendar-editor__calendar-day--has-slots');
+                  }
+
+                  if (dateKey === todayDateKey) {
+                    classNames.push('free-tour-calendar-editor__calendar-day--today');
+                  }
+
+                  if (isBulkSelectionMode && bulkSelectedDateKeySet.has(dateKey)) {
+                    classNames.push('free-tour-calendar-editor__calendar-day--marked');
+                  }
+
+                  if (
+                    (!isBulkSelectionMode && dateKey === activeDateKey) ||
+                    (isBulkSelectionMode &&
+                      bulkSelectedDateKeySet.has(dateKey) &&
+                      dateKey === activeDateKey)
+                  ) {
+                    classNames.push('free-tour-calendar-editor__calendar-day--active');
                   }
 
                   return classNames.join(' ');
                 }}
+                renderDayContents={(dayOfMonth, date) => (
+                  <span className="free-tour-calendar-editor__day-content" data-free-tour-date-key={toFreeTourDateKey(date)}>
+                    {dayOfMonth}
+                  </span>
+                )}
               />
             </div>
           </section>
 
-          <section className="free-tour-calendar-editor__panel">
-            <div className="free-tour-calendar-editor__panel-actions">
-              <button
-                type="button"
-                className="story-admin-button story-admin-button--secondary"
-                onClick={clearCurrentSelection}
-                disabled={!selectedTimes.length}
-              >
-                Clear
-              </button>
-            </div>
-
+          <section className="free-tour-calendar-editor__panel free-tour-calendar-editor__panel--times">
             <div className="free-tour-calendar-editor__time-grid">
               {DEFAULT_FREE_TOUR_TIMES.map((time) => {
-                const hasTimeOnAllSelectedDates = getWorkingDateKeys().every((dateKey) =>
+                const hasSelection = workingDateKeys.length > 0;
+                const hasTimeOnAllSelectedDates = hasSelection && workingDateKeys.every((dateKey) =>
                   effectiveSlots.some((slot) => slot.date === dateKey && slot.time === time)
                 );
                 const hasTimeOnSomeSelectedDates =
+                  hasSelection &&
                   !hasTimeOnAllSelectedDates &&
-                  getWorkingDateKeys().some((dateKey) =>
+                  workingDateKeys.some((dateKey) =>
                     effectiveSlots.some((slot) => slot.date === dateKey && slot.time === time)
                   );
 
@@ -263,6 +464,7 @@ function FreeTourScheduleEditorModal({
                           ? ' free-tour-calendar-editor__time--partial'
                           : ''
                     }`}
+                    disabled={!hasSelection}
                     onClick={() => toggleTime(time)}
                   >
                     {time}
@@ -270,30 +472,10 @@ function FreeTourScheduleEditorModal({
                 );
               })}
             </div>
-
-            <div className="free-tour-calendar-editor__custom-time">
-              <label>
-                Custom time
-                <input
-                  type="time"
-                  step="300"
-                  value={customTime}
-                  onChange={(event) => setCustomTime(event.target.value)}
-                />
-              </label>
-              <button
-                type="button"
-                className="story-admin-button story-admin-button--primary"
-                onClick={addCustomTime}
-                disabled={!TIME_PATTERN.test(customTime.trim())}
-              >
-                Add time
-              </button>
-            </div>
           </section>
         </div>
 
-        <div className="story-admin-actions">
+        <div className="free-tour-calendar-editor__actions">
           <button type="button" className="story-admin-button story-admin-button--secondary" onClick={onCancel}>
             Cancel
           </button>

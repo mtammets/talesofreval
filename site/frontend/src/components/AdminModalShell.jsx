@@ -7,6 +7,7 @@ function AdminModalShell({
   wide = false,
   noBackdropBlur = false,
   hideClose = false,
+  cornerClose = false,
   children,
 }) {
   const modalClassName = [
@@ -22,6 +23,25 @@ function AdminModalShell({
   ]
     .filter(Boolean)
     .join(' ');
+  const hasHeaderCopy = Boolean(title || description);
+  const headerClassName = [
+    'story-editor-header',
+    !hasHeaderCopy ? 'story-editor-header--close-only' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+  const bodyClassName = [
+    'story-editor-body',
+    cornerClose ? 'story-editor-body--corner-close' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+  const closeClassName = [
+    'story-editor-close',
+    cornerClose ? 'story-editor-close--corner' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className={modalClassName} onClick={onClose}>
@@ -32,19 +52,40 @@ function AdminModalShell({
         aria-modal="true"
       >
         <div className="story-editor-shell">
-          <div className="story-editor-body">
+          <div className={bodyClassName}>
+            {hideClose || !cornerClose ? null : (
+              <button
+                type="button"
+                className={closeClassName}
+                onClick={onClose}
+                aria-label="Close"
+                title="Close"
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+            )}
             {eyebrow ? <div className="story-editor-kicker">{eyebrow}</div> : null}
-            <div className="story-editor-header">
-              <div>
-                <h2>{title}</h2>
-                {description ? <p>{description}</p> : null}
+            {hasHeaderCopy || (!hideClose && !cornerClose) ? (
+              <div className={headerClassName}>
+                {hasHeaderCopy ? (
+                  <div className="story-editor-header__copy">
+                    {title ? <h2>{title}</h2> : null}
+                    {description ? <p>{description}</p> : null}
+                  </div>
+                ) : null}
+                {hideClose || cornerClose ? null : (
+                  <button
+                    type="button"
+                    className={closeClassName}
+                    onClick={onClose}
+                    aria-label="Close"
+                    title="Close"
+                  >
+                    <span aria-hidden="true">×</span>
+                  </button>
+                )}
               </div>
-              {hideClose ? null : (
-                <button type="button" className="story-editor-close" onClick={onClose}>
-                  Close
-                </button>
-              )}
-            </div>
+            ) : null}
             {children}
           </div>
         </div>
