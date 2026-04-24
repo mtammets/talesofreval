@@ -5796,8 +5796,8 @@ button.year-event-switch.disabled{
   }
 
   .footer-map-actions a{
-    display: block;
-    width: 100%;
+    display: inline-block;
+    width: auto;
     max-width: 100%;
   }
 
@@ -5809,7 +5809,7 @@ button.year-event-switch.disabled{
 
   .footer-free-tour-book,
   .footer-map-actions .button-primary{
-    width: 100%;
+    width: auto;
     max-width: 100%;
     box-sizing: border-box;
   }
@@ -8068,6 +8068,10 @@ button.year-event-switch.disabled{
     max-width: 100%;
   }
 
+  .footer-map-card{
+    margin-top: 0;
+  }
+
   .footer-free-tour-book{
     width: auto;
     max-width: 100%;
@@ -8076,13 +8080,13 @@ button.year-event-switch.disabled{
   }
 
   .footer-map-actions a{
-    display: block;
-    width: 100%;
+    display: inline-block;
+    width: auto;
     max-width: 100%;
   }
 
   .footer-map-actions .button-primary{
-    width: 100%;
+    width: auto;
     max-width: 100%;
     min-height: 56px;
     padding: 0 16px;
