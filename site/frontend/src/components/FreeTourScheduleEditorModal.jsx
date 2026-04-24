@@ -61,7 +61,11 @@ const getSelectableDateKeyFromTarget = (target) => {
 
   const dayElement = target.closest('.react-datepicker__day');
 
-  if (!dayElement || dayElement.classList.contains('react-datepicker__day--disabled')) {
+  if (
+    !dayElement ||
+    dayElement.classList.contains('react-datepicker__day--disabled') ||
+    dayElement.classList.contains('react-datepicker__day--outside-month')
+  ) {
     return null;
   }
 
@@ -71,6 +75,9 @@ const getSelectableDateKeyFromTarget = (target) => {
 
   return dateElement?.getAttribute('data-free-tour-date-key') || null;
 };
+
+const isOutsideMonthDayTarget = (target) =>
+  target instanceof Element && Boolean(target.closest('.react-datepicker__day--outside-month'));
 
 function FreeTourScheduleEditorModal({
   schedule,
@@ -125,7 +132,7 @@ function FreeTourScheduleEditorModal({
     () => new Set(groupedSchedule.map((day) => day.date)),
     [groupedSchedule]
   );
-  const todayDateKey = toFreeTourDateKey(new Date());
+  const displayedDate = isBulkSelectionMode ? null : activeDate;
 
   const updateSlots = (nextSlots) => {
     setSchedule({
@@ -210,6 +217,12 @@ function FreeTourScheduleEditorModal({
   };
 
   const handleCalendarPointerDown = (event) => {
+    if (isOutsideMonthDayTarget(event.target)) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
     if (!isBulkSelectionMode || (event.pointerType === 'mouse' && event.button !== 0)) {
       return;
     }
@@ -281,6 +294,15 @@ function FreeTourScheduleEditorModal({
     stopBulkSelectionDrag(event.currentTarget, event.pointerId);
   };
 
+  const handleCalendarClickCapture = (event) => {
+    if (!isOutsideMonthDayTarget(event.target)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   const toggleTime = (time) => {
     if (!workingDateKeys.length) {
       return;
@@ -324,6 +346,7 @@ function FreeTourScheduleEditorModal({
               }${
                 isDraggingBulkSelection ? ' free-tour-calendar-editor__date-picker--dragging' : ''
               }`}
+              onClickCapture={handleCalendarClickCapture}
               onPointerDownCapture={handleCalendarPointerDown}
               onPointerMoveCapture={handleCalendarPointerMove}
               onPointerUpCapture={handleCalendarPointerUp}
@@ -331,6 +354,8 @@ function FreeTourScheduleEditorModal({
             >
               <DatePicker
                 inline
+                selected={displayedDate}
+                openToDate={visibleMonth}
                 onChange={handleDateSelection}
                 calendarStartDay={1}
                 renderCustomHeader={({
@@ -406,35 +431,49 @@ function FreeTourScheduleEditorModal({
                 dayClassName={(date) => {
                   const classNames = [];
                   const dateKey = toFreeTourDateKey(date);
+                  const hasSlots = configuredDateKeySet.has(dateKey);
+                  const isMarked = isBulkSelectionMode && bulkSelectedDateKeySet.has(dateKey);
+                  const isActive = !isBulkSelectionMode && dateKey === activeDateKey;
 
-                  if (configuredDateKeySet.has(dateKey)) {
+                  if (hasSlots) {
                     classNames.push('free-tour-calendar-editor__calendar-day--has-slots');
                   }
 
-                  if (dateKey === todayDateKey) {
-                    classNames.push('free-tour-calendar-editor__calendar-day--today');
-                  }
-
-                  if (isBulkSelectionMode && bulkSelectedDateKeySet.has(dateKey)) {
+                  if (isMarked) {
                     classNames.push('free-tour-calendar-editor__calendar-day--marked');
+                    classNames.push(
+                      hasSlots
+                        ? 'free-tour-calendar-editor__calendar-day--marked-with-slots'
+                        : 'free-tour-calendar-editor__calendar-day--marked-pending'
+                    );
                   }
 
-                  if (
-                    (!isBulkSelectionMode && dateKey === activeDateKey) ||
-                    (isBulkSelectionMode &&
-                      bulkSelectedDateKeySet.has(dateKey) &&
-                      dateKey === activeDateKey)
-                  ) {
+                  if (isActive) {
                     classNames.push('free-tour-calendar-editor__calendar-day--active');
+                    classNames.push(
+                      hasSlots
+                        ? 'free-tour-calendar-editor__calendar-day--active-with-slots'
+                        : 'free-tour-calendar-editor__calendar-day--active-pending'
+                    );
                   }
 
                   return classNames.join(' ');
                 }}
-                renderDayContents={(dayOfMonth, date) => (
-                  <span className="free-tour-calendar-editor__day-content" data-free-tour-date-key={toFreeTourDateKey(date)}>
-                    {dayOfMonth}
-                  </span>
-                )}
+                renderDayContents={(dayOfMonth, date) => {
+                  const dateKey = toFreeTourDateKey(date);
+                  const isMarked = isBulkSelectionMode && bulkSelectedDateKeySet.has(dateKey);
+
+                  return (
+                    <span
+                      className={`free-tour-calendar-editor__day-content${
+                        isMarked ? ' free-tour-calendar-editor__day-content--marked' : ''
+                      }`}
+                      data-free-tour-date-key={dateKey}
+                    >
+                      <span className="free-tour-calendar-editor__day-number">{dayOfMonth}</span>
+                    </span>
+                  );
+                }}
               />
             </div>
           </section>

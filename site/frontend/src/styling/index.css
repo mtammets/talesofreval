@@ -7945,12 +7945,23 @@ button.year-event-switch.disabled{
 }
 
 .free-tour-calendar-editor__day-content{
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
   border-radius: inherit;
+  overflow: hidden;
+}
+
+.free-tour-calendar-editor__day-content--marked{
+  background: linear-gradient(180deg, rgba(32, 37, 51, 0.06), rgba(32, 37, 51, 0.02));
+}
+
+.free-tour-calendar-editor__day-number{
+  position: relative;
+  z-index: 1;
 }
 
 .free-tour-calendar-editor__date-picker .react-datepicker__day--outside-month{
@@ -7985,36 +7996,86 @@ button.year-event-switch.disabled{
 }
 
 .free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--marked{
-  background-color: rgba(84, 183, 136, 0.22);
-  color: #215d3f;
-  box-shadow:
-    inset 0 0 0 1px rgba(58, 142, 96, 0.22),
-    0 10px 18px rgba(58, 142, 96, 0.1);
+  color: #202533;
 }
 
-.free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--marked.free-tour-calendar-editor__calendar-day--today{
-  background-color: rgba(84, 183, 136, 0.22);
-  color: #215d3f;
+.free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--marked-pending{
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 242, 237, 0.96));
+  color: #202533;
   box-shadow:
-    inset 0 0 0 1px rgba(58, 142, 96, 0.22),
-    inset 0 0 0 3px rgba(242, 198, 103, 0.78),
-    0 10px 18px rgba(58, 142, 96, 0.1);
+    inset 0 0 0 2px rgba(32, 37, 51, 0.2),
+    0 12px 22px rgba(18, 24, 37, 0.05);
+}
+
+.free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--marked-pending.free-tour-calendar-editor__calendar-day--today{
+  background: linear-gradient(180deg, rgba(255, 252, 246, 0.98), rgba(247, 243, 238, 0.96));
+  color: #7b5522;
+  box-shadow:
+    inset 0 0 0 2px rgba(32, 37, 51, 0.18),
+    inset 0 0 0 4px rgba(242, 198, 103, 0.72),
+    0 12px 22px rgba(18, 24, 37, 0.05);
+}
+
+.free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--marked-with-slots{
+  background:
+    radial-gradient(circle at top right, rgba(45, 124, 88, 0.22), transparent 52%),
+    linear-gradient(180deg, rgba(84, 183, 136, 0.3), rgba(84, 183, 136, 0.18));
+  color: #184f35;
+  box-shadow:
+    inset 0 0 0 2px rgba(45, 124, 88, 0.4),
+    0 0 0 2px rgba(255, 255, 255, 0.94),
+    0 0 0 4px rgba(45, 124, 88, 0.14),
+    0 12px 22px rgba(45, 124, 88, 0.12);
+}
+
+.free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--marked-with-slots.free-tour-calendar-editor__calendar-day--today{
+  background:
+    radial-gradient(circle at top right, rgba(45, 124, 88, 0.22), transparent 52%),
+    linear-gradient(180deg, rgba(84, 183, 136, 0.3), rgba(84, 183, 136, 0.18));
+  color: #184f35;
+  box-shadow:
+    inset 0 0 0 2px rgba(45, 124, 88, 0.4),
+    inset 0 0 0 4px rgba(242, 198, 103, 0.78),
+    0 0 0 2px rgba(255, 255, 255, 0.94),
+    0 0 0 4px rgba(45, 124, 88, 0.14),
+    0 12px 22px rgba(45, 124, 88, 0.12);
 }
 
 .free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--active{
   position: relative;
   z-index: 1;
   transform: scale(1.06);
+  font-weight: 800;
+}
+
+.free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--active-pending{
+  background-color: #202533;
+  color: #fff;
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.96),
+    0 0 0 5px rgba(32, 37, 51, 0.16),
+    0 16px 28px rgba(18, 24, 37, 0.18);
+}
+
+.free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--active-pending.free-tour-calendar-editor__calendar-day--today{
+  background-color: #202533;
+  color: #fff7ea;
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.96),
+    0 0 0 5px rgba(242, 198, 103, 0.88),
+    0 16px 28px rgba(18, 24, 37, 0.18);
+}
+
+.free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--active-with-slots{
   background-color: #2d7c58;
   color: #fff;
-  font-weight: 800;
   box-shadow:
     0 0 0 2px rgba(255, 255, 255, 0.96),
     0 0 0 5px rgba(45, 124, 88, 0.18),
     0 16px 28px rgba(45, 124, 88, 0.24);
 }
 
-.free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--active.free-tour-calendar-editor__calendar-day--today{
+.free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--active-with-slots.free-tour-calendar-editor__calendar-day--today{
   background-color: #2d7c58;
   color: #fff;
   box-shadow:
@@ -8088,9 +8149,17 @@ button.year-event-switch.disabled{
     color: #19563a;
   }
 
-  .free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--marked:hover{
+  .free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--marked-pending:hover{
     transform: none;
-    background-color: rgba(84, 183, 136, 0.28);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(244, 240, 235, 0.98));
+    color: #202533;
+  }
+
+  .free-tour-calendar-editor__date-picker .react-datepicker__day.free-tour-calendar-editor__calendar-day--marked-with-slots:hover{
+    transform: none;
+    background:
+      radial-gradient(circle at top right, rgba(45, 124, 88, 0.24), transparent 52%),
+      linear-gradient(180deg, rgba(84, 183, 136, 0.34), rgba(84, 183, 136, 0.22));
     color: #184f35;
   }
 
