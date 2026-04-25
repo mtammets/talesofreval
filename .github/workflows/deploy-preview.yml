@@ -60,7 +60,23 @@ jobs:
         run: |
           set -euo pipefail
 
-          ssh-keyscan -p "$PREVIEW_PORT" "$PREVIEW_HOST" >> ~/.ssh/known_hosts
+          touch ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+          for attempt in 1 2 3 4 5; do
+            echo "Scanning preview host key (attempt ${attempt}/5)..."
+
+            if ssh-keyscan -T 15 -H -p "$PREVIEW_PORT" "$PREVIEW_HOST" > /tmp/preview_known_hosts 2>/dev/null && [ -s /tmp/preview_known_hosts ]; then
+              cat /tmp/preview_known_hosts >> ~/.ssh/known_hosts
+              sort -u ~/.ssh/known_hosts -o ~/.ssh/known_hosts
+              exit 0
+            fi
+
+            sleep 5
+          done
+
+          echo "Failed to fetch preview host key from ${PREVIEW_HOST}:${PREVIEW_PORT}" >&2
+          exit 1
 
       - name: Test SSH connection
         run: |
