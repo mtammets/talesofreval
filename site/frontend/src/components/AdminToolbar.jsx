@@ -9,6 +9,7 @@ function AdminToolbar({
   setAdminToken,
   editControlsVisible,
   setEditControlsVisible,
+  onOpenFreeTourCalendar,
 }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -44,6 +45,13 @@ function AdminToolbar({
         <span className="admin-toolbar__eyebrow">Edit Mode</span>
       </div>
       <div className="admin-toolbar__actions">
+        <button
+          type="button"
+          className="admin-toolbar__button admin-toolbar__button--secondary"
+          onClick={() => onOpenFreeTourCalendar?.()}
+        >
+          Edit calendar
+        </button>
         <button
           type="button"
           className="admin-toolbar__button admin-toolbar__button--secondary"

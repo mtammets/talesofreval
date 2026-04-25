@@ -8827,14 +8827,14 @@ button.year-event-switch.disabled{
 
 .free-tour-calendar-editor__email-editor--subject{
   min-height: 1.8rem;
-  font-size: 1.02rem;
+  font-size: max(16px, 1.02rem);
   font-weight: 800;
   line-height: 1.45;
 }
 
 .free-tour-calendar-editor__email-editor--body{
   min-height: 260px;
-  font-size: 0.98rem;
+  font-size: max(16px, 1rem);
   line-height: 1.68;
 }
 

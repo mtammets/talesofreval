@@ -60,6 +60,7 @@ function AppShell() {
   const [adminToken, setAdminToken] = useState('');
   const [showBookNow, setShowBookNow] = useState(false);
   const [showFreeBookNow, setShowFreeBookNow] = useState(false);
+  const [isFreeTourCalendarEditorOpen, setIsFreeTourCalendarEditorOpen] = useState(false);
   const [siteSettings, setSiteSettings] = useState(DEFAULT_SITE_SETTINGS);
   const [editControlsVisible, setEditControlsVisible] = useState(Boolean(getStoredStoryAdminAuth()));
   const location = useLocation();
@@ -156,6 +157,7 @@ function AppShell() {
   useEffect(() => {
     if (!adminToken) {
       setEditControlsVisible(false);
+      setIsFreeTourCalendarEditorOpen(false);
     }
   }, [adminToken]);
 
@@ -186,6 +188,7 @@ function AppShell() {
         setAdminToken={setAdminToken}
         editControlsVisible={editControlsVisible}
         setEditControlsVisible={setEditControlsVisible}
+        onOpenFreeTourCalendar={() => setIsFreeTourCalendarEditorOpen(true)}
       />
         <Suspense fallback={null}>
           {!isAdminLogin && showBookNow ? (
@@ -280,6 +283,8 @@ function AppShell() {
         siteSettings={siteSettings}
         setSiteSettings={setSiteSettings}
         isEditMode={editControlsVisible}
+        isCalendarEditorOpen={isFreeTourCalendarEditorOpen}
+        setIsCalendarEditorOpen={setIsFreeTourCalendarEditorOpen}
       />
     </>
   );

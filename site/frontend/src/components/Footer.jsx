@@ -26,6 +26,8 @@ function Footer({
   siteSettings,
   setSiteSettings,
   isEditMode = false,
+  isCalendarEditorOpen = false,
+  setIsCalendarEditorOpen = () => {},
 }) {
   const dispatch = useDispatch();
   const { footer_texts, isError, message } = useSelector((state) => state.texts);
@@ -40,7 +42,6 @@ function Footer({
   const [gpsImageFile, setGpsImageFile] = useState(null);
   const [isPreparingGpsImage, setIsPreparingGpsImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isCalendarEditorOpen, setIsCalendarEditorOpen] = useState(false);
   const [isSavingCalendar, setIsSavingCalendar] = useState(false);
 
   useEffect(() => {
@@ -199,13 +200,6 @@ function Footer({
           <div className="footer-admin-row">
             <button type="button" className="section-edit-button" onClick={() => setIsFooterEditorOpen(true)}>
               Edit
-            </button>
-            <button
-              type="button"
-              className="section-edit-button"
-              onClick={() => setIsCalendarEditorOpen(true)}
-            >
-              Edit calendar
             </button>
           </div>
         ) : null}
