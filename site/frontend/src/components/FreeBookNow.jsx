@@ -87,7 +87,7 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
         return dateObj;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!name) {
             toast.error("Name is required");
@@ -120,15 +120,18 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
             people: numberOfPeople,
             dateObject: dateObj
         };
-    
-        dispatch(sendFreeTourMessage(data));
-    
-        setSubmitted(true);
-        setName('');
-        setEmail('');
-        setSelectedDate(null);
-        setSelectedTime('');
-        setNumberOfPeople('');
+
+        try {
+            await dispatch(sendFreeTourMessage(data)).unwrap();
+            setSubmitted(true);
+            setName('');
+            setEmail('');
+            setSelectedDate(null);
+            setSelectedTime('');
+            setNumberOfPeople('');
+        } catch (_error) {
+            // Toasts are handled by the email slice.
+        }
     }
 
     const handleClose = (e) => {

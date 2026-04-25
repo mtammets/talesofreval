@@ -75,7 +75,7 @@ export const normalizeFreeTourSchedule = (schedule = DEFAULT_FREE_TOUR_SCHEDULE)
 export const getEffectiveFreeTourSlots = (schedule = DEFAULT_FREE_TOUR_SCHEDULE) => {
   const normalizedSchedule = normalizeFreeTourSchedule(schedule);
 
-  return normalizedSchedule.isCustomized
+  return normalizedSchedule.isCustomized || normalizedSchedule.slots.length > 0
     ? normalizedSchedule.slots
     : getFallbackTours(DEFAULT_FREE_TOUR_DAYS, DEFAULT_FREE_TOUR_TIMES);
 };

@@ -3,6 +3,10 @@ const asyncHandler = require('express-async-handler');
 const multer = require('multer');
 
 const adminAuth = require('../middleware/adminAuth');
+const { sendFreeTourCancellationEmails } = require('../controllers/emailController');
+const { normalizeFreeTourEmailTemplates } = require('../lib/freeTourEmailTemplates');
+const { cancelFreeTourBookingsForSlotIds } = require('../lib/freeTourBookingsStore');
+const { getEffectiveFreeTourSlots, normalizeFreeTourSchedule } = require('../lib/freeTourSchedule');
 const { readSiteSettings, writeSiteSettings } = require('../lib/siteSettingsStore');
 const { runtimeSiteUploadsDir } = require('../lib/storagePaths');
 const { IMAGE_PRESETS, processUploadedImage } = require('../lib/uploadedImageProcessor');
@@ -538,14 +542,34 @@ router.put(
   adminAuth,
   asyncHandler(async (req, res) => {
     const settings = await readSiteSettings();
+    const currentEffectiveSlots = getEffectiveFreeTourSlots(settings.freeTourSchedule);
+    const nextSchedule = normalizeFreeTourSchedule(
+      parseJsonField(req.body.freeTourSchedule, settings.freeTourSchedule)
+    );
+    const nextEmails = normalizeFreeTourEmailTemplates(
+      parseJsonField(req.body.freeTourEmails, settings.freeTourEmails)
+    );
+    const nextEffectiveSlots = getEffectiveFreeTourSlots(nextSchedule);
+    const nextSlotIds = new Set(nextEffectiveSlots.map((slot) => slot.id));
+    const removedSlotIds = currentEffectiveSlots
+      .filter((slot) => !nextSlotIds.has(slot.id))
+      .map((slot) => slot.id);
 
     const nextSettings = {
       ...settings,
-      freeTourSchedule: parseJsonField(req.body.freeTourSchedule, settings.freeTourSchedule),
+      freeTourSchedule: nextSchedule,
+      freeTourEmails: nextEmails,
     };
 
-    const saved = await writeSiteSettings(nextSettings);
-    res.json(saved);
+    await writeSiteSettings(nextSettings);
+
+    const cancelledBookings = await cancelFreeTourBookingsForSlotIds(removedSlotIds);
+
+    if (cancelledBookings.length > 0) {
+      await sendFreeTourCancellationEmails(cancelledBookings);
+    }
+
+    res.json(await readSiteSettings());
   })
 );
 

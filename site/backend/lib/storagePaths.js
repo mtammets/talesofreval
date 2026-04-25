@@ -16,6 +16,7 @@ const runtimeSiteUploadsDir = path.join(runtimeUploadsDir, 'site');
 
 const runtimeSiteSettingsFile = path.join(runtimeDataDir, 'site-settings.json');
 const runtimeStoryEventsFile = path.join(runtimeDataDir, 'story-events.json');
+const runtimeFreeTourBookingsFile = path.join(runtimeDataDir, 'free-tour-bookings.json');
 
 const seedFileIfMissing = (targetFile, sourceFile) => {
   if (fs.existsSync(targetFile)) {
@@ -34,6 +35,10 @@ const ensureRuntimeStorageReady = () => {
 
   seedFileIfMissing(runtimeSiteSettingsFile, path.join(bundledDataDir, 'site-settings.json'));
   seedFileIfMissing(runtimeStoryEventsFile, path.join(bundledDataDir, 'story-events.json'));
+  seedFileIfMissing(
+    runtimeFreeTourBookingsFile,
+    path.join(bundledDataDir, 'free-tour-bookings.json')
+  );
 };
 
 module.exports = {
@@ -44,6 +49,7 @@ module.exports = {
   runtimeSiteUploadsDir,
   runtimeSiteSettingsFile,
   runtimeStoryEventsFile,
+  runtimeFreeTourBookingsFile,
   ensureRuntimeStorageReady,
   usingExternalStorage: runtimeRoot !== backendRoot,
   bundledUploadsDir,

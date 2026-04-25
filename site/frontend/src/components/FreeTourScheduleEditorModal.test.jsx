@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import FreeTourScheduleEditorModal from './FreeTourScheduleEditorModal';
+import { DEFAULT_FREE_TOUR_EMAIL_TEMPLATES } from '../utils/freeTourEmailTemplates';
 
 jest.mock('react-toastify', () => ({
   toast: {
@@ -29,6 +30,23 @@ const getDayCell = (container, dateKey) =>
     ?.closest('.react-datepicker__day');
 
 const toDateKey = (date) => date.toISOString().slice(0, 10);
+
+const countWeekdayOccurrencesInMonth = (date) => {
+  const cursor = new Date(date.getFullYear(), date.getMonth(), 1, 12, 0, 0, 0);
+  const targetMonth = cursor.getMonth();
+  const targetDay = date.getDay();
+  let count = 0;
+
+  while (cursor.getMonth() === targetMonth) {
+    if (cursor.getDay() === targetDay) {
+      count += 1;
+    }
+
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  return count;
+};
 
 const getMonthWithVisibleNextMonthDay = () => {
   const monthDate = new Date('2099-01-15T12:00:00');
@@ -209,6 +227,91 @@ describe('FreeTourScheduleEditorModal', () => {
     fireEvent.click(screen.getByRole('button', { name: '10:00' }));
 
     expect(screen.getByRole('button', { name: /save calendar/i }).disabled).toBe(false);
+  });
+
+  test('enables save when a free tour email template changes', () => {
+    jest.useFakeTimers();
+
+    try {
+      function TestHarness() {
+        const [schedule, setSchedule] = useState(buildSchedule());
+        const [emailTemplates, setEmailTemplates] = useState(DEFAULT_FREE_TOUR_EMAIL_TEMPLATES);
+
+        return (
+          <FreeTourScheduleEditorModal
+            schedule={schedule}
+            setSchedule={setSchedule}
+            emailTemplates={emailTemplates}
+            setEmailTemplates={setEmailTemplates}
+            onSave={jest.fn()}
+            onCancel={jest.fn()}
+            isSaving={false}
+          />
+        );
+      }
+
+      render(<TestHarness />);
+
+      const saveButton = screen.getByRole('button', { name: /save calendar/i });
+      expect(saveButton.disabled).toBe(true);
+      expect(screen.queryByRole('textbox', { name: 'Confirmation subject' })).toBeNull();
+
+      fireEvent.click(screen.getByRole('button', { name: /open confirmation email view/i }));
+
+      act(() => {
+        jest.advanceTimersByTime(360);
+      });
+
+      const subjectEditor = screen.getByRole('textbox', { name: 'Confirmation subject' });
+      subjectEditor.textContent = 'Updated confirmation subject';
+      fireEvent.input(subjectEditor);
+
+      expect(screen.getByRole('button', { name: /save calendar/i }).disabled).toBe(false);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  test('inserts template tokens into the focused confirmation field', () => {
+    jest.useFakeTimers();
+
+    try {
+      function TestHarness() {
+        const [schedule, setSchedule] = useState(buildSchedule());
+        const [emailTemplates, setEmailTemplates] = useState(DEFAULT_FREE_TOUR_EMAIL_TEMPLATES);
+
+        return (
+          <FreeTourScheduleEditorModal
+            schedule={schedule}
+            setSchedule={setSchedule}
+            emailTemplates={emailTemplates}
+            setEmailTemplates={setEmailTemplates}
+            onSave={jest.fn()}
+            onCancel={jest.fn()}
+            isSaving={false}
+          />
+        );
+      }
+
+      render(<TestHarness />);
+
+      fireEvent.click(screen.getByRole('button', { name: /open confirmation email view/i }));
+
+      act(() => {
+        jest.advanceTimersByTime(360);
+      });
+
+      const subjectEditor = screen.getByRole('textbox', { name: 'Confirmation subject' });
+      fireEvent.focus(subjectEditor);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Insert Date only' }));
+
+      expect(screen.getByRole('textbox', { name: 'Confirmation subject' }).textContent).toMatch(
+        /Date only/
+      );
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   test('shows only the selected day count when every bulk-selected day already has times', () => {
@@ -463,6 +566,71 @@ describe('FreeTourScheduleEditorModal', () => {
 
     expect(screen.queryByText('2 days selected')).not.toBeNull();
     expect(screen.queryByText('1 day already has times')).not.toBeNull();
+  });
+
+  test('shows the booking count for each visible time slot', () => {
+    render(
+      <FreeTourScheduleEditorModal
+        schedule={{
+          isCustomized: true,
+          slots: [
+            { date: '2099-06-15', time: '10:00', bookings: 3 },
+            { date: '2099-06-15', time: '13:00', bookings: 1 },
+          ],
+        }}
+        setSchedule={jest.fn()}
+        onSave={jest.fn()}
+        onCancel={jest.fn()}
+        isSaving={false}
+      />
+    );
+
+    expect(
+      screen.getByRole('button', { name: '10:00' }).querySelector('.free-tour-calendar-editor__time-count')?.textContent
+    ).toBe('3');
+    expect(
+      screen.getByRole('button', { name: '13:00' }).querySelector('.free-tour-calendar-editor__time-count')?.textContent
+    ).toBe('1');
+  });
+
+  test('selects the whole visible month with the icon shortcut', () => {
+    const { container } = render(
+      <FreeTourScheduleEditorModal
+        schedule={buildSchedule()}
+        setSchedule={jest.fn()}
+        onSave={jest.fn()}
+        onCancel={jest.fn()}
+        isSaving={false}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /toggle multi-day selection/i }));
+    fireEvent.click(screen.getByRole('button', { name: /select visible month/i }));
+
+    expect(screen.queryByText('30 days selected')).not.toBeNull();
+    expect(
+      container.querySelectorAll('.free-tour-calendar-editor__calendar-day--marked').length
+    ).toBe(30);
+  });
+
+  test('selects the active weekday column with the icon shortcut', () => {
+    const activeDate = new Date('2099-06-15T12:00:00');
+    const { container } = render(
+      <FreeTourScheduleEditorModal
+        schedule={buildSchedule()}
+        setSchedule={jest.fn()}
+        onSave={jest.fn()}
+        onCancel={jest.fn()}
+        isSaving={false}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /toggle multi-day selection/i }));
+    fireEvent.click(screen.getByRole('button', { name: /select visible column/i }));
+
+    expect(
+      container.querySelectorAll('.free-tour-calendar-editor__calendar-day--marked').length
+    ).toBe(countWeekdayOccurrencesInMonth(activeDate));
   });
 
   test('shows a non-interactive select days hint when bulk mode is enabled without selected dates', () => {

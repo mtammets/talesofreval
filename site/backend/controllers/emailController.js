@@ -1,6 +1,13 @@
 const asyncHandler = require('express-async-handler');
 
 const nodemailer = require('nodemailer');
+const {
+    DEFAULT_FREE_TOUR_EMAIL_TEMPLATES,
+    renderFreeTourEmailTemplate,
+} = require('../lib/freeTourEmailTemplates');
+const { upsertFreeTourBooking } = require('../lib/freeTourBookingsStore');
+const { createFreeTourSlotId, getEffectiveFreeTourSlots } = require('../lib/freeTourSchedule');
+const { readSiteSettings } = require('../lib/siteSettingsStore');
 
 const parseBoolean = (value, fallback = false) => {
     if (value === undefined) {
@@ -60,28 +67,49 @@ const formatBookingDate = (dateString, time = '') => {
   return time ? `${dateLabel} at ${time}` : dateLabel;
 };
 
-const FREE_TOUR_CONFIRMATION_TEMPLATE = ({ date, time, people, name }) => `
-  <div style="width: 500px; min-height: 220px; font-family: Arial, sans-serif; color:black !important;">
-    <p>Greetings!</p>
-    <p>
-      This is a confirmation that we have received your free tour registration.
-      <br />
-      Tour date: ${formatBookingDate(date, time)}
-      <br />
-      Number of people: ${people}
-      <br />
-      Name: ${name}
-    </p>
-    <p>
-      If anything changes, please contact us at
-      <a href="mailto:${MAIL_TO}">${MAIL_TO}</a>.
-    </p>
-    <p>With warm regards</p>
-    <p>
-      ${signatureHtml()}
-    </p>
+const wrapFreeTourEmailHtml = (content, minHeight = 220) => `
+  <div style="width: 500px; min-height: ${minHeight}px; font-family: Arial, sans-serif; color:black !important;">
+    ${content}
   </div>
 `;
+
+const resolveFreeTourSlot = (settings, date, time) => {
+  const slotId = createFreeTourSlotId(String(date || '').trim(), String(time || '').trim());
+
+  return getEffectiveFreeTourSlots(settings.freeTourSchedule).find((slot) => slot.id === slotId) || null;
+};
+
+const normalizeFreeTourPeople = (value) => {
+  const resolved = Number.parseInt(value, 10);
+
+  if (!Number.isFinite(resolved)) {
+    return 1;
+  }
+
+  return Math.min(99, Math.max(1, resolved));
+};
+
+const buildFreeTourMailData = (mailData = {}, slot = {}) => ({
+  ...mailData,
+  date: slot.date,
+  time: slot.time,
+  people: normalizeFreeTourPeople(mailData.people),
+  name: String(mailData.name || '').trim(),
+  email: String(mailData.email || '').trim(),
+  dateObject: {
+    date: slot.date,
+    time: slot.time,
+  },
+});
+
+const buildFreeTourTemplateTokens = (mailData = {}) => ({
+    date_1: formatBookingDate(mailData.dateObject?.date || mailData.date, mailData.time),
+    date_2: formatBookingDate(mailData.dateObject?.date || mailData.date),
+    time: String(mailData.time || '').trim(),
+    people: normalizeFreeTourPeople(mailData.people),
+    name: String(mailData.name || '').trim(),
+    email: String(mailData.email || '').trim(),
+});
 
 
 const sendBookingTor = async (mailData) => {
@@ -201,14 +229,31 @@ const sendContactEmail = asyncHandler(async (req, res) => {
 //@route POST /email
 //@access Public
 const sendFreeTourEmail = asyncHandler(async (req, res) => {
-    const info = await sendFreeTourTor(req.body);
-    const clientInfo = await sendFreeTourClient(req.body);
+    const settings = await readSiteSettings();
+    const slot = resolveFreeTourSlot(settings, req.body?.date, req.body?.time);
 
-    if(info === 1 && clientInfo === 1){
-        res.status(200).json(info);
-    } else {
-        res.status(400).json(info < clientInfo ? info : clientInfo);
+    if (!slot) {
+        res.status(409).json({
+            message: 'The selected free tour slot is no longer available.',
+        });
+        return;
     }
+
+    const bookingResult = await upsertFreeTourBooking({
+        date: slot.date,
+        time: slot.time,
+        email: req.body?.email,
+        name: req.body?.name,
+        people: req.body?.people,
+    });
+    const freeTourMailData = buildFreeTourMailData(req.body, slot);
+
+    if (bookingResult.created) {
+        await sendFreeTourTor(freeTourMailData);
+    }
+
+    await sendFreeTourClient(freeTourMailData, settings.freeTourEmails?.confirmation);
+    res.status(200).json(1);
 });
 
 const sendFreeTourTor = async (mailData) => {
@@ -240,21 +285,87 @@ const sendFreeTourTor = async (mailData) => {
     return info;
 }
 
-const sendFreeTourClient = async (mailData) => {
+const sendFreeTourClient = async (mailData, templateEntry) => {
+    const renderedTemplate = renderFreeTourEmailTemplate(
+        templateEntry,
+        buildFreeTourTemplateTokens(mailData),
+        DEFAULT_FREE_TOUR_EMAIL_TEMPLATES.confirmation
+    );
     const msg = {
         to: mailData.email,
         from: MAIL_FROM,
-        subject: "Free Tour Booking Confirmation",
-        html: FREE_TOUR_CONFIRMATION_TEMPLATE({
-            date: mailData.dateObject?.date || mailData.date,
-            time: mailData.time,
-            people: mailData.people,
-            name: mailData.name,
-        })
+        subject: renderedTemplate.subject,
+        html: wrapFreeTourEmailHtml(renderedTemplate.html, 280),
     };
 
     const info = await sendNodeEmail(msg);
     return info;
 }
 
-module.exports = { sendBookingEmail, sendContactEmail, sendFreeTourEmail };
+const sendFreeTourCancellationClient = async (booking, templateEntry) => {
+    const renderedTemplate = renderFreeTourEmailTemplate(
+        templateEntry,
+        buildFreeTourTemplateTokens(booking),
+        DEFAULT_FREE_TOUR_EMAIL_TEMPLATES.cancellation
+    );
+    const msg = {
+        to: booking.email,
+        from: MAIL_FROM,
+        subject: renderedTemplate.subject,
+        html: wrapFreeTourEmailHtml(renderedTemplate.html, 240),
+    };
+
+    return sendNodeEmail(msg);
+};
+
+const sendFreeTourCancellationAdminSummary = async (cancelledBookings) => {
+    if (!Array.isArray(cancelledBookings) || cancelledBookings.length === 0) {
+        return 1;
+    }
+
+    const bookingItems = cancelledBookings
+        .map(
+            (booking) => `
+              <li>
+                ${formatBookingDate(booking.date, booking.time)}
+                <br />
+                ${booking.name || 'Unnamed guest'} (${booking.email})
+              </li>
+            `
+        )
+        .join('');
+
+    return sendNodeEmail({
+        to: MAIL_TO,
+        from: MAIL_FROM,
+        subject: 'Free Tour Booking Cancellation Summary',
+        html: `
+          <div style="width: 520px; min-height: 220px; font-family: Arial, sans-serif; color:black !important;">
+            <p>The following free tour registrations were cancelled because their slot was removed:</p>
+            <ul>${bookingItems}</ul>
+          </div>
+        `,
+    });
+};
+
+const sendFreeTourCancellationEmails = async (cancelledBookings = []) => {
+    if (!Array.isArray(cancelledBookings) || cancelledBookings.length === 0) {
+        return 1;
+    }
+
+    const settings = await readSiteSettings();
+
+    for (const booking of cancelledBookings) {
+        await sendFreeTourCancellationClient(booking, settings.freeTourEmails?.cancellation);
+    }
+
+    await sendFreeTourCancellationAdminSummary(cancelledBookings);
+    return 1;
+};
+
+module.exports = {
+    sendBookingEmail,
+    sendContactEmail,
+    sendFreeTourEmail,
+    sendFreeTourCancellationEmails,
+};

@@ -1135,6 +1135,16 @@
       "airbnb": "https://www.airbnb.co.uk/experiences/1096623"
     }
   },
+  "freeTourEmails": {
+    "confirmation": {
+      "subject": "Free Tour Booking Confirmation",
+      "body": "<p>Greetings!</p><p>Your free tour is booked for <strong>{date_1}</strong>.</p><p>I'm glad you're coming to Tallinn and happy that you've found us! We'll gladly take you along to the journey.</p><p>We shall go on our beloved lower old town walking tour, where instead of names and numbers we focus on telling a single binding narrative about the Hanseatic Merchants that built Reval - medieval Tallinn. During the 1.5h performance we will bring to life the dream and the vision of the founders of this one of the best preserved medieval towns in the world, and through the magic of storytelling paint you a vivid picture about the values and mindset of these ancestors of ours</p><p>Feel free to have a look at the trailer here: <a href=\"https://youtu.be/uMjk83r54Vg\" rel=\"noopener noreferrer\" target=\"_blank\">https://youtu.be/uMjk83r54Vg</a>.</p><p>What makes the tour special is our unique combination of guiding, storytelling and street performance. Instead of a dry monologue your guide, dressed in an authentic 15th century merchant's outfit, will involve the audience into the telling of the stories and together you will act through some of the most well known legends and bits of medieval history. The result is an interactive and engaging 90 minutes at the end of which you will be both well entertained and actually be able to remember the stories you hear.</p><p>The route of the tour you can see here and the show will be donation based. You can leave the tip in cash - there is an ATM at the end-point, in the Old Town Square - or we've set up virtual payments through PayPal, Revolut and Wise.</p><p>Please note that your guide will be on the street in a fully authentic 15th century merchant outfit, so they won't be looking at their phones 20 minutes prior to the show - if you're late, there's no point in writing or calling at the last minute. If you miss the guide, please go to the Tourist Information Centre (Niguliste 2), and ask them to point you in the right direction.</p><p>See you on the show!</p>"
+    },
+    "cancellation": {
+      "subject": "Free Tour Booking Cancellation",
+      "body": "Greetings!\n\nWe are sorry to let you know that the free tour registration below has been cancelled.\nTour date: {date_1}\nName: {name}\n\nIf you would like to join another tour, please visit https://www.talesofreval.ee or contact us at info@talesofreval.ee.\n\nWith warm regards\n\nTales of Reval\nhttps://www.talesofreval.ee\ninfo@talesofreval.ee\n+372 5560 4421"
+    }
+  },
   "freeTourSchedule": {
     "isCustomized": true,
     "slots": [
