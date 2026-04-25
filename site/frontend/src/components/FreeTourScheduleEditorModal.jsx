@@ -1883,7 +1883,7 @@ function FreeTourScheduleEditorModal({
             className="story-admin-button story-admin-button--primary"
             disabled={!canSaveCalendar}
           >
-            {isSaving ? 'Saving…' : 'Save calendar'}
+            {isSaving ? 'Saving…' : 'Save settings'}
           </button>
         </div>
       </form>
