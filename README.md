@@ -93,6 +93,8 @@ Lokaalne päris e-maili test:
 - kui `SMTP_HOST` puudub, jääb vaikimisi Zone-stiilis `localhost:25` režiim
 - `MAIL_TO` määrab, kuhu sinu saidi vormiteavitused lähevad
 - `MAIL_FROM` määrab, millise saatja aadressiga kiri välja läheb
+- `MAIL_FROM_NAME` määrab, millist saatja nime postkastis kuvatakse, nt `Tales of Reval`
+- soovi korral võid `MAIL_FROM` anda ka täiskujul, nt `Tales of Reval <info@talesofreval.ee>`
 
 Story feed admin:
 - URL: `/login`
@@ -146,6 +148,7 @@ PREVIEW_NOINDEX=true
 BIND_HOST=127.1.67.5
 MAIL_TO=mtammets@gmail.com
 MAIL_FROM=infotest@talesofreval.ee
+MAIL_FROM_NAME=Tales of Reval
 MAIL_WEBSITE=https://preview.talesofreval.ee
 ```
 
@@ -183,6 +186,7 @@ Preview e-mailid:
 - `Book now`, `Contact us` ja `Free tour` sisemised teavitused lähevad preview's `MAIL_TO` aadressile `mtammets@gmail.com`
 - kliendile saadetakse koopia/kinnitus tema vormi sisestatud aadressile
 - preview saatja on `infotest@talesofreval.ee`
+- preview postkastis kuvatav saatja nimi peaks olema `Tales of Reval`
 - live `talesofreval.ee` vana `tor-full` rakendus saadab `Book now` kirjad koodis hardcoded aadressile `info@talesofreval.ee`
 
 ## Homme edasi
@@ -195,6 +199,7 @@ Järgmine loogiline samm:
 4. Live'i vahetuse ajal panna päris production `.env` väärtused üle:
    - `MAIL_TO=info@talesofreval.ee`
    - `MAIL_FROM=info@talesofreval.ee`
+   - `MAIL_FROM_NAME=Tales of Reval`
    - `MAIL_WEBSITE=https://www.talesofreval.ee`
    - `PREVIEW_NOINDEX=false` või eemalda see
 5. Kontrollida Zone serveris, et päris live `Book now`, `Contact us` ja `Free tour` jõuavad `info@talesofreval.ee`

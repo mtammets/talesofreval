@@ -1165,7 +1165,7 @@
     },
     "bookingClient": {
       "subject": "Copy of Booking Email",
-      "body": "<p>Greetings!</p><p><br></p><p>This is a confirmation that we have received your booking request.<br>We will get back to you as soon as possible to confirm the details of your booking.</p><p>Service type: {event_type}</p><p><br></p><p>With warm regards</p><p><br></p><p>Tales of Reval<br><a href=\"https://www.talesofreval.ee\" rel=\"noopener noreferrer\" target=\"_blank\">https://www.talesofreval.ee</a><br>mtammets@gmail.com<br>+372 5560 4421</p>"
+      "body": "<p>Greetings!</p><p><br></p><p>This is a confirmation that we have received your booking request.<br>We will get back to you as soon as possible to confirm the details of your booking.</p><p>Service type: {event_type}</p><p><br></p><p>With warm regards</p><p><br></p><p>Tales of Reval<br><a href=\"https://www.talesofreval.ee\" rel=\"noopener noreferrer\" target=\"_blank\">https://www.talesofreval.ee</a><br>info@talesofreval.ee<br>+372 5560 4421</p>"
     },
     "bookingAdmin": {
       "subject": "Tor Booking",
@@ -1173,7 +1173,7 @@
     },
     "contactClient": {
       "subject": "Copy of Contact Us Email",
-      "body": "Greetings!\n\nThis message includes a copy of the email sent to mtammets@gmail.com regarding your most recent contact us message.\n\nName: {name}\nEmail: {email}\n\nMessage:\n{message}"
+      "body": "Greetings!\n\nThis message includes a copy of the email sent to info@talesofreval.ee regarding your most recent contact us message.\n\nName: {name}\nEmail: {email}\n\nMessage:\n{message}"
     },
     "contactAdmin": {
       "subject": "Contact Us",

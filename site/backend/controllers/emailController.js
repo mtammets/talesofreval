@@ -24,8 +24,31 @@ const SMTP_REJECT_UNAUTHORIZED = parseBoolean(process.env.SMTP_REJECT_UNAUTHORIZ
 const SMTP_USER = process.env.SMTP_USER || '';
 const SMTP_PASS = process.env.SMTP_PASS || '';
 
-const MAIL_FROM = process.env.MAIL_FROM || 'info@talesofreval.ee';
+const DEFAULT_MAIL_FROM = 'info@talesofreval.ee';
+const MAIL_FROM_VALUE = process.env.MAIL_FROM || DEFAULT_MAIL_FROM;
+const MAIL_FROM_NAME = process.env.MAIL_FROM_NAME || process.env.MAIL_SIGNATURE_NAME || 'Tales of Reval';
 const MAIL_TO = process.env.MAIL_TO || 'info@talesofreval.ee';
+
+const resolveMailFrom = (value, name) => {
+  const normalizedValue = String(value || '').trim() || DEFAULT_MAIL_FROM;
+
+  if (normalizedValue.includes('<') && normalizedValue.includes('>')) {
+    return normalizedValue;
+  }
+
+  const normalizedName = String(name || '').trim();
+
+  if (!normalizedName) {
+    return normalizedValue;
+  }
+
+  return {
+    address: normalizedValue,
+    name: normalizedName,
+  };
+};
+
+const MAIL_FROM = resolveMailFrom(MAIL_FROM_VALUE, MAIL_FROM_NAME);
 
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
