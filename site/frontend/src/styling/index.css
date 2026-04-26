@@ -5444,11 +5444,13 @@ button.year-event-switch.disabled{
 }
 
 .home-explore-banner__store--google{
-  right: calc(3% + 116px);
+  right: calc(3% + 112px);
+  width: 116px;
 }
 
 .home-explore-banner__store--apple{
   right: 3%;
+  width: 100px;
 }
 
 .virtual-tour-page{
