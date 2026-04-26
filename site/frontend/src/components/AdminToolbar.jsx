@@ -50,7 +50,7 @@ function AdminToolbar({
           className="admin-toolbar__button admin-toolbar__button--secondary"
           onClick={() => onOpenFreeTourCalendar?.()}
         >
-          Free tour settings
+          Free tour calendar
         </button>
         <button
           type="button"

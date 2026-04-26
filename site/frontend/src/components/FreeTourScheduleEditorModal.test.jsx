@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import FreeTourScheduleEditorModal from './FreeTourScheduleEditorModal';
-import { DEFAULT_FREE_TOUR_EMAIL_TEMPLATES } from '../utils/freeTourEmailTemplates';
+import { DEFAULT_SITE_EMAIL_TEMPLATES } from '../utils/siteEmailTemplates';
 
 jest.mock('react-toastify', () => ({
   toast: {
@@ -187,15 +187,15 @@ describe('FreeTourScheduleEditorModal', () => {
 
     render(<TestHarness />);
 
-    const saveButton = screen.getByRole('button', { name: /save calendar/i });
+    const saveButton = screen.getByRole('button', { name: /save settings/i });
     expect(saveButton.disabled).toBe(true);
 
     fireEvent.click(screen.getByText('16'));
-    expect(screen.getByRole('button', { name: /save calendar/i }).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: /save settings/i }).disabled).toBe(true);
 
     fireEvent.click(screen.getByRole('button', { name: '10:00' }));
 
-    const enabledSaveButton = screen.getByRole('button', { name: /save calendar/i });
+    const enabledSaveButton = screen.getByRole('button', { name: /save settings/i });
     expect(enabledSaveButton.disabled).toBe(false);
 
     fireEvent.submit(enabledSaveButton.closest('form'));
@@ -222,11 +222,11 @@ describe('FreeTourScheduleEditorModal', () => {
 
     render(<TestHarness />);
 
-    expect(screen.getByRole('button', { name: /save calendar/i }).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: /save settings/i }).disabled).toBe(true);
 
     fireEvent.click(screen.getByRole('button', { name: '10:00' }));
 
-    expect(screen.getByRole('button', { name: /save calendar/i }).disabled).toBe(false);
+    expect(screen.getByRole('button', { name: /save settings/i }).disabled).toBe(false);
   });
 
   test('enables save when a free tour email template changes', () => {
@@ -235,7 +235,7 @@ describe('FreeTourScheduleEditorModal', () => {
     try {
       function TestHarness() {
         const [schedule, setSchedule] = useState(buildSchedule());
-        const [emailTemplates, setEmailTemplates] = useState(DEFAULT_FREE_TOUR_EMAIL_TEMPLATES);
+        const [emailTemplates, setEmailTemplates] = useState(DEFAULT_SITE_EMAIL_TEMPLATES);
 
         return (
           <FreeTourScheduleEditorModal
@@ -252,21 +252,69 @@ describe('FreeTourScheduleEditorModal', () => {
 
       render(<TestHarness />);
 
-      const saveButton = screen.getByRole('button', { name: /save calendar/i });
+      const saveButton = screen.getByRole('button', { name: /save settings/i });
       expect(saveButton.disabled).toBe(true);
-      expect(screen.queryByRole('textbox', { name: 'Confirmation subject' })).toBeNull();
+      expect(screen.queryByRole('textbox', { name: 'Free tour confirmation subject' })).toBeNull();
 
-      fireEvent.click(screen.getByRole('button', { name: /open confirmation email view/i }));
+      fireEvent.click(screen.getByRole('button', { name: /open email templates view/i }));
 
       act(() => {
         jest.advanceTimersByTime(360);
       });
 
-      const subjectEditor = screen.getByRole('textbox', { name: 'Confirmation subject' });
+      const subjectEditor = screen.getByRole('textbox', { name: 'Free tour confirmation subject' });
       subjectEditor.textContent = 'Updated confirmation subject';
       fireEvent.input(subjectEditor);
 
-      expect(screen.getByRole('button', { name: /save calendar/i }).disabled).toBe(false);
+      expect(screen.getByRole('button', { name: /save settings/i }).disabled).toBe(false);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  test('organizes editable email templates under simple group tabs', () => {
+    jest.useFakeTimers();
+
+    try {
+      render(
+        <FreeTourScheduleEditorModal
+          schedule={buildSchedule()}
+          setSchedule={jest.fn()}
+          emailTemplates={DEFAULT_SITE_EMAIL_TEMPLATES}
+          setEmailTemplates={jest.fn()}
+          onSave={jest.fn()}
+          onCancel={jest.fn()}
+          isSaving={false}
+        />
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: /open email templates view/i }));
+
+      act(() => {
+        jest.advanceTimersByTime(360);
+      });
+
+      expect(screen.getByRole('button', { name: 'Free tour' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Book now' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Contact us' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Edit Free tour confirmation email' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Edit Free tour cancellation email' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Edit Free tour admin email' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Edit Free tour cancellation summary email' })).toBeTruthy();
+      expect(screen.queryByRole('button', { name: 'Edit Book now client email' })).toBeNull();
+      expect(screen.queryByText('Preview')).toBeNull();
+      expect(screen.queryByText('All site emails')).toBeNull();
+
+      fireEvent.click(screen.getByRole('button', { name: 'Book now' }));
+
+      expect(screen.getByRole('button', { name: 'Edit Book now client email' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Edit Book now admin email' })).toBeTruthy();
+      expect(screen.queryByRole('button', { name: 'Edit Free tour admin email' })).toBeNull();
+
+      fireEvent.click(screen.getByRole('button', { name: 'Contact us' }));
+
+      expect(screen.getByRole('button', { name: 'Edit Contact us client email' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Edit Contact us admin email' })).toBeTruthy();
     } finally {
       jest.useRealTimers();
     }
@@ -278,7 +326,7 @@ describe('FreeTourScheduleEditorModal', () => {
     try {
       function TestHarness() {
         const [schedule, setSchedule] = useState(buildSchedule());
-        const [emailTemplates, setEmailTemplates] = useState(DEFAULT_FREE_TOUR_EMAIL_TEMPLATES);
+        const [emailTemplates, setEmailTemplates] = useState(DEFAULT_SITE_EMAIL_TEMPLATES);
 
         return (
           <FreeTourScheduleEditorModal
@@ -295,18 +343,18 @@ describe('FreeTourScheduleEditorModal', () => {
 
       render(<TestHarness />);
 
-      fireEvent.click(screen.getByRole('button', { name: /open confirmation email view/i }));
+      fireEvent.click(screen.getByRole('button', { name: /open email templates view/i }));
 
       act(() => {
         jest.advanceTimersByTime(360);
       });
 
-      const subjectEditor = screen.getByRole('textbox', { name: 'Confirmation subject' });
+      const subjectEditor = screen.getByRole('textbox', { name: 'Free tour confirmation subject' });
       fireEvent.focus(subjectEditor);
 
       fireEvent.click(screen.getByRole('button', { name: 'Insert Date only' }));
 
-      expect(screen.getByRole('textbox', { name: 'Confirmation subject' }).textContent).toMatch(
+      expect(screen.getByRole('textbox', { name: 'Free tour confirmation subject' }).textContent).toMatch(
         /Date only/
       );
     } finally {

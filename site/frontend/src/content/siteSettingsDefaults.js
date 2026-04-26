@@ -31,6 +31,7 @@ import bgcontact from '../img/bgcontact.webp';
 import storyBgImage from '../img/storybg.webp';
 import gpsGameImage from '../img/gps-game.webp';
 import { createEmptyPaymentLinks } from './paymentMethods';
+import { normalizeSiteEmailTemplates } from '../utils/siteEmailTemplates';
 
 export const SITE_IMAGE_ASSETS = {
   homeBg,
@@ -316,6 +317,7 @@ export const DEFAULT_SITE_SETTINGS = {
     isCustomized: true,
     slots: [],
   },
+  emailTemplates: normalizeSiteEmailTemplates(),
 };
 
 export const getLocalizedSiteText = (value, language = 'en', fallback = '') => {

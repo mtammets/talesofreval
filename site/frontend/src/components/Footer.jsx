@@ -10,7 +10,7 @@ import HomeFooterEditorModal from './HomeFooterEditorModal';
 import FreeTourScheduleEditorModal from './FreeTourScheduleEditorModal';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
-import { normalizeFreeTourEmailTemplates } from '../utils/freeTourEmailTemplates';
+import { normalizeSiteEmailTemplates } from '../utils/siteEmailTemplates';
 import { toEditableFreeTourSchedule } from '../utils/freeTourSchedule';
 import {
   FOOTER_GPS_IMAGE_PREPARATION_OPTIONS,
@@ -36,8 +36,8 @@ function Footer({
   const [freeTourScheduleForm, setFreeTourScheduleForm] = useState(
     cloneValue(toEditableFreeTourSchedule(siteSettings?.freeTourSchedule))
   );
-  const [freeTourEmailTemplatesForm, setFreeTourEmailTemplatesForm] = useState(
-    cloneValue(normalizeFreeTourEmailTemplates(siteSettings?.freeTourEmails))
+  const [emailTemplatesForm, setEmailTemplatesForm] = useState(
+    cloneValue(normalizeSiteEmailTemplates(siteSettings?.emailTemplates, siteSettings?.freeTourEmails))
   );
   const [gpsImageFile, setGpsImageFile] = useState(null);
   const [isPreparingGpsImage, setIsPreparingGpsImage] = useState(false);
@@ -65,7 +65,9 @@ function Footer({
   useEffect(() => {
     setFooterForm(cloneValue(siteSettings?.footer || {}));
     setFreeTourScheduleForm(cloneValue(toEditableFreeTourSchedule(siteSettings?.freeTourSchedule)));
-    setFreeTourEmailTemplatesForm(cloneValue(normalizeFreeTourEmailTemplates(siteSettings?.freeTourEmails)));
+    setEmailTemplatesForm(
+      cloneValue(normalizeSiteEmailTemplates(siteSettings?.emailTemplates, siteSettings?.freeTourEmails))
+    );
   }, [siteSettings]);
 
   const saveFooter = async (event) => {
@@ -135,12 +137,12 @@ function Footer({
         adminToken,
         {
           freeTourSchedule: freeTourScheduleForm,
-          freeTourEmails: freeTourEmailTemplatesForm,
+          emailTemplates: emailTemplatesForm,
         }
       );
       setSiteSettings(nextSettings);
       setIsCalendarEditorOpen(false);
-      toast.success('Free tour settings updated.');
+      toast.success('Calendar and email settings updated.');
     } catch (error) {
       if (error?.response?.status === 401) {
         setStoredStoryAdminAuth('');
@@ -149,7 +151,7 @@ function Footer({
         toast.error('Admin session expired. Please log in again.');
       } else {
         toast.error(
-          error?.response?.data?.message || error?.message || 'Free tour settings update failed.'
+          error?.response?.data?.message || error?.message || 'Calendar and email settings update failed.'
         );
       }
     } finally {
@@ -232,14 +234,16 @@ function Footer({
         <FreeTourScheduleEditorModal
           schedule={freeTourScheduleForm}
           setSchedule={setFreeTourScheduleForm}
-          emailTemplates={freeTourEmailTemplatesForm}
-          setEmailTemplates={setFreeTourEmailTemplatesForm}
+          emailTemplates={emailTemplatesForm}
+          setEmailTemplates={setEmailTemplatesForm}
           onSave={saveFreeTourSchedule}
           onCancel={() => {
             setIsCalendarEditorOpen(false);
             setFreeTourScheduleForm(cloneValue(toEditableFreeTourSchedule(siteSettings?.freeTourSchedule)));
-            setFreeTourEmailTemplatesForm(
-              cloneValue(normalizeFreeTourEmailTemplates(siteSettings?.freeTourEmails))
+            setEmailTemplatesForm(
+              cloneValue(
+                normalizeSiteEmailTemplates(siteSettings?.emailTemplates, siteSettings?.freeTourEmails)
+              )
             );
           }}
           isSaving={isSavingCalendar}

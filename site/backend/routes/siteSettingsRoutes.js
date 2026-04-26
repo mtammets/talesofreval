@@ -4,7 +4,7 @@ const multer = require('multer');
 
 const adminAuth = require('../middleware/adminAuth');
 const { sendFreeTourCancellationEmails } = require('../controllers/emailController');
-const { normalizeFreeTourEmailTemplates } = require('../lib/freeTourEmailTemplates');
+const { normalizeSiteEmailTemplates } = require('../lib/siteEmailTemplates');
 const { cancelFreeTourBookingsForSlotIds } = require('../lib/freeTourBookingsStore');
 const { getEffectiveFreeTourSlots, normalizeFreeTourSchedule } = require('../lib/freeTourSchedule');
 const { readSiteSettings, writeSiteSettings } = require('../lib/siteSettingsStore');
@@ -546,8 +546,19 @@ router.put(
     const nextSchedule = normalizeFreeTourSchedule(
       parseJsonField(req.body.freeTourSchedule, settings.freeTourSchedule)
     );
-    const nextEmails = normalizeFreeTourEmailTemplates(
-      parseJsonField(req.body.freeTourEmails, settings.freeTourEmails)
+    const requestedEmailTemplates = parseJsonField(req.body.emailTemplates, null);
+    const legacyFreeTourEmails = parseJsonField(req.body.freeTourEmails, null);
+    const nextEmails = normalizeSiteEmailTemplates(
+      requestedEmailTemplates || {
+        ...settings.emailTemplates,
+        ...(legacyFreeTourEmails
+          ? {
+              freeTourConfirmation: legacyFreeTourEmails.confirmation,
+              freeTourCancellation: legacyFreeTourEmails.cancellation,
+            }
+          : {}),
+      },
+      legacyFreeTourEmails
     );
     const nextEffectiveSlots = getEffectiveFreeTourSlots(nextSchedule);
     const nextSlotIds = new Set(nextEffectiveSlots.map((slot) => slot.id));
@@ -558,7 +569,7 @@ router.put(
     const nextSettings = {
       ...settings,
       freeTourSchedule: nextSchedule,
-      freeTourEmails: nextEmails,
+      emailTemplates: nextEmails,
     };
 
     await writeSiteSettings(nextSettings);

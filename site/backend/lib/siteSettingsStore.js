@@ -1,6 +1,6 @@
 const fs = require('fs/promises');
 const { runtimeSiteSettingsFile } = require('./storagePaths');
-const { normalizeFreeTourEmailTemplates } = require('./freeTourEmailTemplates');
+const { normalizeSiteEmailTemplates } = require('./siteEmailTemplates');
 const { getFreeTourBookingCounts } = require('./freeTourBookingsStore');
 const {
   applyBookingCountsToSchedule,
@@ -251,7 +251,10 @@ const normalizeSiteSettings = (settings = {}) => {
       socialLinks: normalizeSocialLinks(settings.footer?.socialLinks),
     },
     freeTourSchedule: normalizeFreeTourSchedule(settings.freeTourSchedule),
-    freeTourEmails: normalizeFreeTourEmailTemplates(settings.freeTourEmails),
+    emailTemplates: normalizeSiteEmailTemplates(
+      settings.emailTemplates,
+      settings.freeTourEmails
+    ),
   };
 };
 

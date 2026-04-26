@@ -8530,179 +8530,11 @@ button.year-event-switch.disabled{
   box-shadow: 0 18px 28px rgba(18, 24, 37, 0.16);
 }
 
-.free-tour-calendar-editor__email-toggle-row{
-  display: flex;
-  justify-content: flex-start;
-}
-
-.free-tour-calendar-editor__email-toggle{
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid rgba(32, 37, 51, 0.1);
-  border-radius: 999px;
-  min-height: 44px;
-  padding: 0.72rem 1rem;
-  background: rgba(255, 255, 255, 0.84);
-  color: #202533;
-  font: inherit;
-  font-size: 0.92rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    0 12px 20px rgba(18, 24, 37, 0.05);
-  transition:
-    transform 0.18s ease,
-    border-color 0.18s ease,
-    background-color 0.18s ease,
-    box-shadow 0.18s ease;
-}
-
-.free-tour-calendar-editor__email-toggle--active{
-  border-color: rgba(217, 136, 134, 0.24);
-  background:
-    radial-gradient(circle at top right, rgba(223, 162, 162, 0.16), transparent 48%),
-    rgba(255, 255, 255, 0.92);
-}
-
-.free-tour-calendar-editor__email-toggle-chevron{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(32, 37, 51, 0.58);
-  font-size: 0.84rem;
-  line-height: 1;
-  transition: transform 0.18s ease, color 0.18s ease;
-}
-
-.free-tour-calendar-editor__email-toggle-chevron--open{
-  transform: rotate(180deg);
-  color: rgba(32, 37, 51, 0.82);
-}
-
-.free-tour-calendar-editor__email-grid{
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.free-tour-calendar-editor__email-stack{
-  display: grid;
-  gap: 18px;
-}
-
-.free-tour-calendar-editor__email-card{
-  display: grid;
-  gap: 18px;
-  min-width: 0;
-  padding: 22px;
-  border: 1px solid rgba(32, 37, 51, 0.08);
-  border-radius: 26px;
-  background:
-    radial-gradient(circle at top right, rgba(223, 162, 162, 0.14), transparent 42%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(247, 243, 238, 0.94));
-  text-align: left;
-  cursor: pointer;
-  box-shadow:
-    0 18px 34px rgba(18, 24, 37, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
-  transition:
-    transform 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    background 0.18s ease;
-}
-
-.free-tour-calendar-editor__email-card--active{
-  border-color: rgba(45, 124, 88, 0.22);
-  background:
-    radial-gradient(circle at top right, rgba(104, 182, 145, 0.16), transparent 42%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(246, 251, 248, 0.96));
-  box-shadow:
-    0 20px 36px rgba(18, 24, 37, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.72),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
-}
-
-.free-tour-calendar-editor__email-card:focus-visible{
-  outline: 2px solid rgba(45, 124, 88, 0.24);
-  outline-offset: 3px;
-}
-
-.free-tour-calendar-editor__email-card-header{
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.free-tour-calendar-editor__email-card-copy{
-  display: grid;
-  gap: 10px;
-  min-width: 0;
-}
-
-.free-tour-calendar-editor__email-card-kicker{
-  color: rgba(32, 37, 51, 0.54);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.free-tour-calendar-editor__email-card-subject{
-  margin: 0;
-  color: #202533;
-  font-size: 1.1rem;
-  font-weight: 800;
-  line-height: 1.35;
-}
-
-.free-tour-calendar-editor__email-card-action{
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  min-height: 34px;
-  padding: 0 14px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.86);
-  color: rgba(32, 37, 51, 0.72);
-  font-size: 0.82rem;
-  font-weight: 800;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
-}
-
-.free-tour-calendar-editor__email-card-body{
-  position: relative;
-  max-height: 238px;
-  overflow: hidden;
-  color: rgba(32, 37, 51, 0.88);
-  font-size: 0.95rem;
-  line-height: 1.62;
-  mask-image: linear-gradient(180deg, #000 74%, transparent 100%);
-  -webkit-mask-image: linear-gradient(180deg, #000 74%, transparent 100%);
-}
-
-.free-tour-calendar-editor__email-card-body > :first-child{
-  margin-top: 0;
-}
-
-.free-tour-calendar-editor__email-card-body > :last-child{
-  margin-bottom: 0;
-}
-
-.free-tour-calendar-editor__email-card-body a{
-  color: inherit;
-  pointer-events: none;
-  text-decoration: none;
-}
-
 .free-tour-calendar-editor__token-row{
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: -4px;
+  margin-top: -2px;
 }
 
 .free-tour-calendar-editor__token{
@@ -8727,9 +8559,121 @@ button.year-event-switch.disabled{
     box-shadow 0.18s ease;
 }
 
+.free-tour-calendar-editor__email-tabs{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.free-tour-calendar-editor__email-tabs--secondary{
+  gap: 8px;
+}
+
+.free-tour-calendar-editor__email-subtabs-shell{
+  position: relative;
+  padding: 4px 0 0 18px;
+}
+
+.free-tour-calendar-editor__email-subtabs-shell::before{
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 12px;
+  left: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(45, 124, 88, 0.3), rgba(45, 124, 88, 0.08));
+}
+
+.free-tour-calendar-editor__email-subtabs-shell::after{
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(84, 183, 136, 0.84);
+  box-shadow:
+    0 0 0 5px rgba(84, 183, 136, 0.08),
+    0 8px 16px rgba(45, 124, 88, 0.12);
+}
+
+.free-tour-calendar-editor__email-tab{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.72rem 1rem;
+  border: 1px solid rgba(32, 37, 51, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.84);
+  color: rgba(32, 37, 51, 0.76);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 12px 20px rgba(18, 24, 37, 0.05);
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.free-tour-calendar-editor__email-tab--secondary{
+  min-height: 40px;
+  padding: 0.62rem 0.92rem;
+  border-color: rgba(32, 37, 51, 0.08);
+  background: rgba(255, 255, 255, 0.7);
+  color: rgba(32, 37, 51, 0.72);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.free-tour-calendar-editor__email-tabs--secondary{
+  padding: 10px;
+  border: 1px solid rgba(32, 37, 51, 0.06);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 10px 22px rgba(18, 24, 37, 0.03);
+}
+
+.free-tour-calendar-editor__email-tab--active{
+  border-color: rgba(45, 124, 88, 0.24);
+  background:
+    radial-gradient(circle at top right, rgba(104, 182, 145, 0.14), transparent 52%),
+    rgba(246, 251, 248, 0.96);
+  color: #205841;
+  box-shadow:
+    0 16px 28px rgba(18, 24, 37, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.free-tour-calendar-editor__email-tab--secondary.free-tour-calendar-editor__email-tab--active{
+  border-color: rgba(45, 124, 88, 0.18);
+  background: rgba(255, 255, 255, 0.96);
+  color: #202533;
+  box-shadow:
+    0 0 0 3px rgba(45, 124, 88, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.free-tour-calendar-editor__email-tab:focus-visible{
+  outline: 2px solid rgba(45, 124, 88, 0.24);
+  outline-offset: 3px;
+}
+
 .free-tour-calendar-editor__email-composer{
   display: grid;
-  gap: 18px;
+  gap: 16px;
   padding: 22px;
   border: 1px solid rgba(32, 37, 51, 0.08);
   border-radius: 28px;
@@ -8787,16 +8731,11 @@ button.year-event-switch.disabled{
   margin: 0 auto;
 }
 
-.free-tour-calendar-editor__email-composer-grid{
-  display: grid;
-  grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
-  gap: 18px;
-  align-items: start;
-}
-
 .free-tour-calendar-editor__email-composer-editors{
   display: grid;
   gap: 16px;
+  min-height: 0;
+  align-content: start;
 }
 
 .free-tour-calendar-editor__email-editor-shell{
@@ -8818,7 +8757,8 @@ button.year-event-switch.disabled{
 }
 
 .free-tour-calendar-editor__email-editor-shell--body{
-  min-height: 320px;
+  min-height: clamp(320px, 46vh, 560px);
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .free-tour-calendar-editor__email-editor-label{
@@ -8844,7 +8784,7 @@ button.year-event-switch.disabled{
 }
 
 .free-tour-calendar-editor__email-editor--body{
-  min-height: 260px;
+  min-height: clamp(260px, 38vh, 460px);
   font-size: max(16px, 1rem);
   line-height: 1.68;
 }
@@ -8876,46 +8816,6 @@ button.year-event-switch.disabled{
   user-select: all;
 }
 
-.free-tour-calendar-editor__email-preview{
-  display: grid;
-  gap: 12px;
-  min-height: 100%;
-  padding: 18px;
-  border: 1px solid rgba(32, 37, 51, 0.08);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
-}
-
-.free-tour-calendar-editor__email-preview-kicker{
-  color: rgba(32, 37, 51, 0.54);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.free-tour-calendar-editor__email-preview-subject{
-  color: #202533;
-  font-size: 0.98rem;
-  font-weight: 800;
-  line-height: 1.35;
-}
-
-.free-tour-calendar-editor__email-preview-body{
-  color: rgba(32, 37, 51, 0.86);
-  font-size: 0.94rem;
-  line-height: 1.6;
-}
-
-.free-tour-calendar-editor__email-preview-body > :first-child{
-  margin-top: 0;
-}
-
-.free-tour-calendar-editor__email-preview-body > :last-child{
-  margin-bottom: 0;
-}
-
 @media (hover: hover) and (pointer: fine) {
   .free-tour-calendar-editor__calendar-nav-button:not(:disabled):hover{
     border-color: rgba(217, 136, 134, 0.34);
@@ -8940,6 +8840,26 @@ button.year-event-switch.disabled{
     border-color: rgba(217, 136, 134, 0.34);
     background: rgba(255, 255, 255, 0.98);
     box-shadow: 0 14px 22px rgba(18, 24, 37, 0.08);
+  }
+
+  .free-tour-calendar-editor__email-tab:hover{
+    transform: translateY(-1px);
+    border-color: rgba(217, 136, 134, 0.32);
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 14px 24px rgba(18, 24, 37, 0.08);
+  }
+
+  .free-tour-calendar-editor__email-tab--active:hover{
+    border-color: rgba(45, 124, 88, 0.28);
+    background:
+      radial-gradient(circle at top right, rgba(104, 182, 145, 0.16), transparent 52%),
+      rgba(246, 251, 248, 0.98);
+    color: #205841;
+  }
+
+  .free-tour-calendar-editor__email-tab--secondary.free-tour-calendar-editor__email-tab--active:hover{
+    background: rgba(255, 255, 255, 1);
+    color: #202533;
   }
 
   .free-tour-calendar-editor__view-switch:hover{
@@ -9078,6 +8998,32 @@ button.year-event-switch.disabled{
 .free-tour-calendar-editor__actions .story-admin-button{
   min-width: 148px;
   min-height: 52px;
+}
+
+@media screen and (min-width: 961px) {
+  .free-tour-calendar-editor{
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: clamp(620px, 82vh, 860px);
+    max-height: 100%;
+  }
+
+  .free-tour-calendar-editor__view-swipe-layer{
+    height: 100%;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .free-tour-calendar-editor__layout,
+  .free-tour-calendar-editor__email-composer{
+    min-height: 100%;
+    box-sizing: border-box;
+  }
+
+  .free-tour-calendar-editor__email-composer-editors{
+    min-height: 100%;
+  }
 }
 
 .story-editor-close{
@@ -9408,26 +9354,32 @@ button.year-event-switch.disabled{
     min-height: 2.95rem;
   }
 
-  .free-tour-calendar-editor__email-grid{
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .free-tour-calendar-editor__email-card{
-    gap: 14px;
-    padding: 18px;
-    border-radius: 24px;
-  }
-
   .free-tour-calendar-editor__email-composer{
     padding: 18px;
     border-radius: 24px;
   }
 
-  .free-tour-calendar-editor__email-composer-header,
-  .free-tour-calendar-editor__email-composer-grid{
-    grid-template-columns: 1fr;
-    display: grid;
+  .free-tour-calendar-editor__email-tabs{
+    gap: 8px;
+  }
+
+  .free-tour-calendar-editor__email-subtabs-shell{
+    padding-left: 14px;
+  }
+
+  .free-tour-calendar-editor__email-subtabs-shell::after{
+    top: 13px;
+  }
+
+  .free-tour-calendar-editor__email-tab{
+    min-height: 42px;
+    padding: 0.66rem 0.92rem;
+    font-size: 0.88rem;
+  }
+
+  .free-tour-calendar-editor__email-tab--secondary{
+    min-height: 38px;
+    font-size: 0.8rem;
   }
 }
 
@@ -9507,19 +9459,36 @@ button.year-event-switch.disabled{
     border-radius: 1rem;
   }
 
-  .free-tour-calendar-editor__email-card{
-    padding: 14px;
-    border-radius: 20px;
-  }
-
   .free-tour-calendar-editor__email-composer{
     gap: 14px;
     padding: 14px;
     border-radius: 20px;
   }
 
-  .free-tour-calendar-editor__email-composer-close{
-    width: 100%;
+  .free-tour-calendar-editor__email-tabs{
+    gap: 8px;
+  }
+
+  .free-tour-calendar-editor__email-subtabs-shell{
+    padding-left: 12px;
+  }
+
+  .free-tour-calendar-editor__email-subtabs-shell::after{
+    top: 12px;
+    width: 9px;
+    height: 9px;
+  }
+
+  .free-tour-calendar-editor__email-tab{
+    flex: 1 1 calc(50% - 4px);
+    min-height: 40px;
+    padding: 0.58rem 0.72rem;
+    font-size: 0.78rem;
+  }
+
+  .free-tour-calendar-editor__email-tab--secondary{
+    min-height: 36px;
+    font-size: 0.74rem;
   }
 
   .free-tour-calendar-editor__email-editor-shell{
@@ -9543,12 +9512,6 @@ button.year-event-switch.disabled{
     min-height: 32px;
     padding: 0.4rem 0.62rem;
     font-size: 0.76rem;
-  }
-
-  .free-tour-calendar-editor__email-preview{
-    gap: 10px;
-    padding: 14px;
-    border-radius: 16px;
   }
 
   .free-tour-calendar-editor__merge-token{
