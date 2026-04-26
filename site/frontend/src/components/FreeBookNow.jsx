@@ -10,6 +10,7 @@ import { getMiscTexts, reset as resetTexts } from '../features/texts/textSlice';
 import { getDates, reset as resetDates } from '../features/tour/tourSlice';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { getFallbackText } from '../content/fallbackContent';
 import { parseFreeTourDate, toFreeTourDateKey } from '../utils/freeTourSchedule';
 
 function FreeBookNow({ showBookNow, setShowBookNow }) {
@@ -24,6 +25,7 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
     const { isLoading } = useSelector(state => state.email);
     const { misc_texts } = useSelector(state => state.texts);
     const { dates, isError, message: tourMessage } = useSelector(state => state.tour);
+    const language = localStorage.getItem('language') || 'en';
 
     useEffect(() => {
         return () => {
@@ -54,10 +56,17 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
     }, [selectedDate, dates]);
 
     useEffect(() => {
-        if (numberOfPeople === "More than 7") {
-            toast.info("For groups larger than 7 please use the main booking option");
+        if (numberOfPeople === getFallbackText('misc', 'more-than-7', language, 'More than 7')) {
+            toast.info(
+              getFallbackText(
+                'misc',
+                'for-groups-larger-than-7-please-use-the-main-booking-option',
+                language,
+                'For groups larger than 7 please use the main booking option.'
+              )
+            );
         }
-    }, [numberOfPeople]);
+    }, [language, numberOfPeople]);
 
     const isDateAvailable = (date) => {
         const today = new Date();
@@ -90,22 +99,29 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!name) {
-            toast.error("Name is required");
+            toast.error(getFallbackText('misc', 'name-is-required', language, 'Name is required.'));
             return;
         } else if (!email) {
-            toast.error("Email is required");
+            toast.error(getFallbackText('misc', 'email-is-required', language, 'Email is required.'));
             return;
         } else if (!email.includes('@')) {
-            toast.error("Email is not valid");
+            toast.error(getFallbackText('misc', 'email-is-not-valid', language, 'Email is not valid.'));
             return;
         } else if (!selectedDate) {
-            toast.error("Date is required");
+            toast.error(getFallbackText('misc', 'date-is-required', language, 'Date is required.'));
             return;
         } else if (!selectedTime) {
-            toast.error("Time is required");
+            toast.error(getFallbackText('misc', 'time-is-required', language, 'Time is required.'));
             return;
-        } else if (!numberOfPeople || numberOfPeople === "More than 7") {
-            toast.error("Please select a valid number of people");
+        } else if (!numberOfPeople || numberOfPeople === getFallbackText('misc', 'more-than-7', language, 'More than 7')) {
+            toast.error(
+              getFallbackText(
+                'misc',
+                'please-select-a-valid-number-of-people',
+                language,
+                'Please select a valid number of people.'
+              )
+            );
             return;
         }
     
@@ -145,10 +161,42 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
         setNumberOfPeople('');
     }
 
-    const nameLabel = misc_texts?.["name"]?.text || 'Name';
-    const emailLabel = misc_texts?.["e-mail"]?.text || 'E-mail';
-    const sendText = misc_texts?.["send"]?.text || 'Send';
-    const cancelText = misc_texts?.["cancel"]?.text || 'Cancel';
+    const nameLabel = misc_texts?.["name"]?.text || getFallbackText('misc', 'name', language, 'Name');
+    const emailLabel = misc_texts?.["e-mail"]?.text || getFallbackText('misc', 'e-mail', language, 'E-mail');
+    const sendText = misc_texts?.["send"]?.text || getFallbackText('misc', 'send', language, 'Send');
+    const cancelText =
+      misc_texts?.["cancel"]?.text || getFallbackText('misc', 'cancel', language, 'Cancel');
+    const thankYouText =
+      misc_texts?.["thank-you"]?.text || getFallbackText('misc', 'thank-you', language, 'Thank you!');
+    const closeText =
+      misc_texts?.["close"]?.text || getFallbackText('misc', 'close', language, 'Close');
+    const followUpText =
+      misc_texts?.["well-be-in-touch"]?.text ||
+      getFallbackText('misc', 'well-be-in-touch', language, "We'll be in touch soon!");
+    const freeTourRegistrationText =
+      misc_texts?.["free-tour-registration"]?.text ||
+      getFallbackText('misc', 'free-tour-registration', language, 'Free Tour Registration');
+    const selectDateText =
+      misc_texts?.["select-a-date"]?.text ||
+      getFallbackText('misc', 'select-a-date', language, 'Select a date:');
+    const selectDatePlaceholder =
+      misc_texts?.["select-a-date-placeholder"]?.text ||
+      getFallbackText('misc', 'select-a-date-placeholder', language, 'Select a date');
+    const selectTimeText =
+      misc_texts?.["select-a-time"]?.text ||
+      getFallbackText('misc', 'select-a-time', language, 'Select a time:');
+    const selectTimePlaceholder =
+      misc_texts?.["select-a-time-placeholder"]?.text ||
+      getFallbackText('misc', 'select-a-time-placeholder', language, 'Select a time');
+    const numberOfPeopleText =
+      misc_texts?.["number-of-people"]?.text ||
+      getFallbackText('misc', 'number-of-people', language, 'Number of people:');
+    const selectNumberOfPeopleText =
+      misc_texts?.["select-number-of-people"]?.text ||
+      getFallbackText('misc', 'select-number-of-people', language, 'Select number of people');
+    const moreThanSevenText =
+      misc_texts?.["more-than-7"]?.text ||
+      getFallbackText('misc', 'more-than-7', language, 'More than 7');
 
     if (!showBookNow) return null;
 
@@ -160,7 +208,7 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
         <div className='book-now-popup'>
             <div className="input-form-card book-card">
                 {submitted && <FaCheck size={25} color={"#05AA6C"} className='padding-20-bottom' />}
-                <h3 className='cardo'>{submitted ? "Thank you" : "Free Tour Registration"}</h3>
+                <h3 className='cardo'>{submitted ? thankYouText : freeTourRegistrationText}</h3>
                 <form>
                     {!submitted ? 
                         <>
@@ -173,7 +221,7 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
                                 <input name='email' type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                             </div>
                             <div className="">
-                                <label htmlFor="date">Select a Date:</label>
+                                <label htmlFor="date">{selectDateText}</label>
                             </div>
                             <DatePicker
                                 selected={selectedDate}
@@ -189,7 +237,7 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
                                 }
                                 filterDate={isDateAvailable}
                                 dateFormat="yyyy-MM-dd"
-                                placeholderText="Select a date"
+                                placeholderText={selectDatePlaceholder}
                                 popperPlacement="auto"
                                 popperModifiers={{
                                     preventOverflow: {
@@ -202,24 +250,24 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
                             {selectedDate && (
                                 <>
                                     <div className="form-group">
-                                        <label htmlFor="time">Select a Time:</label>
+                                        <label htmlFor="time">{selectTimeText}</label>
                                         <select className="basic-select" id="time" name="time" value={selectedTime} onChange={(e) => {
                                             setSelectedTime(e.target.value);
                                         }}>
-                                            <option value="">Select a time</option>
+                                            <option value="">{selectTimePlaceholder}</option>
                                             {availableTimes.map((time) => (
                                                 <option key={time} value={time}>{time}</option>
                                             ))}
                                         </select>
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor="people">Number of People:</label>
+                                        <label htmlFor="people">{numberOfPeopleText}</label>
                                         <select className="basic-select" id="people" name="people" value={numberOfPeople} onChange={(e) => setNumberOfPeople(e.target.value)}>
-                                            <option value="">Select number of people</option>
+                                            <option value="">{selectNumberOfPeopleText}</option>
                                             {[1, 2, 3, 4, 5, 6, 7].map(num => (
                                                 <option key={num} value={num}>{num}</option>
                                             ))}
-                                            <option value="More than 7">More than 7</option>
+                                            <option value={moreThanSevenText}>{moreThanSevenText}</option>
                                         </select>
                                     </div>
                                 </>
@@ -227,17 +275,17 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
                         </>
                     :   
                         <>
-                            <h5 className='padding-20-top'>We'll be in touch!</h5>
+                            <h5 className='padding-20-top'>{followUpText}</h5>
                         </>
                     }
                     <div className="submit">
                         <div>
                             <ButtonSecondary 
-                                text={submitted ? "Close" : cancelText}
+                                text={submitted ? closeText : cancelText}
                                 onClick={handleClose}
                             />  
                         </div>
-                        {!submitted && numberOfPeople !== "More than 7" && (
+                        {!submitted && numberOfPeople !== moreThanSevenText && (
                             <div>
                                 <ButtonPrimary icon="ArrowRight" text={sendText} onClick={handleSubmit} />
                             </div>

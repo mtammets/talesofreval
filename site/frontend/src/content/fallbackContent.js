@@ -59,6 +59,49 @@ const MISC_EN = {
     "This was absolutely amazing. The tour guide was so interesting, enthusiastic and humorous with an amazing knowledge of Tallinn. The whole family thoroughly enjoyed it and we can't recommend it enough!",
   "reviewer-name": "Tripadvisor review",
   "our-team": "Our team",
+  "contact-us": "Contact us",
+  "say-hello!": "Say hello!",
+  name: "Name",
+  "e-mail": "E-mail",
+  "write-something": "Write something",
+  send: "Send",
+  cancel: "Cancel",
+  "thank-you": "Thank you!",
+  close: "Close",
+  "well-be-in-touch": "We'll be in touch soon!",
+  "name-is-required": "Name is required.",
+  "email-is-required": "Email is required.",
+  "message-is-required": "Message is required.",
+  "email-is-not-valid": "Email is not valid.",
+  "free-tour-registration": "Free Tour Registration",
+  "select-a-date": "Select a date:",
+  "select-a-date-placeholder": "Select a date",
+  "select-a-time": "Select a time:",
+  "select-a-time-placeholder": "Select a time",
+  "number-of-people": "Number of people:",
+  "select-number-of-people": "Select number of people",
+  "more-than-7": "More than 7",
+  "date-is-required": "Date is required.",
+  "time-is-required": "Time is required.",
+  "please-select-a-valid-number-of-people": "Please select a valid number of people.",
+  "for-groups-larger-than-7-please-use-the-main-booking-option":
+    "For groups larger than 7 please use the main booking option.",
+  "read-more": "Read more",
+  "explore-alone": "Explore Alone,",
+  "discover-more": "Discover More!",
+  "explore-alone-discover-more": "Explore Alone, Discover More",
+  "medieval-adventure-at-your-fingertips": "Medieval adventure at your fingertips",
+  "location-based-app-guided-tours": "Location based app guided tours",
+  "your-time-your-pace": "Your time, your pace!",
+  "interactive-quizzes": "Interactive quizzes",
+  "photo-challenges": "Photo challenges",
+  "in-depth-tour-with-storytelling": "In-depth tour with storytelling",
+  "what-is-leplace": "What is LePlace",
+  "leplace-about-copy":
+    "LePlace transforms local tourism with interactive outdoor exploration games on your mobile phone and connects creators and organizations with people and places worldwide.",
+  "pay-now": "Pay now",
+  "review-platform-prefix": "on",
+  "review-rating-label": "5 out of 5 rating",
 };
 
 const MISC_EE = {
@@ -80,6 +123,49 @@ const MISC_EE = {
     "See oli täiesti imeline. Giid oli väga huvitav, entusiastlik ja humoorikas ning tundis Tallinna ajalugu suurepäraselt. Kogu pere nautis seda väga ja soovitame soojalt!",
   "reviewer-name": "Tripadvisori arvustus",
   "our-team": "Meie tiim",
+  "contact-us": "Kontakt",
+  "say-hello!": "Ütle tere!",
+  name: "Nimi",
+  "e-mail": "E-post",
+  "write-something": "Kirjuta midagi",
+  send: "Saada",
+  cancel: "Tühista",
+  "thank-you": "Aitäh!",
+  close: "Sulge",
+  "well-be-in-touch": "Võtame peagi ühendust!",
+  "name-is-required": "Nimi on kohustuslik.",
+  "email-is-required": "E-post on kohustuslik.",
+  "message-is-required": "Sõnum on kohustuslik.",
+  "email-is-not-valid": "E-posti aadress ei ole korrektne.",
+  "free-tour-registration": "Tasuta tuuri registreerimine",
+  "select-a-date": "Vali kuupäev:",
+  "select-a-date-placeholder": "Vali kuupäev",
+  "select-a-time": "Vali kellaaeg:",
+  "select-a-time-placeholder": "Vali kellaaeg",
+  "number-of-people": "Inimeste arv:",
+  "select-number-of-people": "Vali inimeste arv",
+  "more-than-7": "Rohkem kui 7",
+  "date-is-required": "Kuupäev on kohustuslik.",
+  "time-is-required": "Kellaaeg on kohustuslik.",
+  "please-select-a-valid-number-of-people": "Palun vali sobiv inimeste arv.",
+  "for-groups-larger-than-7-please-use-the-main-booking-option":
+    "Üle seitsmeliikmeliste gruppide jaoks kasuta palun peamist broneerimisvormi.",
+  "read-more": "Loe lähemalt",
+  "explore-alone": "Avasta omas tempos,",
+  "discover-more": "avasta rohkem!",
+  "explore-alone-discover-more": "Avasta omas tempos, avasta rohkem",
+  "medieval-adventure-at-your-fingertips": "Keskaegne seiklus sinu käeulatuses",
+  "location-based-app-guided-tours": "Asukohapõhised äpijuhitud tuurid",
+  "your-time-your-pace": "Sinu aeg, sinu tempo!",
+  "interactive-quizzes": "Interaktiivsed viktoriinid",
+  "photo-challenges": "Fotoväljakutsed",
+  "in-depth-tour-with-storytelling": "Põhjalik jutustav tuur",
+  "what-is-leplace": "Mis on LePlace",
+  "leplace-about-copy":
+    "LePlace muudab kohaliku turismi mobiilis mängitavate interaktiivsete avastusmängudega ning ühendab loojad ja organisatsioonid inimeste ja paikadega üle kogu maailma.",
+  "pay-now": "Maksa nüüd",
+  "review-platform-prefix": "TripAdvisoris",
+  "review-rating-label": "5 punkti 5-st",
 };
 
 const FOOTER_EN = {
@@ -145,6 +231,13 @@ export const getFallbackTextsForCategory = (category, language = "en") => {
 
   return byLanguage[category] || {};
 };
+
+export const getFallbackText = (
+  category,
+  key,
+  language = "en",
+  fallback = ""
+) => getFallbackTextsForCategory(category, language)?.[key]?.text || fallback;
 
 export const FALLBACK_STORYTELLERS = [
   {

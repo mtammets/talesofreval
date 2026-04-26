@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ButtonPrimary from '../style-components/ButtonPrimary';
 import { getLocalizedSiteText } from '../../content/siteSettingsDefaults';
+import { getFallbackText } from '../../content/fallbackContent';
 import { ArrowRight } from '../../icons/ArrowRight.tsx';
 
 const MOBILE_BREAKPOINT = 768;
@@ -51,7 +52,11 @@ function FooterColumnLeft({ texts, content = null, setShowFreeBookNow }) {
   const startingPointText = content?.startingPointLine
     ? getLocalizedSiteText(content.startingPointLine, language).split(':')
     : texts && texts["starting-point:-niguliste-2"] ? texts["starting-point:-niguliste-2"].text.split(':') : ["", ""];
-  const bookNowText = texts && texts["book-now"] ? texts["book-now"].text : 'Book now';
+  const bookNowText = getFallbackText('header', 'book-now', language, 'Book now');
+  const mapTitle =
+    language === 'ee'
+      ? 'Kaart Tales of Revali kogunemispunktiga'
+      : 'Map showing the Tales of Reval meeting point';
   const footerTimeText = `${footerFirstTimeText} ${footerSecondTimeText}`.trim();
   const handleOpenFreeTourBooking = (event) => {
     event.preventDefault();
@@ -86,7 +91,7 @@ function FooterColumnLeft({ texts, content = null, setShowFreeBookNow }) {
         <div className="footer-map-card">
           <iframe
             className="footer-map-embed"
-            title="Map showing the Tales of Reval meeting point"
+            title={mapTitle}
             src={mapPreviewSrc}
             loading="lazy"
             tabIndex="-1"
@@ -97,7 +102,7 @@ function FooterColumnLeft({ texts, content = null, setShowFreeBookNow }) {
             href={mapLink}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={openMapText || 'Open map'}
+            aria-label={openMapText || getFallbackText('footer', 'open-map', language, 'Open map')}
           />
         </div>
         {isMobileScreen ? null : (

@@ -13,6 +13,7 @@ import HeroImageEditorModal from '../components/HeroImageEditorModal';
 import PageHero from '../components/PageHero';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
+import { getFallbackText } from '../content/fallbackContent';
 import {
   DEFAULT_SITE_SETTINGS,
   HERO_MEDIA_SIZES,
@@ -90,8 +91,8 @@ function ContactUs({
   const [isSavingTeam, setIsSavingTeam] = useState(false);
   const [isSavingContact, setIsSavingContact] = useState(false);
   const [isSavingHero, setIsSavingHero] = useState(false);
-  const [contactTeamHeading, setContactTeamHeading] = useState(cloneValue(siteSettings.homeTeam.heading));
-  const [contactTeamMembers, setContactTeamMembers] = useState(cloneValue(siteSettings.homeTeam.members));
+  const [contactTeamHeading, setContactTeamHeading] = useState(cloneValue(siteSettings.contactPage.teamHeading));
+  const [contactTeamMembers, setContactTeamMembers] = useState(cloneValue(siteSettings.contactPage.teamMembers));
   const [contactTeamImageFiles, setContactTeamImageFiles] = useState({});
   const [contactForm, setContactForm] = useState(cloneValue(siteSettings.contactPage));
   const [contactHeroImageFile, setContactHeroImageFile] = useState(null);
@@ -116,8 +117,8 @@ function ContactUs({
   }, [dispatch]);
 
   useEffect(() => {
-    setContactTeamHeading(cloneValue(siteSettings.homeTeam.heading));
-    setContactTeamMembers(cloneValue(siteSettings.homeTeam.members));
+    setContactTeamHeading(cloneValue(siteSettings.contactPage.teamHeading));
+    setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers));
     setContactForm(cloneValue(siteSettings.contactPage));
     setContactHeroDraftImage(cloneValue(siteSettings.contactPage.image || null));
   }, [siteSettings]);
@@ -150,19 +151,19 @@ function ContactUs({
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name) {
-      toast.error("Name is required");
+      toast.error(getFallbackText('misc', 'name-is-required', language, 'Name is required.'));
       return;
     }
     if (!email) {
-      toast.error("Email is required");
+      toast.error(getFallbackText('misc', 'email-is-required', language, 'Email is required.'));
       return;
     }
     if (!messageContent) {
-      toast.error("Message is required");
+      toast.error(getFallbackText('misc', 'message-is-required', language, 'Message is required.'));
       return;
     }
     if (!email.includes('@')) {
-      toast.error("Email is not valid");
+      toast.error(getFallbackText('misc', 'email-is-not-valid', language, 'Email is not valid.'));
       return;
     }
 
@@ -247,13 +248,41 @@ function ContactUs({
     return <Spinner />;
   }
 
-  const contactUsText = misc_texts?.["contact-us"]?.text || 'Contact us';
-  const sayHelloText = getLocalizedSiteText(siteSettings.contactPage.formTitle, language, misc_texts?.["say-hello!"]?.text || '');
-  const nameLabel = getLocalizedSiteText(siteSettings.contactPage.nameLabel, language, 'Name*');
-  const emailLabel = getLocalizedSiteText(siteSettings.contactPage.emailLabel, language, 'E-mail*');
-  const writeSomethingText = getLocalizedSiteText(siteSettings.contactPage.messageLabel, language, 'Write something');
-  const sendText = getLocalizedSiteText(siteSettings.contactPage.submitLabel, language, 'Send');
+  const contactUsText =
+    misc_texts?.["contact-us"]?.text ||
+    getFallbackText('misc', 'contact-us', language, 'Contact us');
+  const sayHelloText = getLocalizedSiteText(
+    siteSettings.contactPage.formTitle,
+    language,
+    misc_texts?.["say-hello!"]?.text ||
+      getFallbackText('misc', 'say-hello!', language, 'Say hello!')
+  );
+  const nameLabel = getLocalizedSiteText(
+    siteSettings.contactPage.nameLabel,
+    language,
+    `${getFallbackText('misc', 'name', language, 'Name')}*`
+  );
+  const emailLabel = getLocalizedSiteText(
+    siteSettings.contactPage.emailLabel,
+    language,
+    `${getFallbackText('misc', 'e-mail', language, 'E-mail')}*`
+  );
+  const writeSomethingText = getLocalizedSiteText(
+    siteSettings.contactPage.messageLabel,
+    language,
+    getFallbackText('misc', 'write-something', language, 'Write something')
+  );
+  const sendText = getLocalizedSiteText(
+    siteSettings.contactPage.submitLabel,
+    language,
+    getFallbackText('misc', 'send', language, 'Send')
+  );
   const addressText = getLocalizedSiteText(siteSettings.contactPage.address, language, '');
+  const contactMetaDescription =
+    language === 'ee'
+      ? 'Võta Tales of Revaliga ühendust, et küsida meie keskaegsete tuuride, privaatsete elamuste ja tiimiürituste kohta Tallinnas.'
+      : 'Get in touch with Tales of Reval for inquiries about our medieval tours, private tours, team events, and more. Contact us today to book your unique Tallinn experience.';
+  const editText = language === 'ee' ? 'Muuda' : 'Edit';
   const contactHeroMedia =
     (contactHeroPreviewUrl
       ? createPreviewMediaAsset(
@@ -299,8 +328,8 @@ function ContactUs({
   return (
     <div className='story-page contact-page'>
       <Helmet>
-        <title>Contact Us - Tales of Reval</title>
-        <meta name="description" content="Get in touch with Tales of Reval for inquiries about our medieval tours, private tours, team events, and more. Contact us today to book your unique Tallinn experience." />
+        <title>{contactUsText} - Tales of Reval</title>
+        <meta name="description" content={contactMetaDescription} />
         <meta name="keywords" content="Contact Tales of Reval, Book a Tour in Tallinn, Inquire About Medieval Tours, Tour Booking Contact, Tallinn Tour Inquiries, Medieval Tour Customer Service, Private Tours in Tallinn, Team Events Tallinn, Unique Tallinn Experiences" />
       </Helmet>
       <PageHero
@@ -316,13 +345,13 @@ function ContactUs({
       <div className="container contact-page-team">
         <ContactsTeam
           contactPage={true}
-          heading={siteSettings.homeTeam.heading}
-          items={siteSettings.homeTeam.members}
+          heading={siteSettings.contactPage.teamHeading}
+          items={siteSettings.contactPage.teamMembers}
           language={language}
           adminAction={
             adminToken && isEditMode ? (
               <button type="button" className="section-edit-button" onClick={() => setIsTeamEditorOpen(true)}>
-                Edit
+                {editText}
               </button>
             ) : null
           }
@@ -334,7 +363,7 @@ function ContactUs({
           {adminToken && isEditMode ? (
             <div className="contact-section-admin-row">
               <button type="button" className="section-edit-button" onClick={() => setIsContactEditorOpen(true)}>
-                Edit
+                {editText}
               </button>
             </div>
           ) : null}
@@ -417,8 +446,8 @@ function ContactUs({
           onCancel={() => {
             setIsTeamEditorOpen(false);
             setContactTeamImageFiles({});
-            setContactTeamHeading(cloneValue(siteSettings.homeTeam.heading));
-            setContactTeamMembers(cloneValue(siteSettings.homeTeam.members));
+            setContactTeamHeading(cloneValue(siteSettings.contactPage.teamHeading));
+            setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers));
           }}
           isSaving={isSavingTeam}
           modalTitle="Edit team"

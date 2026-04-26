@@ -5,7 +5,10 @@ import { getFooterTexts, reset } from '../features/texts/textSlice';
 import FooterColumnLeft from './footer-components/FooterColumnLeft.jsx';
 import FooterColumnMiddle from './footer-components/FooterColumnMiddle.jsx';
 import FooterColumnRight from './footer-components/FooterColumnRight.jsx';
-import { FALLBACK_FOOTER_TEXTS, hasTextEntries } from '../content/fallbackContent';
+import {
+  getFallbackTextsForCategory,
+  hasTextEntries,
+} from '../content/fallbackContent';
 import HomeFooterEditorModal from './HomeFooterEditorModal';
 import FreeTourScheduleEditorModal from './FreeTourScheduleEditorModal';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
@@ -58,9 +61,10 @@ function Footer({
     }
   }, [isError, message]);
 
+  const language = localStorage.getItem('language') || 'en';
   const resolvedFooterTexts = hasTextEntries(footer_texts)
     ? footer_texts
-    : FALLBACK_FOOTER_TEXTS;
+    : getFallbackTextsForCategory('footer', language);
 
   useEffect(() => {
     setFooterForm(cloneValue(siteSettings?.footer || {}));

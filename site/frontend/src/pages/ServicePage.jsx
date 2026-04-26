@@ -657,12 +657,15 @@ function ServicePage({
     description: seoDescription,
     keywords: seoKeywords,
   } = seoData[serviceType] || {};
+  const pageMetaTitle =
+    language === 'ee' ? `${pageTitle} - Tales of Reval` : seoTitle || `${pageTitle} - Tales of Reval`;
+  const pageMetaDescription = language === 'ee' ? intro : seoDescription || intro;
 
   return (
     <div className="service-page">
       <Helmet>
-        <title>{seoTitle || pageTitle} - Tales of Reval</title>
-        <meta name="description" content={seoDescription || intro} />
+        <title>{pageMetaTitle}</title>
+        <meta name="description" content={pageMetaDescription} />
         <meta
           name="keywords"
           content={

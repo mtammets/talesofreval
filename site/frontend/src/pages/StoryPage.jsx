@@ -16,6 +16,7 @@ import storyAdminService, {
   setStoredStoryAdminAuth,
 } from '../features/events/storyAdminService';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
+import { getFallbackText } from '../content/fallbackContent';
 import {
   applyStoryEventLanguage,
   createEmptyStoryEventForm,
@@ -506,7 +507,13 @@ function StoryPage({
     return <Spinner />;
   }
 
-  const ourStoryText = misc_texts && misc_texts['our-story'] ? misc_texts['our-story'].text : null;
+  const ourStoryText =
+    misc_texts?.['our-story']?.text ||
+    getFallbackText('header', 'our-story', language, 'Our story');
+  const storyMetaDescription =
+    language === 'ee'
+      ? 'Tutvu Tales of Revali teekonnaga alates algusaegadest kuni tänaseni läbi kaasahaaravate lugude ja keskaegsete elamuste.'
+      : 'Explore the journey of Tales of Reval, from its inception to the present day, through immersive storytelling experiences and medieval themed events.';
   const storyHeroMedia =
     (storyHeroPreviewUrl
       ? createPreviewMediaAsset(
@@ -551,10 +558,10 @@ function StoryPage({
   return (
     <div className="story-page">
       <Helmet>
-        <title>Our Story - Tales of Reval</title>
+        <title>{ourStoryText} - Tales of Reval</title>
         <meta
           name="description"
-          content="Explore the journey of Tales of Reval, from its inception to the present day, through immersive storytelling experiences and medieval themed events."
+          content={storyMetaDescription}
         />
         <meta
           name="keywords"

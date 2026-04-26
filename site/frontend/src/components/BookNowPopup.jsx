@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { sendMessage } from '../features/email/emailSlice';
 import Spinner from './Spinner';
 import { getMiscTexts, reset } from '../features/texts/textSlice';
+import { getFallbackText } from '../content/fallbackContent';
 import { ArrowRight } from '../icons/ArrowRight.tsx';
 
 function BookNowPopup({ showBookNow, setShowBookNow }) {
@@ -20,6 +21,7 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
     const { misc_texts } = useSelector(state => state.texts);
 
     const location = useLocation();
+    const language = localStorage.getItem('language') || 'en';
 
     const resetFormState = () => {
         setSubmitted(false);
@@ -85,16 +87,16 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!name) {
-            toast.error("Name is required");
+            toast.error(getFallbackText('misc', 'name-is-required', language, 'Name is required.'));
             return;
         } else if (!email) {
-            toast.error("Email is required");
+            toast.error(getFallbackText('misc', 'email-is-required', language, 'Email is required.'));
             return;
         } else if (!message) {
-            toast.error("Message is required");
+            toast.error(getFallbackText('misc', 'message-is-required', language, 'Message is required.'));
             return;
         } else if (!email.includes('@')) {
-            toast.error("Email is not valid");
+            toast.error(getFallbackText('misc', 'email-is-not-valid', language, 'Email is not valid.'));
             return;
         }
 
@@ -117,11 +119,21 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
         resetFormState();
     };
 
-    const nameLabel = misc_texts?.["name"]?.text || 'Name';
-    const emailLabel = misc_texts?.["e-mail"]?.text || 'E-mail';
-    const writeSomethingText = misc_texts?.["write-something"]?.text || 'Write something';
-    const sendText = misc_texts?.["send"]?.text || 'Send';
-    const cancelText = misc_texts?.["cancel"]?.text || 'Cancel';
+    const nameLabel = misc_texts?.["name"]?.text || getFallbackText('misc', 'name', language, 'Name');
+    const emailLabel = misc_texts?.["e-mail"]?.text || getFallbackText('misc', 'e-mail', language, 'E-mail');
+    const writeSomethingText =
+      misc_texts?.["write-something"]?.text ||
+      getFallbackText('misc', 'write-something', language, 'Write something');
+    const sendText = misc_texts?.["send"]?.text || getFallbackText('misc', 'send', language, 'Send');
+    const cancelText =
+      misc_texts?.["cancel"]?.text || getFallbackText('misc', 'cancel', language, 'Cancel');
+    const thankYouText =
+      misc_texts?.["thank-you"]?.text || getFallbackText('misc', 'thank-you', language, 'Thank you!');
+    const closeText = misc_texts?.["close"]?.text || getFallbackText('misc', 'close', language, 'Close');
+    const followUpText =
+      misc_texts?.["well-be-in-touch"]?.text ||
+      getFallbackText('misc', 'well-be-in-touch', language, "We'll be in touch soon!");
+    const bookNowText = getFallbackText('header', 'book-now', language, 'Book now');
 
     if (!showBookNow) return null;
 
@@ -145,7 +157,7 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
                     </div>
                 ) : null}
                 <h3 className={`book-now-dialog__title cardo${submitted ? ' book-now-dialog__title--submitted' : ''}`} id="book-now-dialog-title">
-                    {submitted ? "Thank you!" : "Book now"}
+                    {submitted ? thankYouText : bookNowText}
                 </h3>
                 <form className={`book-now-form${submitted ? ' book-now-form--submitted' : ''}`} onSubmit={handleSubmit}>
                     {!submitted ?
@@ -165,7 +177,7 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
                         </>
                         :
                         <>
-                            <p className='book-now-confirmation-copy'>We'll be in touch :)</p>
+                            <p className='book-now-confirmation-copy'>{followUpText}</p>
                         </>
                     }
 
@@ -175,7 +187,7 @@ function BookNowPopup({ showBookNow, setShowBookNow }) {
                             className={`book-now-action ${submitted ? 'book-now-action--close' : 'book-now-action--cancel'}`}
                             onClick={handleClose}
                         >
-                            {submitted ? "Close" : cancelText}
+                            {submitted ? closeText : cancelText}
                         </button>
                         {!submitted && (
                             <button type="submit" className="book-now-action book-now-action--submit">

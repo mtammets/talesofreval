@@ -4,8 +4,7 @@ import DesktopHeader from './header-components/DesktopHeader.jsx';
 import MobileHeader from './header-components/MobileHeader.jsx';
 import { getHeaderTexts, getMiscTexts, reset } from '../features/texts/textSlice';
 import {
-  FALLBACK_HEADER_TEXTS,
-  FALLBACK_MISC_TEXTS,
+  getFallbackTextsForCategory,
   hasTextEntries,
 } from '../content/fallbackContent';
 
@@ -49,12 +48,13 @@ function Header({
     }
   }, [isError, message]);
 
+  const language = localStorage.getItem('language') || 'en';
   const resolvedHeaderTexts = hasTextEntries(header_texts)
     ? header_texts
-    : FALLBACK_HEADER_TEXTS;
+    : getFallbackTextsForCategory('header', language);
   const resolvedMiscTexts = hasTextEntries(misc_texts)
     ? misc_texts
-    : FALLBACK_MISC_TEXTS;
+    : getFallbackTextsForCategory('misc', language);
   const isVirtualPage = window.location.pathname.startsWith('/virtual');
 
   return (

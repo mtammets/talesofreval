@@ -1,13 +1,15 @@
+import { getFallbackText } from '../../content/fallbackContent';
 import { getLocalizedSiteText } from '../../content/siteSettingsDefaults';
 
 function FooterContactDetails({ texts, content = null, className = '' }) {
   const language = localStorage.getItem('language') || 'en';
   const contactUsText = content?.contactHeading
     ? getLocalizedSiteText(content.contactHeading, language)
-    : texts && texts["contact-us:"] ? texts["contact-us:"].text : 'Contact us';
+    : texts && texts["contact-us:"] ? texts["contact-us:"].text : getFallbackText('footer', 'contact-us:', language, 'Contact us');
   const taxAddressText = content?.address
     ? getLocalizedSiteText(content.address, language)
     : texts && texts["tax-address"] ? texts["tax-address"].text : '';
+  const companyRegFallback = language === 'ee' ? 'Reg nr. 14443936' : 'Reg no. 14443936';
   const sectionClassName = ['footer-right-section', 'footer-contact-section', className]
     .filter(Boolean)
     .join(' ');
@@ -25,7 +27,7 @@ function FooterContactDetails({ texts, content = null, className = '' }) {
       </div>
       <p className="footer-company-meta">
         {content?.companyName || 'OÜ Satsang'} <br />
-        {content?.companyReg || 'Reg no. 14443936'} <br />
+        {content?.companyReg || companyRegFallback} <br />
         {taxAddressText}
       </p>
     </div>

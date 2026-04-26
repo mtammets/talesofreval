@@ -13,8 +13,8 @@ import OurTeam from '../components/OurTeam';
 import Reviews from '../components/Reviews';
 import { getHomeTexts, getMiscTexts, reset } from '../features/texts/textSlice';
 import {
-  FALLBACK_HOME_TEXTS,
-  FALLBACK_MISC_TEXTS,
+  getFallbackText,
+  getFallbackTextsForCategory,
   hasTextEntries,
 } from '../content/fallbackContent';
 import {
@@ -143,10 +143,15 @@ function Home({
 
   const resolvedHomeTexts = hasTextEntries(home_texts)
     ? home_texts
-    : FALLBACK_HOME_TEXTS;
+    : getFallbackTextsForCategory('home-page', language);
   const resolvedMiscTexts = hasTextEntries(misc_texts)
     ? misc_texts
-    : FALLBACK_MISC_TEXTS;
+    : getFallbackTextsForCategory('misc', language);
+  const homeMetaTitle = getFallbackText('header', 'home', language, 'Home');
+  const homeMetaDescription =
+    language === 'ee'
+      ? 'Koge Tallinna ehedamaid keskaegseid tuure. Avastage Tales of Revaliga ainulaadsed live-elamused ja ajaloolised seiklused.'
+      : 'Experience the most authentic medieval tours in Tallinn. Discover unique live experiences and historical adventures with Tales of Reval.';
 
   const heroTexts = useMemo(
     () => ({
@@ -340,7 +345,7 @@ function Home({
   return (
     <div className="home-page">
       <Helmet>
-        <title>Home - Tales of Reval</title>
+        <title>{homeMetaTitle} - Tales of Reval</title>
         {preloadHeroMedia?.src ? (
           <link
             rel="preload"
@@ -352,7 +357,7 @@ function Home({
         ) : null}
         <meta
           name="description"
-          content="Experience the most authentic medieval tours in Tallinn. Discover unique live experiences and historical adventures with Tales of Reval."
+          content={homeMetaDescription}
         />
         <meta
           name="keywords"
@@ -400,7 +405,7 @@ function Home({
             ) : null
           }
         />
-        <HomeExploreBanner />
+        <HomeExploreBanner texts={resolvedMiscTexts} language={language} />
       </div>
 
       {adminToken && isHeroEditorOpen ? (

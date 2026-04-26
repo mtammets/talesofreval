@@ -14,6 +14,10 @@ function PageHero({
   overlay = null,
   children,
 }) {
+  const language =
+    typeof window !== 'undefined'
+      ? window.localStorage.getItem('language') || 'en'
+      : 'en';
   const wrapperClassName = ['page-hero', className].filter(Boolean).join(' ');
   const heroMediaClassName = ['page-hero__media', mediaClassName].filter(Boolean).join(' ');
   const heroMediaEntries = useMemo(() => {
@@ -122,7 +126,7 @@ function PageHero({
         {isEditable ? (
           <div className="page-hero__admin-actions">
             <button type="button" onClick={onEditBackground}>
-              Edit hero
+              {language === 'ee' ? 'Muuda päist' : 'Edit hero'}
             </button>
           </div>
         ) : null}

@@ -13,7 +13,7 @@ function ContactsTeam({ texts, contactPage = false, heading, items, language = '
         {adminAction}
       </div>
       <OurTeamList items={items} />
-      {!contactPage && <Reviews misc_texts={texts} />}
+      {!contactPage && <Reviews misc_texts={texts} language={language} />}
     </div>
   );
 }
