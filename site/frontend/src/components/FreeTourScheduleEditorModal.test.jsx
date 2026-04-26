@@ -294,27 +294,43 @@ describe('FreeTourScheduleEditorModal', () => {
         jest.advanceTimersByTime(360);
       });
 
+      const templatePicker = screen.getByRole('button', { name: 'Free tour email template' });
+
       expect(screen.getByRole('button', { name: 'Free tour' })).toBeTruthy();
       expect(screen.getByRole('button', { name: 'Book now' })).toBeTruthy();
       expect(screen.getByRole('button', { name: 'Contact us' })).toBeTruthy();
-      expect(screen.getByRole('button', { name: 'Edit Free tour confirmation email' })).toBeTruthy();
-      expect(screen.getByRole('button', { name: 'Edit Free tour cancellation email' })).toBeTruthy();
-      expect(screen.getByRole('button', { name: 'Edit Free tour admin email' })).toBeTruthy();
-      expect(screen.getByRole('button', { name: 'Edit Free tour cancellation summary email' })).toBeTruthy();
-      expect(screen.queryByRole('button', { name: 'Edit Book now client email' })).toBeNull();
+      expect(templatePicker.textContent).toMatch(/Confirmation/);
+
+      fireEvent.click(templatePicker);
+
+      expect(screen.getByRole('option', { name: 'Confirmation' })).toBeTruthy();
+      expect(screen.getByRole('option', { name: 'Cancellation' })).toBeTruthy();
+      expect(screen.getByRole('option', { name: 'Admin notice' })).toBeTruthy();
+      expect(screen.getByRole('option', { name: 'Cancelled slots' })).toBeTruthy();
       expect(screen.queryByText('Preview')).toBeNull();
       expect(screen.queryByText('All site emails')).toBeNull();
 
       fireEvent.click(screen.getByRole('button', { name: 'Book now' }));
 
-      expect(screen.getByRole('button', { name: 'Edit Book now client email' })).toBeTruthy();
-      expect(screen.getByRole('button', { name: 'Edit Book now admin email' })).toBeTruthy();
-      expect(screen.queryByRole('button', { name: 'Edit Free tour admin email' })).toBeNull();
+      expect(screen.getByRole('button', { name: 'Book now email template' }).textContent).toMatch(
+        /Client confirmation/
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: 'Book now email template' }));
+
+      expect(screen.getByRole('option', { name: 'Client confirmation' })).toBeTruthy();
+      expect(screen.getByRole('option', { name: 'Admin notice' })).toBeTruthy();
 
       fireEvent.click(screen.getByRole('button', { name: 'Contact us' }));
 
-      expect(screen.getByRole('button', { name: 'Edit Contact us client email' })).toBeTruthy();
-      expect(screen.getByRole('button', { name: 'Edit Contact us admin email' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Contact us email template' }).textContent).toMatch(
+        /Client copy/
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: 'Contact us email template' }));
+
+      expect(screen.getByRole('option', { name: 'Client copy' })).toBeTruthy();
+      expect(screen.getByRole('option', { name: 'Admin notice' })).toBeTruthy();
     } finally {
       jest.useRealTimers();
     }
@@ -349,8 +365,17 @@ describe('FreeTourScheduleEditorModal', () => {
         jest.advanceTimersByTime(360);
       });
 
+      expect(screen.queryByRole('button', { name: 'Insert Date only' })).toBeNull();
+
+      fireEvent.click(screen.getByRole('button', { name: /insert fields/i }));
+
+      const dateOnlyTokenButton = screen.getByRole('button', { name: 'Insert Date only' });
+      expect(dateOnlyTokenButton.disabled).toBe(true);
+
       const subjectEditor = screen.getByRole('textbox', { name: 'Free tour confirmation subject' });
       fireEvent.focus(subjectEditor);
+
+      expect(screen.getByRole('button', { name: 'Insert Date only' }).disabled).toBe(false);
 
       fireEvent.click(screen.getByRole('button', { name: 'Insert Date only' }));
 

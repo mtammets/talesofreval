@@ -218,15 +218,16 @@ function FreeTourScheduleEditorModal({
   });
   const [isDraggingBulkSelection, setIsDraggingBulkSelection] = useState(false);
   const [activeViewIndex, setActiveViewIndex] = useState(0);
-  const activeTemplateFieldRef = useRef({
-    emailKey: DEFAULT_ACTIVE_EMAIL_TEMPLATE_KEY,
-    field: 'body',
-  });
+  const activeTemplateFieldRef = useRef(null);
   const [activeEmailTemplateKey, setActiveEmailTemplateKey] = useState(
     DEFAULT_ACTIVE_EMAIL_TEMPLATE_KEY
   );
+  const [isTemplateMenuOpen, setIsTemplateMenuOpen] = useState(false);
+  const [isTokenTrayOpen, setIsTokenTrayOpen] = useState(false);
+  const [activeTemplateFieldKey, setActiveTemplateFieldKey] = useState(null);
   const focusedTemplateFieldRef = useRef(null);
   const templateFieldRefs = useRef({});
+  const templateMenuRef = useRef(null);
   const dragSelectionRef = useRef({
     pointerId: null,
     shouldMark: true,
@@ -386,6 +387,38 @@ function FreeTourScheduleEditorModal({
       setActiveEmailTemplateKey(DEFAULT_ACTIVE_EMAIL_TEMPLATE_KEY);
     }
   }, [activeEmailTemplateKey]);
+
+  useEffect(() => {
+    if (!isTemplateMenuOpen) {
+      return undefined;
+    }
+
+    const handlePointerDown = (event) => {
+      if (!(event.target instanceof Node)) {
+        return;
+      }
+
+      if (templateMenuRef.current?.contains(event.target)) {
+        return;
+      }
+
+      setIsTemplateMenuOpen(false);
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsTemplateMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isTemplateMenuOpen]);
 
   const dismissUndoToast = () => {
     if (undoToastIdRef.current) {
@@ -558,6 +591,7 @@ function FreeTourScheduleEditorModal({
       emailKey,
       field,
     };
+    setActiveTemplateFieldKey(`${emailKey}.${field}`);
   };
 
   const setTemplateFieldRef = (emailKey, field, node) => {
@@ -716,6 +750,10 @@ function FreeTourScheduleEditorModal({
     setIsEditorViewDragging(false);
     setIsEditorViewTransitioning(false);
     setEditorViewTransitionTargetIndex(null);
+    setIsTemplateMenuOpen(false);
+    setIsTokenTrayOpen(false);
+    activeTemplateFieldRef.current = null;
+    setActiveTemplateFieldKey(null);
     focusedTemplateFieldRef.current = null;
     resetEditorViewSwipeState();
   };
@@ -898,10 +936,16 @@ function FreeTourScheduleEditorModal({
       return;
     }
 
-    const activeField =
-      activeTemplateFieldRef.current?.emailKey === emailKey
-        ? activeTemplateFieldRef.current.field
-        : 'body';
+    if (activeTemplateFieldRef.current?.emailKey !== emailKey) {
+      return;
+    }
+
+    const activeField = activeTemplateFieldRef.current?.field;
+
+    if (!activeField) {
+      return;
+    }
+
     const inputKey = `${emailKey}.${activeField}`;
     const inputElement = templateFieldRefs.current[inputKey];
 
@@ -1710,10 +1754,15 @@ function FreeTourScheduleEditorModal({
 
   const selectEmailTemplate = (nextTemplateKey) => {
     if (nextTemplateKey === activeEmailOption?.key) {
+      setIsTemplateMenuOpen(false);
       return;
     }
 
     blurActiveEditorField();
+    setIsTemplateMenuOpen(false);
+    setIsTokenTrayOpen(false);
+    activeTemplateFieldRef.current = null;
+    setActiveTemplateFieldKey(null);
     focusedTemplateFieldRef.current = null;
     setActiveEmailTemplateKey(nextTemplateKey);
   };
@@ -1742,55 +1791,82 @@ function FreeTourScheduleEditorModal({
     const groupedTemplateOptions = (activeEmailGroup?.templateKeys || [])
       .map((templateKey) => getSiteEmailTemplateOption(templateKey))
       .filter(Boolean);
+    const isTokenInsertionEnabled = activeTemplateFieldKey?.startsWith(`${option.key}.`);
     const availableTokens = SITE_EMAIL_TEMPLATE_TOKENS.filter((entry) =>
       option.tokenKeys.includes(entry.key)
     );
 
     return (
       <section className="free-tour-calendar-editor__email-composer free-tour-calendar-editor__email-composer--swipe">
-        <div className="free-tour-calendar-editor__email-tabs" aria-label="Email groups">
-          {SITE_EMAIL_TEMPLATE_GROUPS.map((group) => {
-            const isActive = group.key === activeEmailGroup?.key;
-
-            return (
-              <button
-                key={group.key}
-                type="button"
-                className={`free-tour-calendar-editor__email-tab${
-                  isActive ? ' free-tour-calendar-editor__email-tab--active' : ''
-                }`}
-                onClick={() => selectEmailGroup(group.key)}
-                aria-pressed={isActive}
-              >
-                {group.label}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="free-tour-calendar-editor__email-subtabs-shell">
-          <div
-            className="free-tour-calendar-editor__email-tabs free-tour-calendar-editor__email-tabs--secondary"
-            aria-label={`${activeEmailGroup?.label || option.groupLabel} email templates`}
-          >
-            {groupedTemplateOptions.map((templateOption) => {
-              const isActive = templateOption.key === option.key;
+        <div className="free-tour-calendar-editor__email-toolbar">
+          <div className="free-tour-calendar-editor__email-tabs" aria-label="Email groups">
+            {SITE_EMAIL_TEMPLATE_GROUPS.map((group) => {
+              const isActive = group.key === activeEmailGroup?.key;
 
               return (
                 <button
-                  key={templateOption.key}
+                  key={group.key}
                   type="button"
-                  className={`free-tour-calendar-editor__email-tab free-tour-calendar-editor__email-tab--secondary${
+                  className={`free-tour-calendar-editor__email-tab${
                     isActive ? ' free-tour-calendar-editor__email-tab--active' : ''
                   }`}
-                  onClick={() => selectEmailTemplate(templateOption.key)}
-                  aria-label={templateOption.ariaLabel}
+                  onClick={() => selectEmailGroup(group.key)}
                   aria-pressed={isActive}
                 >
-                  {templateOption.tabLabel || templateOption.label}
+                  {group.label}
                 </button>
               );
             })}
+          </div>
+
+          <div
+            ref={templateMenuRef}
+            className={`free-tour-calendar-editor__email-picker${
+              isTemplateMenuOpen ? ' free-tour-calendar-editor__email-picker--open' : ''
+            }`}
+          >
+            <button
+              type="button"
+              className="free-tour-calendar-editor__email-picker-button"
+              onClick={() => setIsTemplateMenuOpen((current) => !current)}
+              aria-haspopup="listbox"
+              aria-expanded={isTemplateMenuOpen}
+              aria-controls={`email-template-menu-${activeEmailGroup?.key || option.groupKey}`}
+              aria-label={`${activeEmailGroup?.label || option.groupLabel} email template`}
+            >
+              <span className="free-tour-calendar-editor__email-picker-label">
+                {option.tabLabel || option.label}
+              </span>
+              <span className="free-tour-calendar-editor__email-picker-chevron" aria-hidden="true" />
+            </button>
+
+            {isTemplateMenuOpen ? (
+              <div
+                id={`email-template-menu-${activeEmailGroup?.key || option.groupKey}`}
+                className="free-tour-calendar-editor__email-picker-menu"
+                role="listbox"
+                aria-label={`${activeEmailGroup?.label || option.groupLabel} email templates`}
+              >
+                {groupedTemplateOptions.map((templateOption) => {
+                  const isActive = templateOption.key === option.key;
+
+                  return (
+                    <button
+                      key={templateOption.key}
+                      type="button"
+                      className={`free-tour-calendar-editor__email-picker-option${
+                        isActive ? ' free-tour-calendar-editor__email-picker-option--active' : ''
+                      }`}
+                      onClick={() => selectEmailTemplate(templateOption.key)}
+                      role="option"
+                      aria-selected={isActive}
+                    >
+                      {templateOption.tabLabel || templateOption.label}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
         </div>
 
@@ -1819,25 +1895,57 @@ function FreeTourScheduleEditorModal({
             />
           </div>
 
-          <div className="free-tour-calendar-editor__token-row">
-            {availableTokens.map((entry) => (
-              <button
-                key={`${option.key}-${entry.token}`}
-                type="button"
-                className="free-tour-calendar-editor__token"
-                onClick={() => insertTemplateToken(option.key, entry.token)}
-                aria-label={`Insert ${entry.label}`}
-              >
-                {entry.label}
-              </button>
-            ))}
-          </div>
-
           <div
             className="free-tour-calendar-editor__email-editor-shell free-tour-calendar-editor__email-editor-shell--body"
             onClick={(event) => handleEditorShellClick(option.key, 'body', event)}
           >
-            <span className="free-tour-calendar-editor__email-editor-label">Message</span>
+            <div className="free-tour-calendar-editor__email-editor-shell-header">
+              <span className="free-tour-calendar-editor__email-editor-label">Message</span>
+              <button
+                type="button"
+                className={`free-tour-calendar-editor__email-toggle free-tour-calendar-editor__email-toggle--compact${
+                  isTokenTrayOpen ? ' free-tour-calendar-editor__email-toggle--active' : ''
+                }`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsTokenTrayOpen((current) => !current);
+                }}
+                aria-label={isTokenTrayOpen ? 'Hide insert fields' : 'Insert fields'}
+                aria-expanded={isTokenTrayOpen}
+                aria-controls={`email-token-row-${option.key}`}
+              >
+                <span>Fields</span>
+                <span
+                  className={`free-tour-calendar-editor__email-toggle-chevron${
+                    isTokenTrayOpen ? ' free-tour-calendar-editor__email-toggle-chevron--open' : ''
+                  }`}
+                  aria-hidden="true"
+                >
+                  ˅
+                </span>
+              </button>
+            </div>
+
+            {isTokenTrayOpen ? (
+              <div
+                id={`email-token-row-${option.key}`}
+                className="free-tour-calendar-editor__token-row free-tour-calendar-editor__token-row--embedded"
+              >
+                {availableTokens.map((entry) => (
+                  <button
+                    key={`${option.key}-${entry.token}`}
+                    type="button"
+                    className="free-tour-calendar-editor__token"
+                    onClick={() => insertTemplateToken(option.key, entry.token)}
+                    aria-label={`Insert ${entry.label}`}
+                    disabled={!isTokenInsertionEnabled}
+                  >
+                    {entry.label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
             <div
               ref={(node) => setTemplateFieldRef(option.key, 'body', node)}
               className="free-tour-calendar-editor__email-editor free-tour-calendar-editor__email-editor--body"
