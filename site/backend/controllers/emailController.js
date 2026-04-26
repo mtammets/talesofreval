@@ -28,6 +28,7 @@ const DEFAULT_MAIL_FROM = 'info@talesofreval.ee';
 const MAIL_FROM_VALUE = process.env.MAIL_FROM || DEFAULT_MAIL_FROM;
 const MAIL_FROM_NAME = process.env.MAIL_FROM_NAME || process.env.MAIL_SIGNATURE_NAME || 'Tales of Reval';
 const MAIL_TO = process.env.MAIL_TO || 'info@talesofreval.ee';
+const MAIL_BCC = String(process.env.MAIL_BCC || '').trim();
 
 const resolveMailFrom = (value, name) => {
   const normalizedValue = String(value || '').trim() || DEFAULT_MAIL_FROM;
@@ -49,6 +50,19 @@ const resolveMailFrom = (value, name) => {
 };
 
 const MAIL_FROM = resolveMailFrom(MAIL_FROM_VALUE, MAIL_FROM_NAME);
+
+const withDefaultBcc = (message = {}) => {
+  if (!MAIL_BCC) {
+    return message;
+  }
+
+  const existingBcc = String(message.bcc || '').trim();
+
+  return {
+    ...message,
+    bcc: existingBcc ? `${existingBcc}, ${MAIL_BCC}` : MAIL_BCC,
+  };
+};
 
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
@@ -77,7 +91,7 @@ const safeConsoleWrite = (method, ...args) => {
 
 const sendNodeEmail = async (msg) => {
   try {
-    const info = await transporter.sendMail(msg);
+    const info = await transporter.sendMail(withDefaultBcc(msg));
     safeConsoleWrite('log', 'Email sent successfully', info);
     return 1;
   } catch (error) {

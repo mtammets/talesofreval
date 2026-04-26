@@ -92,6 +92,7 @@ Lokaalne päris e-maili test:
 - kui määrad `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, siis saad testida oma päris e-mailidega ka lokaalselt
 - kui `SMTP_HOST` puudub, jääb vaikimisi Zone-stiilis `localhost:25` režiim
 - `MAIL_TO` määrab, kuhu sinu saidi vormiteavitused lähevad
+- `MAIL_BCC` lisab igale väljaminevale kirjale peidetud koopia saaja
 - `MAIL_FROM` määrab, millise saatja aadressiga kiri välja läheb
 - `MAIL_FROM_NAME` määrab, millist saatja nime postkastis kuvatakse, nt `Tales of Reval`
 - soovi korral võid `MAIL_FROM` anda ka täiskujul, nt `Tales of Reval <info@talesofreval.ee>`
@@ -146,7 +147,8 @@ NODE_ENV=production
 APP_STORAGE_DIR=/data01/virt72693/domeenid/www.talesofreval.ee/preview-storage
 PREVIEW_NOINDEX=true
 BIND_HOST=127.1.67.5
-MAIL_TO=mtammets@gmail.com
+MAIL_TO=info@talesofreval.ee
+MAIL_BCC=mtammets@gmail.com
 MAIL_FROM=infotest@talesofreval.ee
 MAIL_FROM_NAME=Tales of Reval
 MAIL_WEBSITE=https://preview.talesofreval.ee
@@ -183,7 +185,8 @@ Preview admin:
   - pildi upload töötab, server töötleb uploadi `webp` failiks ja teenindab selle `/uploads/site/...` alt
 
 Preview e-mailid:
-- `Book now`, `Contact us` ja `Free tour` sisemised teavitused lähevad preview's `MAIL_TO` aadressile `mtammets@gmail.com`
+- `Book now`, `Contact us` ja `Free tour` sisemised teavitused lähevad preview's `MAIL_TO` aadressile `info@talesofreval.ee`
+- `MAIL_BCC=mtammets@gmail.com` saadab kõigist preview kirjadest peidetud koopia Marekile
 - kliendile saadetakse koopia/kinnitus tema vormi sisestatud aadressile
 - preview saatja on `infotest@talesofreval.ee`
 - preview postkastis kuvatav saatja nimi peaks olema `Tales of Reval`
@@ -198,6 +201,7 @@ Järgmine loogiline samm:
 3. Kui klient kinnitab, tõsta preview/live muudatused päris `talesofreval.ee` alla
 4. Live'i vahetuse ajal panna päris production `.env` väärtused üle:
    - `MAIL_TO=info@talesofreval.ee`
+   - vajadusel `MAIL_BCC=mtammets@gmail.com` testimise ajaks
    - `MAIL_FROM=info@talesofreval.ee`
    - `MAIL_FROM_NAME=Tales of Reval`
    - `MAIL_WEBSITE=https://www.talesofreval.ee`
