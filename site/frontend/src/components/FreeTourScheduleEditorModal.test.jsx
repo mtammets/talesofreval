@@ -229,6 +229,52 @@ describe('FreeTourScheduleEditorModal', () => {
     expect(screen.getByRole('button', { name: /save settings/i }).disabled).toBe(false);
   });
 
+  test('asks for confirmation before saving slot removals that cancel existing bookings', () => {
+    const onSave = jest.fn();
+
+    function TestHarness() {
+      const [schedule, setSchedule] = useState({
+        isCustomized: true,
+        slots: [
+          { date: '2099-06-15', time: '10:00', bookings: 2 },
+          { date: '2099-06-15', time: '13:00', bookings: 0 },
+        ],
+      });
+
+      return (
+        <FreeTourScheduleEditorModal
+          schedule={schedule}
+          setSchedule={setSchedule}
+          onSave={onSave}
+          onCancel={jest.fn()}
+          isSaving={false}
+        />
+      );
+    }
+
+    render(<TestHarness />);
+
+    fireEvent.click(screen.getByRole('button', { name: '10:00' }));
+
+    expect(screen.queryByText('2 booking cancellations pending')).not.toBeNull();
+
+    fireEvent.submit(screen.getByRole('button', { name: /save settings/i }).closest('form'));
+
+    expect(onSave).not.toHaveBeenCalled();
+    expect(screen.getByRole('dialog', { name: 'Cancel existing bookings?' })).toBeTruthy();
+    expect(screen.queryByText(/This will cancel 2 existing bookings\./)).not.toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Go back' }));
+
+    expect(onSave).not.toHaveBeenCalled();
+    expect(screen.queryByRole('dialog', { name: 'Cancel existing bookings?' })).toBeNull();
+
+    fireEvent.submit(screen.getByRole('button', { name: /save settings/i }).closest('form'));
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel bookings and save' }));
+
+    expect(onSave).toHaveBeenCalledTimes(1);
+  });
+
   test('enables save when a free tour email template changes', () => {
     jest.useFakeTimers();
 

@@ -7689,6 +7689,7 @@ button.year-event-switch.disabled{
 }
 
 .free-tour-calendar-editor{
+  position: relative;
   display: grid;
   gap: 16px;
   padding-bottom: clamp(14px, 3vw, 28px);
@@ -9130,6 +9131,71 @@ button.year-event-switch.disabled{
   cursor: pointer;
 }
 
+.free-tour-calendar-editor__confirm-overlay{
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background: rgba(242, 238, 232, 0.48);
+  backdrop-filter: blur(8px);
+}
+
+.free-tour-calendar-editor__confirm-card{
+  width: min(100%, 560px);
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid rgba(32, 37, 51, 0.08);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top right, rgba(217, 136, 134, 0.12), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 243, 238, 0.96));
+  box-shadow:
+    0 28px 48px rgba(18, 24, 37, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+.free-tour-calendar-editor__confirm-kicker{
+  color: rgba(166, 91, 89, 0.86);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.free-tour-calendar-editor__confirm-title{
+  margin: 0;
+  color: #202533;
+  font-size: clamp(1.3rem, 1rem + 0.7vw, 1.72rem);
+  line-height: 1.18;
+}
+
+.free-tour-calendar-editor__confirm-copy{
+  display: grid;
+  gap: 10px;
+  color: rgba(32, 37, 51, 0.82);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.free-tour-calendar-editor__confirm-copy p{
+  margin: 0;
+}
+
+.free-tour-calendar-editor__confirm-actions{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.free-tour-calendar-editor__confirm-actions .story-admin-button{
+  min-width: 184px;
+}
+
 .free-tour-calendar-editor__actions{
   position: sticky;
   bottom: max(18px, env(safe-area-inset-bottom, 0px));
@@ -9151,6 +9217,34 @@ button.year-event-switch.disabled{
   background: rgba(250, 248, 244, 0.94);
   box-shadow: 0 18px 36px rgba(18, 24, 37, 0.08);
   backdrop-filter: blur(10px);
+}
+
+.free-tour-calendar-editor__actions-note{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: auto;
+  padding: 0.72rem 0.94rem;
+  border: 1px solid rgba(217, 136, 134, 0.22);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at top right, rgba(217, 136, 134, 0.12), transparent 58%),
+    rgba(255, 250, 248, 0.94);
+  color: rgba(125, 72, 71, 0.94);
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.2;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.84),
+    0 10px 20px rgba(18, 24, 37, 0.05);
+}
+
+.free-tour-calendar-editor__actions-note-dot{
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 999px;
+  background: #d98886;
+  box-shadow: 0 0 0 5px rgba(217, 136, 134, 0.12);
 }
 
 .free-tour-calendar-editor__actions .story-admin-button{
@@ -9486,6 +9580,10 @@ button.year-event-switch.disabled{
     margin-top: 0;
   }
 
+  .free-tour-calendar-editor__confirm-overlay{
+    padding: 18px;
+  }
+
   .free-tour-calendar-editor__panel-header{
     grid-template-columns: 1fr;
     display: grid;
@@ -9499,6 +9597,12 @@ button.year-event-switch.disabled{
   .free-tour-calendar-editor__actions{
     width: 100%;
     margin-left: 0;
+  }
+
+  .free-tour-calendar-editor__actions-note{
+    flex-basis: 100%;
+    margin-right: 0;
+    justify-content: center;
   }
 
   .free-tour-calendar-editor__view-switcher{
@@ -9727,6 +9831,29 @@ button.year-event-switch.disabled{
     justify-content: space-between;
   }
 
+  .free-tour-calendar-editor__confirm-overlay{
+    padding: 12px;
+  }
+
+  .free-tour-calendar-editor__confirm-card{
+    gap: 14px;
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .free-tour-calendar-editor__confirm-copy{
+    font-size: 0.92rem;
+  }
+
+  .free-tour-calendar-editor__confirm-actions{
+    gap: 10px;
+  }
+
+  .free-tour-calendar-editor__confirm-actions .story-admin-button{
+    width: 100%;
+    min-width: 0;
+  }
+
   .free-tour-calendar-editor__actions{
     gap: 10px;
     bottom: max(16px, env(safe-area-inset-bottom, 0px));
@@ -9753,6 +9880,12 @@ button.year-event-switch.disabled{
 
   .free-tour-calendar-editor__actions{
     padding: 12px;
+  }
+
+  .free-tour-calendar-editor__actions-note{
+    width: 100%;
+    border-radius: 16px;
+    justify-content: center;
   }
 
   .free-tour-calendar-editor__actions .story-admin-button{

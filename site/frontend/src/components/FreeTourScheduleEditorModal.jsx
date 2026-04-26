@@ -118,6 +118,18 @@ const getMonthDateKeys = (monthDate) => {
 const formatCountLabel = (count, singular, plural = `${singular}s`) =>
   `${count} ${count === 1 ? singular : plural}`;
 
+const getFreeTourSlotId = (slot = {}) => `${slot.date}-${slot.time}`;
+
+const getFreeTourSlotBookings = (slot = {}) => {
+  const parsedBookings = Number.parseInt(slot?.bookings, 10);
+
+  if (!Number.isFinite(parsedBookings) || parsedBookings < 1) {
+    return 0;
+  }
+
+  return parsedBookings;
+};
+
 const serializeEditorState = (schedule, emailTemplates) =>
   JSON.stringify({
     schedule: toEditableFreeTourSchedule(schedule || DEFAULT_FREE_TOUR_SCHEDULE),
@@ -264,8 +276,19 @@ function FreeTourScheduleEditorModal({
   const [isEditorViewDragging, setIsEditorViewDragging] = useState(false);
   const [isEditorViewTransitioning, setIsEditorViewTransitioning] = useState(false);
   const [editorViewTransitionTargetIndex, setEditorViewTransitionTargetIndex] = useState(null);
+  const [isCancellationConfirmOpen, setIsCancellationConfirmOpen] = useState(false);
   const undoToastIdRef = useRef(null);
+  const editorFormRef = useRef(null);
+  const hasConfirmedCancellationSaveRef = useRef(false);
   const initialEditorStateRef = useRef(serializeEditorState(schedule, emailTemplates));
+  const initialEffectiveSlotsRef = useRef(
+    getEffectiveFreeTourSlots(
+      normalizeFreeTourSchedule(schedule || DEFAULT_FREE_TOUR_SCHEDULE)
+    ).map((slot) => ({
+      ...slot,
+      bookings: getFreeTourSlotBookings(slot),
+    }))
+  );
 
   const activeDateKey = toFreeTourDateKey(activeDate);
   const visibleMonthDateKeys = useMemo(
@@ -344,6 +367,28 @@ function FreeTourScheduleEditorModal({
   const activeEmailOption =
     getSiteEmailTemplateOption(activeEmailTemplateKey) ||
     SITE_EMAIL_TEMPLATE_OPTIONS[0];
+  const pendingCancellationImpact = useMemo(() => {
+    const currentSlotIds = new Set(effectiveSlots.map((slot) => getFreeTourSlotId(slot)));
+    const removedSlots = initialEffectiveSlotsRef.current.filter(
+      (slot) => !currentSlotIds.has(getFreeTourSlotId(slot))
+    );
+    const removedBookedSlots = removedSlots.filter((slot) => getFreeTourSlotBookings(slot) > 0);
+    const removedDayCount = new Set(removedSlots.map((slot) => slot.date)).size;
+    const removedBookingDayCount = new Set(removedBookedSlots.map((slot) => slot.date)).size;
+    const cancelledBookingCount = removedBookedSlots.reduce(
+      (total, slot) => total + getFreeTourSlotBookings(slot),
+      0
+    );
+
+    return {
+      removedSlotCount: removedSlots.length,
+      removedDayCount,
+      removedBookedSlotCount: removedBookedSlots.length,
+      removedBookingDayCount,
+      cancelledBookingCount,
+    };
+  }, [effectiveSlots]);
+  const requiresCancellationConfirmation = pendingCancellationImpact.cancelledBookingCount > 0;
 
   useEffect(() => {
     const updateViewportMode = () => {
@@ -387,6 +432,13 @@ function FreeTourScheduleEditorModal({
       setActiveEmailTemplateKey(DEFAULT_ACTIVE_EMAIL_TEMPLATE_KEY);
     }
   }, [activeEmailTemplateKey]);
+
+  useEffect(() => {
+    if (!requiresCancellationConfirmation) {
+      setIsCancellationConfirmOpen(false);
+      hasConfirmedCancellationSaveRef.current = false;
+    }
+  }, [requiresCancellationConfirmation]);
 
   useEffect(() => {
     if (!isTemplateMenuOpen) {
@@ -1002,7 +1054,7 @@ function FreeTourScheduleEditorModal({
 
     toast.info(
       <div className="free-tour-calendar-editor__undo-toast">
-        <span>{`${time} removed from ${formatCountLabel(removedDateCount, 'day')}`}</span>
+        <span>{`${time} removed from ${formatCountLabel(removedDateCount, 'day')}. Save to apply.`}</span>
         <button
           type="button"
           className="free-tour-calendar-editor__undo-toast-button"
@@ -1578,6 +1630,8 @@ function FreeTourScheduleEditorModal({
   };
 
   const handleCancel = () => {
+    setIsCancellationConfirmOpen(false);
+    hasConfirmedCancellationSaveRef.current = false;
     dismissUndoToast();
     onCancel();
   };
@@ -1589,7 +1643,31 @@ function FreeTourScheduleEditorModal({
     }
 
     dismissUndoToast();
+
+    if (requiresCancellationConfirmation && !hasConfirmedCancellationSaveRef.current) {
+      event.preventDefault();
+      setIsCancellationConfirmOpen(true);
+      return;
+    }
+
+    hasConfirmedCancellationSaveRef.current = false;
+    setIsCancellationConfirmOpen(false);
     onSave(event);
+  };
+
+  const handleDismissCancellationConfirm = () => {
+    hasConfirmedCancellationSaveRef.current = false;
+    setIsCancellationConfirmOpen(false);
+  };
+
+  const handleConfirmCancellationSave = () => {
+    if (!editorFormRef.current) {
+      return;
+    }
+
+    hasConfirmedCancellationSaveRef.current = true;
+    setIsCancellationConfirmOpen(false);
+    editorFormRef.current.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
   };
 
   const calendarSwipeWidth = getCalendarSwipeWidth();
@@ -2025,7 +2103,11 @@ function FreeTourScheduleEditorModal({
       wide
       hideClose
     >
-      <form onSubmit={handleSave} className="story-admin-form free-tour-calendar-editor">
+      <form
+        ref={editorFormRef}
+        onSubmit={handleSave}
+        className="story-admin-form free-tour-calendar-editor"
+      >
         <div className="free-tour-calendar-editor__view-switcher" aria-label="Editor views">
           {EDITOR_VIEW_OPTIONS.map((view, index) => (
             <button
@@ -2062,7 +2144,80 @@ function FreeTourScheduleEditorModal({
           })}
         </div>
 
+        {isCancellationConfirmOpen ? (
+          <div
+            className="free-tour-calendar-editor__confirm-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="free-tour-cancellation-confirm-title"
+            aria-describedby="free-tour-cancellation-confirm-copy"
+          >
+            <div className="free-tour-calendar-editor__confirm-card">
+              <span className="free-tour-calendar-editor__confirm-kicker">
+                Cancellation emails
+              </span>
+              <h3
+                id="free-tour-cancellation-confirm-title"
+                className="free-tour-calendar-editor__confirm-title"
+              >
+                Cancel existing bookings?
+              </h3>
+              <div
+                id="free-tour-cancellation-confirm-copy"
+                className="free-tour-calendar-editor__confirm-copy"
+              >
+                <p>
+                  {`You are removing ${formatCountLabel(
+                    pendingCancellationImpact.removedSlotCount,
+                    'time slot'
+                  )} across ${formatCountLabel(
+                    pendingCancellationImpact.removedDayCount,
+                    'day'
+                  )}.`}
+                </p>
+                <p>
+                  {`This will cancel ${formatCountLabel(
+                    pendingCancellationImpact.cancelledBookingCount,
+                    'existing booking'
+                  )}.`}
+                </p>
+                <p>
+                  Affected customers will receive the cancellation email and admin will
+                  receive the cancellation summary email.
+                </p>
+              </div>
+              <div className="free-tour-calendar-editor__confirm-actions">
+                <button
+                  type="button"
+                  className="story-admin-button story-admin-button--secondary"
+                  onClick={handleDismissCancellationConfirm}
+                >
+                  Go back
+                </button>
+                <button
+                  type="button"
+                  className="story-admin-button story-admin-button--primary"
+                  onClick={handleConfirmCancellationSave}
+                >
+                  Cancel bookings and save
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         <div className="free-tour-calendar-editor__actions">
+          {requiresCancellationConfirmation ? (
+            <div className="free-tour-calendar-editor__actions-note" aria-live="polite">
+              <span className="free-tour-calendar-editor__actions-note-dot" aria-hidden="true" />
+              <span>
+                {`${formatCountLabel(
+                  pendingCancellationImpact.cancelledBookingCount,
+                  'booking cancellation'
+                )} pending`}
+              </span>
+            </div>
+          ) : null}
           <button
             type="button"
             className="story-admin-button story-admin-button--secondary"

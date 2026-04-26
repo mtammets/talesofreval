@@ -42,13 +42,23 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const safeConsoleWrite = (method, ...args) => {
+  try {
+    if (typeof console?.[method] === 'function') {
+      console[method](...args);
+    }
+  } catch (_error) {
+    // Ignore logging transport errors so a successful mail send cannot crash the request.
+  }
+};
+
 const sendNodeEmail = async (msg) => {
   try {
     const info = await transporter.sendMail(msg);
-    console.log('Email sent successfully', info);
+    safeConsoleWrite('log', 'Email sent successfully', info);
     return 1;
   } catch (error) {
-    console.error('Error sending email:', error);
+    safeConsoleWrite('error', 'Error sending email:', error);
     return 0;
   }
 };
