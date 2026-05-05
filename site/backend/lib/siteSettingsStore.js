@@ -56,6 +56,9 @@ const imageShape = (image = {}, fallbackWidth = 1440, fallbackHeight = 700) => (
       variants.find((variant) => variant.width >= fallbackWidth) ||
       variants[variants.length - 1] ||
       null;
+    const focusX = Number(image.focusX) >= 0 ? Number(image.focusX) : 50;
+    const focusY = Number(image.focusY) >= 0 ? Number(image.focusY) : 50;
+    const zoom = normalizeImageZoom(image.zoom, 1);
 
     return {
       src: image.src || preferredVariant?.src || '',
@@ -66,9 +69,12 @@ const imageShape = (image = {}, fallbackWidth = 1440, fallbackHeight = 700) => (
       pixelRatio:
         Number(image.pixelRatio) ||
         (variants.some((variant) => variant.width >= fallbackWidth * 2) ? 2 : 1),
-      focusX: Number(image.focusX) >= 0 ? Number(image.focusX) : 50,
-      focusY: Number(image.focusY) >= 0 ? Number(image.focusY) : 50,
-      ...(image.zoom != null ? { zoom: normalizeImageZoom(image.zoom, 1) } : {}),
+      focusX,
+      focusY,
+      zoom,
+      mobileFocusX: Number(image.mobileFocusX) >= 0 ? Number(image.mobileFocusX) : focusX,
+      mobileFocusY: Number(image.mobileFocusY) >= 0 ? Number(image.mobileFocusY) : focusY,
+      mobileZoom: normalizeImageZoom(image.mobileZoom, zoom),
       variants,
     };
   })(),

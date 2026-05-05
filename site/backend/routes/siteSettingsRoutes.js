@@ -67,22 +67,47 @@ const normalizeImageZoom = (value, fallback = 1) => {
   return Math.min(2.5, Math.max(1, Number(resolvedValue.toFixed(2))));
 };
 
-const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage = null) => ({
-  ...(processedImage || fallbackImage || null),
-  focusX:
+const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage = null) => {
+  const focusX =
     Number(providedImage?.focusX) >= 0
       ? Number(providedImage.focusX)
       : Number(fallbackImage?.focusX) >= 0
         ? Number(fallbackImage.focusX)
-        : 50,
-  focusY:
+        : 50;
+  const focusY =
     Number(providedImage?.focusY) >= 0
       ? Number(providedImage.focusY)
       : Number(fallbackImage?.focusY) >= 0
         ? Number(fallbackImage.focusY)
-        : 50,
-  zoom: normalizeImageZoom(providedImage?.zoom, normalizeImageZoom(fallbackImage?.zoom, 1)),
-});
+        : 50;
+  const zoom = normalizeImageZoom(
+    providedImage?.zoom,
+    normalizeImageZoom(fallbackImage?.zoom, 1)
+  );
+
+  return {
+    ...(processedImage || fallbackImage || null),
+    focusX,
+    focusY,
+    zoom,
+    mobileFocusX:
+      Number(providedImage?.mobileFocusX) >= 0
+        ? Number(providedImage.mobileFocusX)
+        : Number(fallbackImage?.mobileFocusX) >= 0
+          ? Number(fallbackImage.mobileFocusX)
+          : focusX,
+    mobileFocusY:
+      Number(providedImage?.mobileFocusY) >= 0
+        ? Number(providedImage.mobileFocusY)
+        : Number(fallbackImage?.mobileFocusY) >= 0
+          ? Number(fallbackImage.mobileFocusY)
+          : focusY,
+    mobileZoom: normalizeImageZoom(
+      providedImage?.mobileZoom,
+      normalizeImageZoom(fallbackImage?.mobileZoom, zoom)
+    ),
+  };
+};
 
 const resolveHomeHeroDefaultImageSrc = (
   nextHeroImages,

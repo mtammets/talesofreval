@@ -428,7 +428,34 @@ export const getImageFocusPoint = (image = null) => ({
   focusY: Number(image?.focusY) >= 0 ? Number(image.focusY) : 50,
 });
 
-export const getImageZoom = (image = null) => clampImageZoom(image?.zoom);
+export const getResponsiveImageFocusPoint = (image = null, viewport = 'desktop') => {
+  const desktopFocusX = Number(image?.focusX) >= 0 ? Number(image.focusX) : 50;
+  const desktopFocusY = Number(image?.focusY) >= 0 ? Number(image.focusY) : 50;
+
+  if (viewport === 'mobile') {
+    return {
+      focusX:
+        Number(image?.mobileFocusX) >= 0 ? Number(image.mobileFocusX) : desktopFocusX,
+      focusY:
+        Number(image?.mobileFocusY) >= 0 ? Number(image.mobileFocusY) : desktopFocusY,
+    };
+  }
+
+  return {
+    focusX: desktopFocusX,
+    focusY: desktopFocusY,
+  };
+};
+
+export const getImageZoom = (image = null, viewport = 'desktop') => {
+  const desktopZoom = clampImageZoom(image?.zoom);
+
+  if (viewport === 'mobile') {
+    return clampImageZoom(image?.mobileZoom ?? desktopZoom);
+  }
+
+  return desktopZoom;
+};
 
 export const getImageRotation = (image = null) => clampImageRotation(image?.rotation);
 
@@ -445,8 +472,8 @@ export const getImageLayout = (image = null) => ({
   rotation: getImageRotation(image),
 });
 
-export const getImageObjectPosition = (image = null) => {
-  const focus = getImageFocusPoint(image);
+export const getImageObjectPosition = (image = null, viewport = 'desktop') => {
+  const focus = getResponsiveImageFocusPoint(image, viewport);
   return `${focus.focusX}% ${focus.focusY}%`;
 };
 
@@ -470,8 +497,10 @@ export const resolveSiteImage = (image, imageKey) => {
 export const resolveSiteImageMedia = (image, imageKey = '', sizes = '100vw') => {
   const variants = normalizeResponsiveVariants(image?.variants);
   const resolvedSrc = resolveSiteImage(image, imageKey);
-  const focus = getImageFocusPoint(image);
-  const zoom = getImageZoom(image);
+  const desktopFocus = getResponsiveImageFocusPoint(image, 'desktop');
+  const mobileFocus = getResponsiveImageFocusPoint(image, 'mobile');
+  const zoom = getImageZoom(image, 'desktop');
+  const mobileZoom = getImageZoom(image, 'mobile');
 
   if (!resolvedSrc) {
     return null;
@@ -486,15 +515,24 @@ export const resolveSiteImageMedia = (image, imageKey = '', sizes = '100vw') => 
     srcSet: variants.length
       ? variants.map((variant) => `${variant.src} ${variant.width}w`).join(', ')
       : '',
-    sizes: resolveResponsiveSizes(sizes, resolvedWidth, resolvedHeight, zoom),
+    sizes: resolveResponsiveSizes(
+      sizes,
+      resolvedWidth,
+      resolvedHeight,
+      Math.max(zoom, mobileZoom)
+    ),
     width: resolvedWidth,
     height: resolvedHeight,
     format: image?.format || preferredVariant?.format || '',
-    objectPosition: getImageObjectPosition(image),
+    objectPosition: getImageObjectPosition(image, 'desktop'),
+    mobileObjectPosition: getImageObjectPosition(image, 'mobile'),
     backgroundPosition: getImageBackgroundPosition(image),
-    focusX: focus.focusX,
-    focusY: focus.focusY,
+    focusX: desktopFocus.focusX,
+    focusY: desktopFocus.focusY,
+    mobileFocusX: mobileFocus.focusX,
+    mobileFocusY: mobileFocus.focusY,
     zoom,
+    mobileZoom,
     rotation: getImageRotation(image),
   };
 };
@@ -533,8 +571,10 @@ export const resolveSiteImageMediaList = (
 export const createPreviewMediaAsset = (src, sizes = '100vw', image = null) =>
   src
     ? (() => {
-        const focus = getImageFocusPoint(image);
-        const zoom = getImageZoom(image);
+        const desktopFocus = getResponsiveImageFocusPoint(image, 'desktop');
+        const mobileFocus = getResponsiveImageFocusPoint(image, 'mobile');
+        const zoom = getImageZoom(image, 'desktop');
+        const mobileZoom = getImageZoom(image, 'mobile');
 
         return {
           src,
@@ -543,11 +583,15 @@ export const createPreviewMediaAsset = (src, sizes = '100vw', image = null) =>
           width: 0,
           height: 0,
           format: '',
-          objectPosition: getImageObjectPosition(image),
+          objectPosition: getImageObjectPosition(image, 'desktop'),
+          mobileObjectPosition: getImageObjectPosition(image, 'mobile'),
           backgroundPosition: getImageBackgroundPosition(image),
-          focusX: focus.focusX,
-          focusY: focus.focusY,
+          focusX: desktopFocus.focusX,
+          focusY: desktopFocus.focusY,
+          mobileFocusX: mobileFocus.focusX,
+          mobileFocusY: mobileFocus.focusY,
           zoom,
+          mobileZoom,
           rotation: getImageRotation(image),
         };
       })()

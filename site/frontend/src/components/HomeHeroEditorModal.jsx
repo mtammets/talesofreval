@@ -211,6 +211,7 @@ function HomeHeroEditorModal({
                       label={null}
                       helpText={null}
                       previewVariant="hero"
+                      allowResponsiveCrop
                     />
                     <div className="hero-editor-gallery__meta">
                       <div className="hero-editor-gallery__copy">

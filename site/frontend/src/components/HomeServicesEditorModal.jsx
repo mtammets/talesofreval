@@ -114,6 +114,9 @@ function HomeServicesEditorModal({
                 focusX: 50,
                 focusY: 50,
                 zoom: 1,
+                mobileFocusX: 50,
+                mobileFocusY: 50,
+                mobileZoom: 1,
               },
             }
           : item
@@ -322,6 +325,7 @@ function HomeServicesEditorModal({
                     label={null}
                     helpText={null}
                     allowZoom
+                    allowResponsiveCrop
                   />
                 </div>
               </div>

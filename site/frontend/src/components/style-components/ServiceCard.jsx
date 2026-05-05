@@ -27,7 +27,11 @@ function ServiceCard({
       : null;
   const imageSrc = responsiveMedia?.src || imageValue?.src || imageValue || '';
   const imagePosition = responsiveMedia?.objectPosition || getImageObjectPosition(imageValue);
+  const mobileImagePosition =
+    responsiveMedia?.mobileObjectPosition || imagePosition;
   const imageZoom = responsiveMedia?.zoom || getImageZoom(imageValue);
+  const mobileImageZoom =
+    responsiveMedia?.mobileZoom || getImageZoom(imageValue, 'mobile');
 
   const handleClick = () => {
     setOurServicesOpen?.(false);
@@ -51,9 +55,10 @@ function ServiceCard({
               alt=""
               aria-hidden="true"
               style={{
-                objectPosition: imagePosition,
-                transform: `scale(${imageZoom})`,
-                transformOrigin: imagePosition,
+                '--service-desktop-position': imagePosition,
+                '--service-mobile-position': mobileImagePosition,
+                '--service-desktop-scale': String(imageZoom),
+                '--service-mobile-scale': String(mobileImageZoom),
               }}
             />
           ) : null}

@@ -2215,7 +2215,18 @@ body.book-now-modal-open{
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: var(--service-desktop-position, center);
+  transform: scale(var(--service-desktop-scale, 1));
+  transform-origin: var(--service-desktop-position, center);
   pointer-events: none;
+}
+
+@media (max-width: 768px){
+  .service-media-image{
+    object-position: var(--service-mobile-position, var(--service-desktop-position, center));
+    transform: scale(var(--service-mobile-scale, var(--service-desktop-scale, 1)));
+    transform-origin: var(--service-mobile-position, var(--service-desktop-position, center));
+  }
 }
 
 .service-info{
@@ -2924,7 +2935,17 @@ body.book-now-modal-open{
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: var(--page-hero-desktop-position, center);
+  transform: scale(var(--page-hero-desktop-scale, 1));
+  transform-origin: var(--page-hero-desktop-position, center);
+}
+
+@media (max-width: 768px){
+  .page-hero__media-image{
+    object-position: var(--page-hero-mobile-position, var(--page-hero-desktop-position, center));
+    transform: scale(var(--page-hero-mobile-scale, var(--page-hero-desktop-scale, 1)));
+    transform-origin: var(--page-hero-mobile-position, var(--page-hero-desktop-position, center));
+  }
 }
 
 .page-hero__overlay{
@@ -6884,6 +6905,10 @@ button.year-event-switch.disabled{
   color: #202533;
 }
 
+.image-focus-editor__header.has-viewport-toggle{
+  align-items: center;
+}
+
 .image-focus-editor__header strong{
   font-size: 13px;
 }
@@ -6892,6 +6917,33 @@ button.year-event-switch.disabled{
   font-size: 12px;
   font-weight: 600;
   color: rgba(32, 37, 51, 0.68);
+}
+
+.image-focus-editor__viewport-toggle{
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(32, 37, 51, 0.08);
+}
+
+.image-focus-editor__viewport-button{
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: transparent;
+  color: rgba(32, 37, 51, 0.72);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.image-focus-editor__viewport-button.is-active{
+  background: #f4efe8;
+  color: #202533;
+  box-shadow: 0 4px 14px rgba(32, 37, 51, 0.12);
 }
 
 .image-focus-editor__frame{
@@ -6903,6 +6955,11 @@ button.year-event-switch.disabled{
   background: #ece6dc;
   cursor: grab;
   touch-action: none;
+}
+
+.image-focus-editor__frame.is-mobile-profile{
+  width: min(100%, 360px);
+  margin-inline: auto;
 }
 
 .image-focus-editor__frame.is-dragging{

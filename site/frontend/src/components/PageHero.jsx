@@ -127,9 +127,15 @@ function PageHero({
                     srcSet={mediaItem.srcSet || undefined}
                     sizes={mediaItem.sizes || undefined}
                     style={{
-                      objectPosition: mediaItem.objectPosition || '50% 50%',
-                      transform: `scale(${Number(mediaItem.zoom) || 1})`,
-                      transformOrigin: mediaItem.objectPosition || '50% 50%',
+                      '--page-hero-desktop-position': mediaItem.objectPosition || '50% 50%',
+                      '--page-hero-mobile-position':
+                        mediaItem.mobileObjectPosition ||
+                        mediaItem.objectPosition ||
+                        '50% 50%',
+                      '--page-hero-desktop-scale': String(Number(mediaItem.zoom) || 1),
+                      '--page-hero-mobile-scale': String(
+                        Number(mediaItem.mobileZoom) || Number(mediaItem.zoom) || 1
+                      ),
                     }}
                     alt=""
                     loading={index === resolvedInitialImageIndex ? 'eager' : 'lazy'}

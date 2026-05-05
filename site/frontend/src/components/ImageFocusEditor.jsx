@@ -1,14 +1,15 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
-  getImageFocusPoint,
   getImageObjectPosition,
   getImageRotation,
+  getResponsiveImageFocusPoint,
   getImageZoom,
 } from '../content/siteSettingsDefaults';
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const roundFocusValue = (value) => Number(clamp(value, 0, 100).toFixed(2));
+const MOBILE_MEDIA_QUERY = '(max-width: 768px)';
 
 function ImageFocusEditor({
   image = null,
@@ -19,16 +20,61 @@ function ImageFocusEditor({
   helpText = 'Drag the image until the visible view looks right.',
   previewVariant = 'default',
   allowZoom = false,
+  allowResponsiveCrop = false,
 }) {
   const frameRef = useRef(null);
   const dragStateRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [intrinsicSize, setIntrinsicSize] = useState({ width: 0, height: 0 });
-  const focus = useMemo(() => getImageFocusPoint(image), [image]);
-  const zoom = useMemo(() => getImageZoom(image), [image]);
+  const [activeViewport, setActiveViewport] = useState(() =>
+    allowResponsiveCrop &&
+    typeof window !== 'undefined' &&
+    window.matchMedia?.(MOBILE_MEDIA_QUERY)?.matches
+      ? 'mobile'
+      : 'desktop'
+  );
+  const focus = useMemo(
+    () => getResponsiveImageFocusPoint(image, activeViewport),
+    [activeViewport, image]
+  );
+  const zoom = useMemo(() => getImageZoom(image, activeViewport), [activeViewport, image]);
   const rotation = useMemo(() => getImageRotation(image), [image]);
-  const focusPosition = useMemo(() => getImageObjectPosition(image), [image]);
+  const focusPosition = useMemo(
+    () => getImageObjectPosition(image, activeViewport),
+    [activeViewport, image]
+  );
   const showZoomControls = allowZoom || previewVariant === 'hero';
+  const resolvedAspectRatio =
+    allowResponsiveCrop && activeViewport === 'mobile' ? '390 / 640' : aspectRatio;
+
+  useEffect(() => {
+    if (!allowResponsiveCrop && activeViewport !== 'desktop') {
+      setActiveViewport('desktop');
+    }
+  }, [activeViewport, allowResponsiveCrop]);
+
+  const applyViewportChange = (nextValues) => {
+    if (!allowResponsiveCrop || activeViewport === 'desktop') {
+      onChange?.(nextValues);
+      return;
+    }
+
+    const remappedValues = {};
+
+    if (Object.prototype.hasOwnProperty.call(nextValues, 'focusX')) {
+      remappedValues.mobileFocusX = nextValues.focusX;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(nextValues, 'focusY')) {
+      remappedValues.mobileFocusY = nextValues.focusY;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(nextValues, 'zoom')) {
+      remappedValues.mobileZoom = nextValues.zoom;
+    }
+
+    onChange?.(remappedValues);
+  };
 
   const getDragMetrics = () => {
     const bounds = frameRef.current?.getBoundingClientRect();
@@ -65,16 +111,40 @@ function ImageFocusEditor({
 
   return (
     <div className="image-focus-editor">
-      {label ? (
-        <div className="image-focus-editor__header">
-          <strong>{label}</strong>
-          <span>{isDragging ? 'Release to keep position' : 'Drag image'}</span>
+      {label || allowResponsiveCrop ? (
+        <div
+          className={`image-focus-editor__header${
+            allowResponsiveCrop ? ' has-viewport-toggle' : ''
+          }`}
+        >
+          {label ? <strong>{label}</strong> : <span aria-hidden="true" />}
+          {allowResponsiveCrop ? (
+            <div className="image-focus-editor__viewport-toggle" aria-label="Crop viewport">
+              {['desktop', 'mobile'].map((viewport) => (
+                <button
+                  key={viewport}
+                  type="button"
+                  aria-pressed={activeViewport === viewport}
+                  className={`image-focus-editor__viewport-button${
+                    activeViewport === viewport ? ' is-active' : ''
+                  }`}
+                  onClick={() => setActiveViewport(viewport)}
+                >
+                  {viewport === 'desktop' ? 'Desktop' : 'Mobile'}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <span>{isDragging ? 'Release to keep position' : 'Drag image'}</span>
+          )}
         </div>
       ) : null}
       <div
         ref={frameRef}
-        className={`image-focus-editor__frame${isDragging ? ' is-dragging' : ''}`}
-        style={{ aspectRatio }}
+        className={`image-focus-editor__frame${isDragging ? ' is-dragging' : ''}${
+          allowResponsiveCrop && activeViewport === 'mobile' ? ' is-mobile-profile' : ''
+        }`}
+        style={{ aspectRatio: resolvedAspectRatio }}
         onPointerDown={(event) => {
           const metrics = getDragMetrics();
 
@@ -139,7 +209,7 @@ function ImageFocusEditor({
             nextFocusY = roundFocusValue((nextOffsetY / minOffsetY) * 100);
           }
 
-          onChange?.({
+          applyViewportChange({
             focusX: nextFocusX,
             focusY: nextFocusY,
           });
@@ -176,7 +246,7 @@ function ImageFocusEditor({
               type="button"
               className="story-admin-button story-admin-button--secondary"
               onClick={() =>
-                onChange?.({
+                applyViewportChange({
                   zoom: Math.max(1, Number((zoom - 0.1).toFixed(2))),
                 })
               }
@@ -192,7 +262,7 @@ function ImageFocusEditor({
               step="0.01"
               value={zoom}
               onChange={(event) =>
-                onChange?.({
+                applyViewportChange({
                   zoom: Number(event.target.value),
                 })
               }
@@ -201,7 +271,7 @@ function ImageFocusEditor({
               type="button"
               className="story-admin-button story-admin-button--secondary"
               onClick={() =>
-                onChange?.({
+                applyViewportChange({
                   zoom: Math.min(2.5, Number((zoom + 0.1).toFixed(2))),
                 })
               }
@@ -213,7 +283,7 @@ function ImageFocusEditor({
               type="button"
               className="story-admin-button story-admin-button--secondary"
               onClick={() =>
-                onChange?.({
+                applyViewportChange({
                   zoom: 1,
                 })
               }
