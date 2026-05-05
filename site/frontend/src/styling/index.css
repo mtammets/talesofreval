@@ -6468,6 +6468,7 @@ button.year-event-switch.disabled{
   gap: 18px;
   min-width: 0;
   overflow-x: clip;
+  padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
 }
 
 .story-admin-login-form label,
@@ -7307,7 +7308,8 @@ button.year-event-switch.disabled{
   overscroll-behavior-x: none;
   touch-action: pan-y;
   padding: var(--story-editor-body-padding);
-  padding-bottom: calc(clamp(28px, 4vw, 40px) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(clamp(44px, 6vw, 72px) + env(safe-area-inset-bottom, 0px));
+  scroll-padding-bottom: calc(clamp(44px, 6vw, 72px) + env(safe-area-inset-bottom, 0px));
 }
 
 .story-editor-body--confirm{
@@ -9534,6 +9536,7 @@ button.year-event-switch.disabled{
   justify-content: flex-end;
   padding: 16px;
   margin-top: 6px;
+  margin-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   border-radius: 22px;
   border: 1px solid rgba(32, 37, 51, 0.08);
   background: rgba(250, 248, 244, 0.94);
@@ -9720,6 +9723,7 @@ button.year-event-switch.disabled{
     --story-modal-gap: 12px;
     align-items: flex-end;
     padding: var(--story-modal-gap);
+    padding-bottom: max(var(--story-modal-gap), calc(env(safe-area-inset-bottom, 0px) + 28px));
   }
 
   .story-editor-sheet,
@@ -9739,7 +9743,7 @@ button.year-event-switch.disabled{
   .story-editor-body{
     --story-editor-body-padding: 18px;
     padding: var(--story-editor-body-padding);
-    padding-bottom: 28px;
+    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px));
   }
 
   .service-section-editor,
@@ -9749,6 +9753,7 @@ button.year-event-switch.disabled{
 
   .story-admin-actions{
     margin-top: 10px;
+    margin-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   }
 
   .footer-admin-row{
