@@ -132,7 +132,7 @@ function Footer({
     }
   };
 
-  const saveFreeTourSchedule = async (event) => {
+  const saveFreeTourSchedule = async (event, options = {}) => {
     event.preventDefault();
     setIsSavingCalendar(true);
 
@@ -142,6 +142,7 @@ function Footer({
         {
           freeTourSchedule: freeTourScheduleForm,
           emailTemplates: emailTemplatesForm,
+          cancellationReason: options.cancellationReason || '',
         }
       );
       setSiteSettings(nextSettings);

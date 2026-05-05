@@ -20,7 +20,10 @@ const DEFAULT_SITE_EMAIL_TEMPLATES = Object.freeze({
     subject: 'Free Tour Booking Cancellation',
     body: `Greetings!
 
-We are sorry to let you know that the free tour registration below has been cancelled.
+We are sorry to let you know that the free tour registration below has been cancelled for the following reason:
+
+{cancellation_reason}
+
 Tour date: {date_1}
 Name: {name}
 
@@ -45,6 +48,9 @@ Number of people: {people}`,
   freeTourCancellationSummary: Object.freeze({
     subject: 'Free Tour Booking Cancellation Summary',
     body: `The following free tour registrations were cancelled because their slot was removed:
+
+Cancellation reason:
+{cancellation_reason}
 
 {cancelled_list}`,
   }),
@@ -191,7 +197,9 @@ const renderSiteEmailTemplate = (
   const renderedBodySource = replaceTemplateTokens(
     normalized.body,
     tokens,
-    hasHtmlBody ? escapeHtml : (tokenValue) => String(tokenValue ?? '')
+    hasHtmlBody
+      ? (tokenValue) => escapeHtml(tokenValue).replace(/\r?\n/g, '<br />')
+      : (tokenValue) => String(tokenValue ?? '')
   );
 
   return {

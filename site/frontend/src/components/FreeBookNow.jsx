@@ -48,7 +48,11 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
     useEffect(() => {
         if (selectedDate) {
             const formattedDate = toFreeTourDateKey(selectedDate);
-            const times = dates.filter(d => d.date === formattedDate).map(d => d.time);
+            const times = [...new Set(
+                dates
+                    .filter(d => d.date === formattedDate)
+                    .map(d => d.time)
+            )].sort((left, right) => left.localeCompare(right));
             setAvailableTimes(times);
         } else {
             setAvailableTimes([]);

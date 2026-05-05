@@ -10,6 +10,7 @@ export const FREE_TOUR_EMAIL_TEMPLATE_TOKENS = Object.freeze([
   Object.freeze({ token: '{name}', label: 'Guest name' }),
   Object.freeze({ token: '{people}', label: 'Group size' }),
   Object.freeze({ token: '{email}', label: 'Guest email' }),
+  Object.freeze({ token: '{cancellation_reason}', label: 'Cancellation reason' }),
 ]);
 
 const FREE_TOUR_EMAIL_TOKEN_LOOKUP = new Map(
@@ -33,7 +34,10 @@ export const DEFAULT_FREE_TOUR_EMAIL_TEMPLATES = Object.freeze({
     subject: 'Free Tour Booking Cancellation',
     body: `Greetings!
 
-We are sorry to let you know that the free tour registration below has been cancelled.
+We are sorry to let you know that the free tour registration below has been cancelled for the following reason:
+
+{cancellation_reason}
+
 Tour date: {date_1}
 Name: {name}
 
@@ -70,10 +74,10 @@ export const normalizeFreeTourEmailTemplates = (templates = {}) => ({
   ),
 });
 
-const replaceTemplateTokens = (value, tokens = {}) =>
+const replaceTemplateTokens = (value, tokens = {}, formatter = (tokenValue) => String(tokenValue ?? '')) =>
   Object.entries(tokens).reduce((result, [token, replacement]) => {
     const safeToken = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return result.replace(new RegExp(`\\{${safeToken}\\}`, 'g'), String(replacement ?? ''));
+    return result.replace(new RegExp(`\\{${safeToken}\\}`, 'g'), formatter(replacement));
   }, String(value || ''));
 
 const escapeHtml = (value) =>
@@ -106,6 +110,9 @@ const plainTextToHtml = (value) => {
     .map((paragraph) => `<p>${createLinkifiedParagraph(paragraph).replace(/\n/g, '<br />')}</p>`)
     .join('');
 };
+
+const formatHtmlToken = (tokenValue) =>
+  escapeHtml(tokenValue).replace(/\r?\n/g, '<br />');
 
 const decodeHtmlEntities = (value) => {
   if (typeof document === 'undefined') {
@@ -219,6 +226,7 @@ export const buildFreeTourEmailPreviewTokens = ({
   name = 'John Doe',
   people = 2,
   email = 'john@example.com',
+  cancellation_reason = 'The guide became unavailable due to illness.',
 } = {}) => ({
   date_1: formatTemplateDate(date, time),
   date_2: formatTemplateDate(date),
@@ -226,6 +234,7 @@ export const buildFreeTourEmailPreviewTokens = ({
   name,
   people,
   email,
+  cancellation_reason,
 });
 
 export const renderFreeTourEmailTemplatePreview = (
@@ -235,12 +244,15 @@ export const renderFreeTourEmailTemplatePreview = (
 ) => {
   const normalized = normalizeTemplateEntry(templateEntry, fallbackEntry);
   const renderedSubject = replaceTemplateTokens(normalized.subject, tokens);
-  const renderedBodySource = replaceTemplateTokens(normalized.body, tokens);
+  const hasHtmlBody = looksLikeHtml(normalized.body);
+  const renderedBodySource = replaceTemplateTokens(
+    normalized.body,
+    tokens,
+    hasHtmlBody ? formatHtmlToken : (tokenValue) => String(tokenValue ?? '')
+  );
 
   return {
     subject: renderedSubject,
-    html: looksLikeHtml(renderedBodySource)
-      ? renderedBodySource
-      : plainTextToHtml(renderedBodySource),
+    html: hasHtmlBody ? renderedBodySource : plainTextToHtml(renderedBodySource),
   };
 };

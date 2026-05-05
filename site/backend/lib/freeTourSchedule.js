@@ -1,5 +1,5 @@
 const DEFAULT_FREE_TOUR_DAYS = 30;
-const DEFAULT_FREE_TOUR_TIMES = ['10:00', '13:00'];
+const DEFAULT_FREE_TOUR_TIMES = ['10:30', '13:00'];
 
 const TOUR_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const TOUR_TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
@@ -36,6 +36,9 @@ const normalizeFreeTourSlots = (slots = []) => {
         date,
         time,
         bookings: Number.isFinite(Number(slot?.bookings)) ? Number(slot.bookings) : 0,
+        bookedPeople: Number.isFinite(Number(slot?.bookedPeople))
+          ? Number(slot.bookedPeople)
+          : 0,
       };
     })
     .filter(Boolean)
@@ -81,6 +84,7 @@ const getFallbackFreeTourSlots = (
         date: isoDate,
         time,
         bookings: 0,
+        bookedPeople: 0,
       });
     }
   }
@@ -96,11 +100,12 @@ const getEffectiveFreeTourSlots = (schedule = {}) => {
     : getFallbackFreeTourSlots();
 };
 
-const applyBookingCountsToSchedule = (schedule = {}, bookingCounts = new Map()) => {
+const applyBookingCountsToSchedule = (schedule = {}, bookingStats = new Map()) => {
   const normalizedSchedule = normalizeFreeTourSchedule(schedule);
   const effectiveSlots = getEffectiveFreeTourSlots(normalizedSchedule).map((slot) => ({
     ...slot,
-    bookings: bookingCounts.get(slot.id) || 0,
+    bookings: bookingStats.get(slot.id)?.bookings || 0,
+    bookedPeople: bookingStats.get(slot.id)?.bookedPeople || 0,
   }));
 
   return {

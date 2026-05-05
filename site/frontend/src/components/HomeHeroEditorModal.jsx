@@ -1,5 +1,9 @@
 import ImageFocusEditor from './ImageFocusEditor';
 import AdminModalShell from './AdminModalShell';
+import {
+  getRetainedHomeHeroDraftKey,
+  getSelectedHomeHeroDraftKey,
+} from '../utils/homeHeroDraftSelection';
 
 function HomeHeroEditorModal({
   titleLine1,
@@ -19,6 +23,8 @@ function HomeHeroEditorModal({
   previewUrls = [],
   onSave,
   onCancel,
+  defaultImageKey = '',
+  onSelectDefaultImage,
   isSaving,
   isPreparingImages = false,
   maxImageCount = 6,
@@ -62,20 +68,22 @@ function HomeHeroEditorModal({
 
   const slideshowItems = [
     ...previewUrls.map((imageUrl, index) => ({
-      key: `selected-${imageUrl}-${index}`,
+      key: getSelectedHomeHeroDraftKey(selectedImages[index], index),
       image: selectedImages[index],
       imageUrl,
       name: selectedFiles[index]?.name || `Upload ${index + 1}`,
       onChange: (focus) => updateSelectedImageFocus(index, focus),
       onRemove: () => removeSelectedFile(index),
+      onSelectDefault: () => onSelectDefaultImage?.(getSelectedHomeHeroDraftKey(selectedImages[index], index)),
     })),
     ...currentImageUrls.map((imageUrl, index) => ({
-      key: `current-${imageUrl}-${index}`,
+      key: getRetainedHomeHeroDraftKey(currentImages[index], index),
       image: currentImages[index],
       imageUrl,
       name: currentImages[index]?.name || `Image ${index + 1}`,
       onChange: (focus) => updateCurrentImageFocus(index, focus),
       onRemove: () => removeCurrentImage(index),
+      onSelectDefault: () => onSelectDefaultImage?.(getRetainedHomeHeroDraftKey(currentImages[index], index)),
     })),
   ];
 
@@ -205,14 +213,35 @@ function HomeHeroEditorModal({
                       previewVariant="hero"
                     />
                     <div className="hero-editor-gallery__meta">
-                      <span>{item.name}</span>
-                      <button
-                        type="button"
-                        className="story-admin-button story-admin-button--secondary"
-                        onClick={item.onRemove}
-                      >
-                        Remove
-                      </button>
+                      <div className="hero-editor-gallery__copy">
+                        <span>{item.name}</span>
+                        {item.key === defaultImageKey ? (
+                          <strong>Opens first on page load</strong>
+                        ) : null}
+                      </div>
+                      <div className="hero-editor-gallery__actions">
+                        <button
+                          type="button"
+                          className={`story-admin-button ${
+                            item.key === defaultImageKey
+                              ? 'story-admin-button--primary'
+                              : 'story-admin-button--secondary'
+                          }`}
+                          onClick={item.onSelectDefault}
+                          disabled={item.key === defaultImageKey}
+                        >
+                          {item.key === defaultImageKey
+                            ? 'Opening image'
+                            : 'Start with this image'}
+                        </button>
+                        <button
+                          type="button"
+                          className="story-admin-button story-admin-button--secondary"
+                          onClick={item.onRemove}
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

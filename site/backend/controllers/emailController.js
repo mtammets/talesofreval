@@ -128,6 +128,11 @@ const normalizeFreeTourPeople = (value) => {
   return Math.min(99, Math.max(1, resolved));
 };
 
+const normalizeCancellationReason = (value) =>
+  String(value || '')
+    .trim()
+    .slice(0, 2000);
+
 const buildFreeTourMailData = (mailData = {}, slot = {}) => ({
   ...mailData,
   date: slot.date,
@@ -151,6 +156,7 @@ const buildSiteEmailTokens = (mailData = {}) => ({
   email: String(mailData.email || '').trim(),
   message: String(mailData.message || '').trim(),
   cancelled_list: String(mailData.cancelled_list || '').trim(),
+  cancellation_reason: normalizeCancellationReason(mailData.cancellationReason),
 });
 
 const renderEmailMessage = (templateEntry, tokens, fallbackEntry) =>
@@ -273,10 +279,13 @@ const sendFreeTourClient = async (mailData, templateEntry) => {
   });
 };
 
-const sendFreeTourCancellationClient = async (booking, templateEntry) => {
+const sendFreeTourCancellationClient = async (booking, templateEntry, options = {}) => {
   const renderedTemplate = renderEmailMessage(
     templateEntry,
-    buildSiteEmailTokens(booking),
+    buildSiteEmailTokens({
+      ...booking,
+      cancellationReason: options.cancellationReason,
+    }),
     DEFAULT_SITE_EMAIL_TEMPLATES.freeTourCancellation
   );
 
@@ -288,7 +297,11 @@ const sendFreeTourCancellationClient = async (booking, templateEntry) => {
   });
 };
 
-const sendFreeTourCancellationAdminSummary = async (cancelledBookings, templateEntry) => {
+const sendFreeTourCancellationAdminSummary = async (
+  cancelledBookings,
+  templateEntry,
+  options = {}
+) => {
   if (!Array.isArray(cancelledBookings) || cancelledBookings.length === 0) {
     return 1;
   }
@@ -302,7 +315,10 @@ const sendFreeTourCancellationAdminSummary = async (cancelledBookings, templateE
 
   const renderedTemplate = renderEmailMessage(
     templateEntry,
-    buildSiteEmailTokens({ cancelled_list: cancelledList }),
+    buildSiteEmailTokens({
+      cancelled_list: cancelledList,
+      cancellationReason: options.cancellationReason,
+    }),
     DEFAULT_SITE_EMAIL_TEMPLATES.freeTourCancellationSummary
   );
 
@@ -342,20 +358,26 @@ const sendFreeTourEmail = asyncHandler(async (req, res) => {
   res.status(200).json(1);
 });
 
-const sendFreeTourCancellationEmails = async (cancelledBookings = []) => {
+const sendFreeTourCancellationEmails = async (cancelledBookings = [], options = {}) => {
   if (!Array.isArray(cancelledBookings) || cancelledBookings.length === 0) {
     return 1;
   }
 
   const settings = await readSiteSettings();
+  const cancellationReason = normalizeCancellationReason(options.cancellationReason);
 
   for (const booking of cancelledBookings) {
-    await sendFreeTourCancellationClient(booking, settings.emailTemplates?.freeTourCancellation);
+    await sendFreeTourCancellationClient(
+      booking,
+      settings.emailTemplates?.freeTourCancellation,
+      { cancellationReason }
+    );
   }
 
   await sendFreeTourCancellationAdminSummary(
     cancelledBookings,
-    settings.emailTemplates?.freeTourCancellationSummary
+    settings.emailTemplates?.freeTourCancellationSummary,
+    { cancellationReason }
   );
   return 1;
 };

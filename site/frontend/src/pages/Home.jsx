@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import HomeLanding from '../components/HomeLanding';
 import HomeHeroEditorModal from '../components/HomeHeroEditorModal';
 import HomeExploreBanner from '../components/HomeExploreBanner';
+import HomeExploreBannerEditorModal from '../components/HomeExploreBannerEditorModal';
 import HomeReviewEditorModal from '../components/HomeReviewEditorModal';
 import HomeTeamEditorModal from '../components/HomeTeamEditorModal';
 import ManagedServicesSection from '../components/ManagedServicesSection';
@@ -33,6 +34,12 @@ import {
   HERO_IMAGE_PREPARATION_OPTIONS,
   prepareImageFilesForUpload,
 } from '../utils/prepareImageFilesForUpload';
+import {
+  createHomeHeroDraftImageId,
+  getInitialHomeHeroDefaultDraftKey,
+  getRetainedHomeHeroDraftKey,
+  getSelectedHomeHeroDraftKey,
+} from '../utils/homeHeroDraftSelection';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 const MAX_HOME_HERO_IMAGES = 6;
@@ -64,12 +71,19 @@ function Home({
   const [isHeroEditorOpen, setIsHeroEditorOpen] = useState(false);
   const [isTeamEditorOpen, setIsTeamEditorOpen] = useState(false);
   const [isReviewEditorOpen, setIsReviewEditorOpen] = useState(false);
+  const [isExploreBannerEditorOpen, setIsExploreBannerEditorOpen] = useState(false);
 
   const [heroImageFiles, setHeroImageFiles] = useState([]);
   const [heroNewImages, setHeroNewImages] = useState([]);
   const [heroPreviewUrls, setHeroPreviewUrls] = useState([]);
   const [retainedHeroImages, setRetainedHeroImages] = useState(
     cloneValue(siteSettings.homeHero.images || [])
+  );
+  const [heroDefaultImageKey, setHeroDefaultImageKey] = useState(
+    getInitialHomeHeroDefaultDraftKey(
+      siteSettings.homeHero.images || [],
+      siteSettings.homeHero.defaultImageSrc
+    )
   );
   const [isPreparingHeroImages, setIsPreparingHeroImages] = useState(false);
   const [teamHeading, setTeamHeading] = useState(cloneValue(siteSettings.homeTeam.heading));
@@ -80,6 +94,9 @@ function Home({
   const [reviewHeading, setReviewHeading] = useState(cloneValue(siteSettings.homeReview.heading));
   const [reviewText, setReviewText] = useState(cloneValue(siteSettings.homeReview.text));
   const [reviewer, setReviewer] = useState(cloneValue(siteSettings.homeReview.reviewer));
+  const [exploreBannerContent, setExploreBannerContent] = useState(
+    cloneValue(siteSettings.homeExploreBanner)
+  );
   const [isSavingSection, setIsSavingSection] = useState('');
   const [heroTitleLine1, setHeroTitleLine1] = useState(cloneValue(siteSettings.homeHero.titleLine1));
   const [heroTitleLine2, setHeroTitleLine2] = useState(cloneValue(siteSettings.homeHero.titleLine2));
@@ -110,10 +127,17 @@ function Home({
     setReviewHeading(cloneValue(siteSettings.homeReview.heading));
     setReviewText(cloneValue(siteSettings.homeReview.text));
     setReviewer(cloneValue(siteSettings.homeReview.reviewer));
+    setExploreBannerContent(cloneValue(siteSettings.homeExploreBanner));
     setHeroTitleLine1(cloneValue(siteSettings.homeHero.titleLine1));
     setHeroTitleLine2(cloneValue(siteSettings.homeHero.titleLine2));
     setHeroSubtitle(cloneValue(siteSettings.homeHero.subtitle));
     setRetainedHeroImages(cloneValue(siteSettings.homeHero.images || []));
+    setHeroDefaultImageKey(
+      getInitialHomeHeroDefaultDraftKey(
+        siteSettings.homeHero.images || [],
+        siteSettings.homeHero.defaultImageSrc
+      )
+    );
   }, [siteSettings]);
 
   useEffect(() => {
@@ -193,6 +217,36 @@ function Home({
         .filter(Boolean),
     [heroNewImages, heroPreviewUrls]
   );
+  const heroDraftItems = useMemo(
+    () => [
+      ...heroNewImages.map((image, index) => ({
+        key: getSelectedHomeHeroDraftKey(image, index),
+        source: 'new',
+        index,
+      })),
+      ...retainedHeroImages.map((image, index) => ({
+        key: getRetainedHomeHeroDraftKey(image, index),
+        source: 'retained',
+        index,
+      })),
+    ],
+    [heroNewImages, retainedHeroImages]
+  );
+  const persistedHeroInitialIndex = useMemo(() => {
+    if (!persistedHeroImages.length) {
+      return 0;
+    }
+
+    const selectedIndex = persistedHeroImages.findIndex(
+      (image) => image?.src === siteSettings.homeHero.defaultImageSrc
+    );
+
+    return selectedIndex >= 0 ? selectedIndex : 0;
+  }, [persistedHeroImages, siteSettings.homeHero.defaultImageSrc]);
+  const draftHeroInitialIndex = useMemo(() => {
+    const selectedIndex = heroDraftItems.findIndex((item) => item.key === heroDefaultImageKey);
+    return selectedIndex >= 0 ? selectedIndex : 0;
+  }, [heroDefaultImageKey, heroDraftItems]);
 
   const activeHeroMediaItems = useMemo(() => {
     if (!isHeroEditorOpen) {
@@ -210,7 +264,24 @@ function Home({
     retainedHeroMediaItems,
     siteSettings.homeHero.imageKey,
   ]);
-  const preloadHeroMedia = activeHeroMediaItems[0] || null;
+  useEffect(() => {
+    if (!heroDraftItems.length) {
+      if (heroDefaultImageKey) {
+        setHeroDefaultImageKey('');
+      }
+      return;
+    }
+
+    if (!heroDraftItems.some((item) => item.key === heroDefaultImageKey)) {
+      setHeroDefaultImageKey(heroDraftItems[0].key);
+    }
+  }, [heroDefaultImageKey, heroDraftItems]);
+
+  const activeHeroInitialIndex = isHeroEditorOpen
+    ? draftHeroInitialIndex
+    : persistedHeroInitialIndex;
+  const preloadHeroMedia =
+    activeHeroMediaItems[activeHeroInitialIndex] || activeHeroMediaItems[0] || null;
 
   const handleHeroFilesSelected = async (fileList) => {
     const files = Array.from(fileList || []);
@@ -245,6 +316,7 @@ function Home({
       setHeroImageFiles((current) => [...preparedFiles, ...current]);
       setHeroNewImages((current) => [
         ...preparedFiles.map((file) => ({
+          draftId: createHomeHeroDraftImageId(),
           name: file.name,
           focusX: 50,
           focusY: 50,
@@ -267,6 +339,12 @@ function Home({
     setHeroTitleLine2(cloneValue(siteSettings.homeHero.titleLine2));
     setHeroSubtitle(cloneValue(siteSettings.homeHero.subtitle));
     setRetainedHeroImages(cloneValue(siteSettings.homeHero.images || []));
+    setHeroDefaultImageKey(
+      getInitialHomeHeroDefaultDraftKey(
+        siteSettings.homeHero.images || [],
+        siteSettings.homeHero.defaultImageSrc
+      )
+    );
   };
 
   const saveHero = async (event) => {
@@ -280,6 +358,18 @@ function Home({
       formData.append('subtitle', JSON.stringify(heroSubtitle));
       formData.append('retainedImages', JSON.stringify(retainedHeroImages));
       formData.append('newImages', JSON.stringify(heroNewImages));
+      const selectedDefaultItem =
+        heroDraftItems.find((item) => item.key === heroDefaultImageKey) || heroDraftItems[0] || null;
+      if (selectedDefaultItem) {
+        formData.append('defaultImageGroup', selectedDefaultItem.source);
+        formData.append('defaultImageIndex', String(selectedDefaultItem.index));
+        if (selectedDefaultItem.source === 'retained') {
+          formData.append(
+            'defaultImageSrc',
+            retainedHeroImages[selectedDefaultItem.index]?.src || ''
+          );
+        }
+      }
       heroImageFiles.forEach((file) => {
         formData.append('imageFile', file);
       });
@@ -342,6 +432,32 @@ function Home({
     }
   };
 
+  const saveExploreBanner = async (event) => {
+    event.preventDefault();
+    setIsSavingSection('explore');
+
+    try {
+      const nextSettings = await siteSettingsService.updateHomeExploreBannerSiteSettings(
+        adminToken,
+        {
+          titleLine1: exploreBannerContent.titleLine1,
+          titleLine2: exploreBannerContent.titleLine2,
+          subtitle: exploreBannerContent.subtitle,
+          readMoreLabel: exploreBannerContent.readMoreLabel,
+          googlePlayUrl: exploreBannerContent.googlePlayUrl,
+          appStoreUrl: exploreBannerContent.appStoreUrl,
+        }
+      );
+      setSiteSettings(nextSettings);
+      setIsExploreBannerEditorOpen(false);
+      toast.success('Virtual tour banner updated.');
+    } catch (error) {
+      handleAdminAuthError(error, 'Virtual tour banner update failed.');
+    } finally {
+      setIsSavingSection('');
+    }
+  };
+
   return (
     <div className="home-page">
       <Helmet>
@@ -368,6 +484,7 @@ function Home({
       <HomeLanding
         texts={heroTexts}
         backgroundMediaItems={activeHeroMediaItems}
+        initialImageIndex={activeHeroInitialIndex}
         isEditable={Boolean(adminToken) && isEditMode}
         onEditBackground={() => setIsHeroEditorOpen(true)}
       />
@@ -405,7 +522,16 @@ function Home({
             ) : null
           }
         />
-        <HomeExploreBanner texts={resolvedMiscTexts} language={language} />
+        {adminToken && isEditMode ? (
+          <div className="section-inline-action">
+            <SectionEditButton onClick={() => setIsExploreBannerEditorOpen(true)} />
+          </div>
+        ) : null}
+        <HomeExploreBanner
+          texts={resolvedMiscTexts}
+          language={language}
+          content={siteSettings.homeExploreBanner}
+        />
       </div>
 
       {adminToken && isHeroEditorOpen ? (
@@ -421,6 +547,8 @@ function Home({
           previewUrls={heroPreviewUrls}
           onSave={saveHero}
           onCancel={closeHeroEditor}
+          defaultImageKey={heroDefaultImageKey}
+          onSelectDefaultImage={setHeroDefaultImageKey}
           isSaving={isSavingSection === 'hero'}
           isPreparingImages={isPreparingHeroImages}
           maxImageCount={MAX_HOME_HERO_IMAGES}
@@ -463,6 +591,19 @@ function Home({
             setReviewer(cloneValue(siteSettings.homeReview.reviewer));
           }}
           isSaving={isSavingSection === 'review'}
+        />
+      ) : null}
+
+      {adminToken && isExploreBannerEditorOpen ? (
+        <HomeExploreBannerEditorModal
+          content={exploreBannerContent}
+          setContent={setExploreBannerContent}
+          onSave={saveExploreBanner}
+          onCancel={() => {
+            setIsExploreBannerEditorOpen(false);
+            setExploreBannerContent(cloneValue(siteSettings.homeExploreBanner));
+          }}
+          isSaving={isSavingSection === 'explore'}
         />
       ) : null}
     </div>

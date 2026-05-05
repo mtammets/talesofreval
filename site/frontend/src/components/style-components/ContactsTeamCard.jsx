@@ -6,7 +6,7 @@ import {
 
 const CONTACT_TEAM_MEDIA_SIZES = '(max-width: 768px) 100vw, (max-width: 1100px) 50vw, 25vw';
 
-function OurTeamCard({image, title, email, phone}) {
+function OurTeamCard({image, title}) {
   const responsiveMedia =
     image && typeof image === 'object'
       ? resolveSiteImageMedia(image, '', CONTACT_TEAM_MEDIA_SIZES)
@@ -32,10 +32,8 @@ function OurTeamCard({image, title, email, phone}) {
           }}
         />
       ) : null}
-      <div className="contacts-team-info">
+      <div className="contacts-team-info contacts-team-info--name-only">
         <h5>{title}</h5>
-        <a className="mail" href={`mailto:${email}`}>{email}</a>
-        <a className="phone bold" href={`tel:${phone}`}>{phone}</a>
       </div>
     </div>
   )

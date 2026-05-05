@@ -91,6 +91,7 @@ export const DEFAULT_SITE_SETTINGS = {
       ee: 'Lase oma kujutlusvõimel hääl leida!',
     },
     imageKey: 'homeBg',
+    defaultImageSrc: '',
     images: [],
     image: null,
   },
@@ -229,6 +230,49 @@ export const DEFAULT_SITE_SETTINGS = {
     },
     reviewer: { en: 'Tripadvisor review', ee: 'Tripadvisori arvustus' },
   },
+  homeExploreBanner: {
+    titleLine1: { en: 'Explore Alone,', ee: 'Avasta omas tempos,' },
+    titleLine2: { en: 'Discover More!', ee: 'avasta rohkem!' },
+    subtitle: {
+      en: 'Medieval adventure at your fingertips',
+      ee: 'Keskaegne seiklus sinu käeulatuses',
+    },
+    readMoreLabel: { en: 'Read more', ee: 'Loe lähemalt' },
+    googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.leplace.global&pli=1',
+    appStoreUrl: 'https://apps.apple.com/ee/app/leplace-world/id1496776027',
+  },
+  virtualTourPage: {
+    titleLine1: { en: 'Explore Alone,', ee: 'Avasta omas tempos,' },
+    titleLine2: { en: 'Discover More!', ee: 'avasta rohkem!' },
+    subtitle: {
+      en: 'Location based app guided tours',
+      ee: 'Asukohapõhised äpijuhitud tuurid',
+    },
+    contentTitle: {
+      en: 'Medieval adventure at your fingertips',
+      ee: 'Keskaegne seiklus sinu käeulatuses',
+    },
+    featureItems: [
+      { en: 'Your time, your pace!', ee: 'Sinu aeg, sinu tempo!' },
+      { en: 'Interactive quizzes', ee: 'Interaktiivsed viktoriinid' },
+      { en: 'Photo challenges', ee: 'Fotoväljakutsed' },
+      {
+        en: 'In-depth tour with storytelling',
+        ee: 'Põhjalik jutustav tuur',
+      },
+    ],
+    priceLabel: '3.99 €',
+    payNowLabel: { en: 'Pay now', ee: 'Maksa nüüd' },
+    googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.leplace.global&pli=1',
+    appStoreUrl: 'https://apps.apple.com/ee/app/leplace-world/id1496776027',
+    aboutTitle: { en: 'What is LePlace', ee: 'Mis on LePlace' },
+    aboutCopy: {
+      en: 'LePlace transforms local tourism with interactive outdoor exploration games on your mobile phone and connects creators and organizations with people and places worldwide.',
+      ee: 'LePlace muudab kohaliku turismi mobiilis mängitavate interaktiivsete avastusmängudega ning ühendab loojad ja organisatsioonid inimeste ja paikadega üle kogu maailma.',
+    },
+    readMoreLabel: { en: 'Read more', ee: 'Loe lähemalt' },
+    readMoreUrl: 'https://connect.leplace.online/storyline-talesofreval',
+  },
   contactPage: {
     imageKey: 'contactBg',
     image: null,
@@ -285,7 +329,7 @@ export const DEFAULT_SITE_SETTINGS = {
   },
   footer: {
     freeTourHeading: { en: 'Join our free tour', ee: 'Liitu meie tasuta tuuriga' },
-    firstTime: { en: 'Daily 10:00', ee: 'Iga päev 10:00' },
+    firstTime: { en: 'Daily 10:30', ee: 'Iga päev 10:30' },
     secondTime: { en: 'and 13:00', ee: 'ja 13:00' },
     languageLine: { en: 'Language: English', ee: 'Keel: inglise' },
     durationLine: { en: 'Duration: 90 minutes', ee: 'Kestus: 90 minutit' },

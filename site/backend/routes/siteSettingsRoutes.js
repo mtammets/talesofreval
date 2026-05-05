@@ -84,6 +84,42 @@ const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage 
   zoom: normalizeImageZoom(providedImage?.zoom, normalizeImageZoom(fallbackImage?.zoom, 1)),
 });
 
+const resolveHomeHeroDefaultImageSrc = (
+  nextHeroImages,
+  retainedImages,
+  defaultImageGroup,
+  defaultImageIndex,
+  fallbackDefaultImageSrc = ''
+) => {
+  if (!Array.isArray(nextHeroImages) || !nextHeroImages.length) {
+    return '';
+  }
+
+  const parsedIndex = Number.parseInt(defaultImageIndex, 10);
+
+  if (defaultImageGroup === 'new' && Number.isInteger(parsedIndex)) {
+    return nextHeroImages[parsedIndex]?.src || nextHeroImages[0]?.src || '';
+  }
+
+  if (defaultImageGroup === 'retained' && Number.isInteger(parsedIndex)) {
+    const retainedImageSrc = retainedImages?.[parsedIndex]?.src;
+
+    if (retainedImageSrc) {
+      return (
+        nextHeroImages.find((image) => image?.src === retainedImageSrc)?.src ||
+        nextHeroImages[0]?.src ||
+        ''
+      );
+    }
+  }
+
+  const matchingFallbackSrc = nextHeroImages.find(
+    (image) => image?.src === fallbackDefaultImageSrc
+  )?.src;
+
+  return matchingFallbackSrc || nextHeroImages[0]?.src || '';
+};
+
 router.get(
   '/',
   asyncHandler(async (_req, res) => {
@@ -147,6 +183,14 @@ router.put(
       throw new Error(`Homepage hero supports up to ${MAX_HOME_HERO_IMAGES} images.`);
     }
 
+    const defaultImageSrc = resolveHomeHeroDefaultImageSrc(
+      nextHeroImages,
+      Array.isArray(retainedImages) ? retainedImages : currentImages,
+      req.body.defaultImageGroup,
+      req.body.defaultImageIndex,
+      req.body.defaultImageSrc || settings.homeHero.defaultImageSrc
+    );
+
     const nextSettings = {
       ...settings,
       homeHero: {
@@ -154,8 +198,9 @@ router.put(
         titleLine1: parseJsonField(req.body.titleLine1, settings.homeHero.titleLine1),
         titleLine2: parseJsonField(req.body.titleLine2, settings.homeHero.titleLine2),
         subtitle: parseJsonField(req.body.subtitle, settings.homeHero.subtitle),
+        defaultImageSrc,
         images: nextHeroImages,
-        image: nextHeroImages[0] || null,
+        image: nextHeroImages.find((image) => image?.src === defaultImageSrc) || nextHeroImages[0] || null,
       },
     };
 
@@ -455,6 +500,89 @@ router.put(
 );
 
 router.put(
+  '/admin/home-explore-banner',
+  adminAuth,
+  reviewUpload,
+  asyncHandler(async (req, res) => {
+    const settings = await readSiteSettings();
+    const currentBanner = settings.homeExploreBanner || {};
+
+    const nextSettings = {
+      ...settings,
+      homeExploreBanner: {
+        ...currentBanner,
+        titleLine1: parseJsonField(req.body.titleLine1, currentBanner.titleLine1),
+        titleLine2: parseJsonField(req.body.titleLine2, currentBanner.titleLine2),
+        subtitle: parseJsonField(req.body.subtitle, currentBanner.subtitle),
+        readMoreLabel: parseJsonField(
+          req.body.readMoreLabel,
+          currentBanner.readMoreLabel
+        ),
+        googlePlayUrl:
+          typeof req.body.googlePlayUrl === 'string'
+            ? req.body.googlePlayUrl
+            : currentBanner.googlePlayUrl,
+        appStoreUrl:
+          typeof req.body.appStoreUrl === 'string'
+            ? req.body.appStoreUrl
+            : currentBanner.appStoreUrl,
+      },
+    };
+
+    const saved = await writeSiteSettings(nextSettings);
+    res.json(saved);
+  })
+);
+
+router.put(
+  '/admin/virtual-tour-page',
+  adminAuth,
+  reviewUpload,
+  asyncHandler(async (req, res) => {
+    const settings = await readSiteSettings();
+    const currentPage = settings.virtualTourPage || {};
+
+    const nextSettings = {
+      ...settings,
+      virtualTourPage: {
+        ...currentPage,
+        titleLine1: parseJsonField(req.body.titleLine1, currentPage.titleLine1),
+        titleLine2: parseJsonField(req.body.titleLine2, currentPage.titleLine2),
+        subtitle: parseJsonField(req.body.subtitle, currentPage.subtitle),
+        contentTitle: parseJsonField(req.body.contentTitle, currentPage.contentTitle),
+        featureItems: parseJsonField(req.body.featureItems, currentPage.featureItems),
+        priceLabel:
+          typeof req.body.priceLabel === 'string'
+            ? req.body.priceLabel
+            : currentPage.priceLabel,
+        payNowLabel: parseJsonField(req.body.payNowLabel, currentPage.payNowLabel),
+        googlePlayUrl:
+          typeof req.body.googlePlayUrl === 'string'
+            ? req.body.googlePlayUrl
+            : currentPage.googlePlayUrl,
+        appStoreUrl:
+          typeof req.body.appStoreUrl === 'string'
+            ? req.body.appStoreUrl
+            : currentPage.appStoreUrl,
+        aboutTitle: parseJsonField(req.body.aboutTitle, currentPage.aboutTitle),
+        aboutCopy: parseJsonField(req.body.aboutCopy, currentPage.aboutCopy),
+        readMoreLabel: parseJsonField(
+          req.body.readMoreLabel,
+          currentPage.readMoreLabel
+        ),
+        readMoreUrl:
+          typeof req.body.readMoreUrl === 'string'
+            ? req.body.readMoreUrl
+            : currentPage.readMoreUrl,
+      },
+    };
+
+    const saved = await writeSiteSettings(nextSettings);
+    res.json(saved);
+  })
+);
+
+router.put(
   '/admin/contact-page',
   adminAuth,
   contactUpload,
@@ -543,6 +671,9 @@ router.put(
   asyncHandler(async (req, res) => {
     const settings = await readSiteSettings();
     const currentEffectiveSlots = getEffectiveFreeTourSlots(settings.freeTourSchedule);
+    const cancellationReason = String(req.body.cancellationReason || '')
+      .trim()
+      .slice(0, 2000);
     const nextSchedule = normalizeFreeTourSchedule(
       parseJsonField(req.body.freeTourSchedule, settings.freeTourSchedule)
     );
@@ -562,9 +693,19 @@ router.put(
     );
     const nextEffectiveSlots = getEffectiveFreeTourSlots(nextSchedule);
     const nextSlotIds = new Set(nextEffectiveSlots.map((slot) => slot.id));
-    const removedSlotIds = currentEffectiveSlots
-      .filter((slot) => !nextSlotIds.has(slot.id))
-      .map((slot) => slot.id);
+    const removedSlots = currentEffectiveSlots.filter((slot) => !nextSlotIds.has(slot.id));
+    const removedSlotIds = removedSlots.map((slot) => slot.id);
+    const removedBookingCount = removedSlots.reduce(
+      (total, slot) => total + Math.max(0, Number(slot.bookings) || 0),
+      0
+    );
+
+    if (removedBookingCount > 0 && !cancellationReason) {
+      res.status(400).json({
+        message: 'Please enter a cancellation reason before saving changes that cancel bookings.',
+      });
+      return;
+    }
 
     const nextSettings = {
       ...settings,
@@ -577,7 +718,7 @@ router.put(
     const cancelledBookings = await cancelFreeTourBookingsForSlotIds(removedSlotIds);
 
     if (cancelledBookings.length > 0) {
-      await sendFreeTourCancellationEmails(cancelledBookings);
+      await sendFreeTourCancellationEmails(cancelledBookings, { cancellationReason });
     }
 
     res.json(await readSiteSettings());

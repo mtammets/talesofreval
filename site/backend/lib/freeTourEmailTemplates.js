@@ -20,7 +20,10 @@ const DEFAULT_FREE_TOUR_EMAIL_TEMPLATES = Object.freeze({
     subject: 'Free Tour Booking Cancellation',
     body: `Greetings!
 
-We are sorry to let you know that the free tour registration below has been cancelled.
+We are sorry to let you know that the free tour registration below has been cancelled for the following reason:
+
+{cancellation_reason}
+
 Tour date: {date_1}
 Name: {name}
 
@@ -57,10 +60,10 @@ const normalizeFreeTourEmailTemplates = (templates = {}) => ({
   ),
 });
 
-const replaceTemplateTokens = (value, tokens = {}) =>
+const replaceTemplateTokens = (value, tokens = {}, formatter = (tokenValue) => String(tokenValue ?? '')) =>
   Object.entries(tokens).reduce((result, [token, replacement]) => {
     const safeToken = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return result.replace(new RegExp(`\\{${safeToken}\\}`, 'g'), String(replacement ?? ''));
+    return result.replace(new RegExp(`\\{${safeToken}\\}`, 'g'), formatter(replacement));
   }, String(value || ''));
 
 const escapeHtml = (value) =>
@@ -92,13 +95,18 @@ const renderFreeTourEmailTemplate = (templateEntry, tokens = {}, fallbackEntry) 
     DEFAULT_FREE_TOUR_EMAIL_TEMPLATES.confirmation;
   const normalized = normalizeTemplateEntry(templateEntry, fallback);
   const renderedSubject = replaceTemplateTokens(normalized.subject, tokens);
-  const renderedBodySource = replaceTemplateTokens(normalized.body, tokens);
+  const hasHtmlBody = looksLikeHtml(normalized.body);
+  const renderedBodySource = replaceTemplateTokens(
+    normalized.body,
+    tokens,
+    hasHtmlBody
+      ? (tokenValue) => escapeHtml(tokenValue).replace(/\r?\n/g, '<br />')
+      : (tokenValue) => String(tokenValue ?? '')
+  );
 
   return {
     subject: renderedSubject,
-    html: looksLikeHtml(renderedBodySource)
-      ? renderedBodySource
-      : plainTextToHtml(renderedBodySource),
+    html: hasHtmlBody ? renderedBodySource : plainTextToHtml(renderedBodySource),
   };
 };
 

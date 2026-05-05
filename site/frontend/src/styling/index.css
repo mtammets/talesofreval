@@ -1704,6 +1704,17 @@ p.line-height-spaced{
 
 .home-landing-copy{
   max-width: 588px;
+  --home-hero-text-outline: rgba(18, 22, 30, 0.78);
+  --home-hero-text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.26),
+    1px 0 0 var(--home-hero-text-outline),
+    -1px 0 0 var(--home-hero-text-outline),
+    0 1px 0 var(--home-hero-text-outline),
+    0 -1px 0 var(--home-hero-text-outline),
+    1px 1px 0 var(--home-hero-text-outline),
+    -1px 1px 0 var(--home-hero-text-outline),
+    1px -1px 0 var(--home-hero-text-outline),
+    -1px -1px 0 var(--home-hero-text-outline);
 }
 
 .home-landing-title{
@@ -1713,6 +1724,9 @@ p.line-height-spaced{
   font-weight: 400;
   letter-spacing: -0.02em;
   text-transform: uppercase;
+  -webkit-text-stroke: 0.7px var(--home-hero-text-outline);
+  paint-order: stroke fill;
+  text-shadow: var(--home-hero-text-shadow);
 }
 
 .home-landing-text{
@@ -1720,6 +1734,9 @@ p.line-height-spaced{
   max-width: 478px;
   font-size: 16px;
   line-height: 1.5;
+  -webkit-text-stroke: 0.45px var(--home-hero-text-outline);
+  paint-order: stroke fill;
+  text-shadow: var(--home-hero-text-shadow);
 }
 
 /* BOOK NOW POPUP */
@@ -2294,7 +2311,7 @@ body.book-now-modal-open{
   padding: 14px 12px 16px;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 0;
+  gap: 10px;
   background: var(--blue);
 }
 
@@ -2302,8 +2319,12 @@ body.book-now-modal-open{
   color: var(--cream);
   font-size: 15px;
   line-height: 1.15;
-  margin-bottom: 12px;
+  margin-bottom: 0;
   padding-bottom: 0;
+}
+
+.team-info--tippable .payment-button{
+  margin-top: 0;
 }
 
 .team-link--tippable{
@@ -2393,6 +2414,10 @@ body.book-now-modal-open{
   font-size: 1.15rem;
   line-height: 1.08;
   margin-bottom: 18px;
+}
+
+.contacts-team-info--name-only h5{
+  margin-bottom: 0;
 }
 
 .contacts-team-info .mail,
@@ -5474,6 +5499,12 @@ button.year-event-switch.disabled{
   margin: 0 auto;
 }
 
+.virtual-tour-page__editor-action{
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 28px;
+}
+
 .virtual-tour-page__intro{
   max-width: 468px;
   margin: 0 0 56px 338px;
@@ -5768,6 +5799,10 @@ button.year-event-switch.disabled{
     padding: 124px 32px 52px;
   }
 
+  .virtual-tour-page__editor-action{
+    margin-bottom: 20px;
+  }
+
   .virtual-tour-page__intro{
     margin: 0 auto 44px;
     text-align: center;
@@ -5951,6 +5986,11 @@ button.year-event-switch.disabled{
 
   .virtual-tour-page__frame{
     max-width: none;
+  }
+
+  .virtual-tour-page__editor-action{
+    padding: 0 28px;
+    margin-bottom: 22px;
   }
 
   .virtual-tour-page__intro{
@@ -6752,11 +6792,18 @@ button.year-event-switch.disabled{
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .hero-editor-gallery__meta--actions-only{
   justify-content: flex-end;
+}
+
+.hero-editor-gallery__copy{
+  display: grid;
+  gap: 4px;
+  min-width: 0;
 }
 
 .hero-editor-gallery__meta span{
@@ -6765,6 +6812,20 @@ button.year-event-switch.disabled{
   font-weight: 600;
   color: rgba(32, 37, 51, 0.78);
   overflow-wrap: anywhere;
+}
+
+.hero-editor-gallery__copy strong{
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #845a20;
+}
+
+.hero-editor-gallery__actions{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .hero-editor-gallery__meta .story-admin-button{
@@ -8474,6 +8535,48 @@ button.year-event-switch.disabled{
   gap: 14px;
 }
 
+.free-tour-calendar-editor__time-tools{
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.free-tour-calendar-editor__time-custom{
+  flex: 1 1 auto;
+  display: grid;
+  gap: 8px;
+}
+
+.free-tour-calendar-editor__time-custom-label{
+  color: rgba(32, 37, 51, 0.7);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.free-tour-calendar-editor__time-custom input{
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+  border: 1px solid rgba(32, 37, 51, 0.12);
+  border-radius: 16px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #202533;
+  font: inherit;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 12px 22px rgba(18, 24, 37, 0.04);
+}
+
+.free-tour-calendar-editor__time-custom input:focus{
+  outline: 2px solid rgba(217, 136, 134, 0.24);
+  outline-offset: 2px;
+}
+
 .free-tour-calendar-editor__time{
   display: inline-flex;
   align-items: center;
@@ -9186,6 +9289,39 @@ button.year-event-switch.disabled{
   margin: 0;
 }
 
+.free-tour-calendar-editor__confirm-field{
+  display: grid;
+  gap: 10px;
+}
+
+.free-tour-calendar-editor__confirm-field-label{
+  color: #202533;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.free-tour-calendar-editor__confirm-field textarea{
+  width: 100%;
+  min-height: 128px;
+  resize: vertical;
+  padding: 14px 16px;
+  border: 1px solid rgba(32, 37, 51, 0.12);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #202533;
+  font: inherit;
+  line-height: 1.55;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.free-tour-calendar-editor__confirm-field textarea:focus{
+  outline: none;
+  border-color: rgba(45, 124, 88, 0.42);
+  box-shadow:
+    0 0 0 4px rgba(45, 124, 88, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
 .free-tour-calendar-editor__confirm-actions{
   display: flex;
   flex-wrap: wrap;
@@ -9330,9 +9466,8 @@ button.year-event-switch.disabled{
 }
 
 .story-admin-actions{
-  position: sticky;
-  bottom: 20px;
-  z-index: 2;
+  position: relative;
+  z-index: 1;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
@@ -9556,7 +9691,7 @@ button.year-event-switch.disabled{
   }
 
   .story-admin-actions{
-    bottom: 12px;
+    margin-top: 10px;
   }
 
   .footer-admin-row{
@@ -9594,6 +9729,11 @@ button.year-event-switch.disabled{
   .free-tour-calendar-editor__time-grid{
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
+  }
+
+  .free-tour-calendar-editor__time-tools{
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .free-tour-calendar-editor__actions{
@@ -9828,6 +9968,11 @@ button.year-event-switch.disabled{
     font-size: 0.74rem;
   }
 
+  .free-tour-calendar-editor__time-custom input{
+    min-height: 44px;
+    padding: 0 12px;
+  }
+
   .free-tour-calendar-editor__undo-toast{
     flex-wrap: wrap;
     justify-content: space-between;
@@ -9845,6 +9990,10 @@ button.year-event-switch.disabled{
 
   .free-tour-calendar-editor__confirm-copy{
     font-size: 0.92rem;
+  }
+
+  .free-tour-calendar-editor__confirm-field textarea{
+    min-height: 112px;
   }
 
   .free-tour-calendar-editor__confirm-actions{
@@ -10023,12 +10172,13 @@ button.year-event-switch.disabled{
 
   .home-page .team-info--tippable{
     padding: 16px 14px 18px;
+    gap: 12px;
   }
 
   .home-page .team-info--tippable .team-name{
     font-size: 20px;
     line-height: 1.12;
-    margin-bottom: 14px;
+    margin-bottom: 0;
   }
 
   .home-page .team-link--tippable{

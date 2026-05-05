@@ -3,6 +3,7 @@ function AdminModalShell({
   title,
   description,
   onClose,
+  closeOnBackdropClick = false,
   compact = false,
   wide = false,
   noBackdropBlur = false,
@@ -42,12 +43,27 @@ function AdminModalShell({
   ]
     .filter(Boolean)
     .join(' ');
+  const stopEventPropagation = (event) => {
+    event.stopPropagation();
+  };
+  const preventImplicitCloseShortcuts = (event) => {
+    event.stopPropagation();
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+    }
+  };
 
   return (
-    <div className={modalClassName} onClick={onClose}>
+    <div
+      className={modalClassName}
+      onKeyDownCapture={preventImplicitCloseShortcuts}
+      onClick={closeOnBackdropClick ? onClose : undefined}
+    >
       <div
         className={sheetClassName}
-        onClick={(event) => event.stopPropagation()}
+        onMouseDown={stopEventPropagation}
+        onClick={stopEventPropagation}
         role="dialog"
         aria-modal="true"
       >

@@ -272,7 +272,18 @@ function AppShell() {
                 />
               }
             />
-            <Route path="/virtual" element={<VirtualTour siteSettings={siteSettings} />} />
+            <Route
+              path="/virtual"
+              element={
+                <VirtualTour
+                  adminToken={adminToken}
+                  setAdminToken={setAdminToken}
+                  siteSettings={siteSettings}
+                  setSiteSettings={setSiteSettings}
+                  isEditMode={editControlsVisible}
+                />
+              }
+            />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Suspense>

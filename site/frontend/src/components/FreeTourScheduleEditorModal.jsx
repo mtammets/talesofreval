@@ -119,6 +119,7 @@ const formatCountLabel = (count, singular, plural = `${singular}s`) =>
   `${count} ${count === 1 ? singular : plural}`;
 
 const getFreeTourSlotId = (slot = {}) => `${slot.date}-${slot.time}`;
+const FREE_TOUR_TIME_INPUT_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 const getFreeTourSlotBookings = (slot = {}) => {
   const parsedBookings = Number.parseInt(slot?.bookings, 10);
@@ -128,6 +129,28 @@ const getFreeTourSlotBookings = (slot = {}) => {
   }
 
   return parsedBookings;
+};
+
+const getFreeTourSlotBookedPeople = (slot = {}) => {
+  const parsedPeople = Number.parseInt(slot?.bookedPeople, 10);
+
+  if (!Number.isFinite(parsedPeople) || parsedPeople < 1) {
+    return 0;
+  }
+
+  return parsedPeople;
+};
+
+const formatFreeTourBookingSummary = (bookingCount = 0, bookedPeople = 0) => {
+  if (bookingCount < 1) {
+    return '0';
+  }
+
+  if (bookedPeople < 1) {
+    return String(bookingCount);
+  }
+
+  return `${bookingCount}(${bookedPeople})`;
 };
 
 const serializeEditorState = (schedule, emailTemplates) =>
@@ -277,8 +300,11 @@ function FreeTourScheduleEditorModal({
   const [isEditorViewTransitioning, setIsEditorViewTransitioning] = useState(false);
   const [editorViewTransitionTargetIndex, setEditorViewTransitionTargetIndex] = useState(null);
   const [isCancellationConfirmOpen, setIsCancellationConfirmOpen] = useState(false);
+  const [cancellationReason, setCancellationReason] = useState('');
+  const [customTimeValue, setCustomTimeValue] = useState('');
   const undoToastIdRef = useRef(null);
   const editorFormRef = useRef(null);
+  const cancellationReasonFieldRef = useRef(null);
   const hasConfirmedCancellationSaveRef = useRef(false);
   const initialEditorStateRef = useRef(serializeEditorState(schedule, emailTemplates));
   const initialEffectiveSlotsRef = useRef(
@@ -287,6 +313,7 @@ function FreeTourScheduleEditorModal({
     ).map((slot) => ({
       ...slot,
       bookings: getFreeTourSlotBookings(slot),
+      bookedPeople: getFreeTourSlotBookedPeople(slot),
     }))
   );
 
@@ -358,8 +385,16 @@ function FreeTourScheduleEditorModal({
     selectedConfiguredDateCount,
     workingDateKeys.length,
   ]);
+  const timeOptions = useMemo(
+    () =>
+      [...new Set([...DEFAULT_FREE_TOUR_TIMES, ...effectiveSlots.map((slot) => slot.time)])].sort(
+        (left, right) => left.localeCompare(right)
+      ),
+    [effectiveSlots]
+  );
   const showBulkSelectionHint = isBulkSelectionMode && !workingDateKeys.length;
   const visibleMonthKey = visibleMonth.getTime();
+  const trimmedCancellationReason = cancellationReason.trim();
   const hasEditorChanges =
     serializeEditorState(normalizedSchedule, normalizedEmailTemplates) !== initialEditorStateRef.current;
   const canSaveCalendar = !isSaving && hasEditorChanges;
@@ -436,9 +471,18 @@ function FreeTourScheduleEditorModal({
   useEffect(() => {
     if (!requiresCancellationConfirmation) {
       setIsCancellationConfirmOpen(false);
+      setCancellationReason('');
       hasConfirmedCancellationSaveRef.current = false;
     }
   }, [requiresCancellationConfirmation]);
+
+  useEffect(() => {
+    if (!isCancellationConfirmOpen) {
+      return;
+    }
+
+    cancellationReasonFieldRef.current?.focus();
+  }, [isCancellationConfirmOpen]);
 
   useEffect(() => {
     if (!isTemplateMenuOpen) {
@@ -1620,7 +1664,12 @@ function FreeTourScheduleEditorModal({
                 (dateKey) =>
                   !effectiveSlots.some((slot) => slot.date === dateKey && slot.time === time)
               )
-              .map((dateKey) => ({ date: dateKey, time, bookings: 0 })),
+              .map((dateKey) => ({
+                date: dateKey,
+                time,
+                bookings: 0,
+                bookedPeople: 0,
+              })),
           ]
     );
 
@@ -1629,8 +1678,44 @@ function FreeTourScheduleEditorModal({
     }
   };
 
+  const addCustomTime = () => {
+    const normalizedTime = String(customTimeValue || '').trim();
+
+    if (!workingDateKeys.length) {
+      toast.error('Select at least one day before adding a custom time.');
+      return;
+    }
+
+    if (!FREE_TOUR_TIME_INPUT_PATTERN.test(normalizedTime)) {
+      toast.error('Enter a valid custom time in HH:mm format.');
+      return;
+    }
+
+    const missingDateKeys = workingDateKeys.filter(
+      (dateKey) =>
+        !effectiveSlots.some((slot) => slot.date === dateKey && slot.time === normalizedTime)
+    );
+
+    if (!missingDateKeys.length) {
+      toast.info('That time is already added for the selected day(s).');
+      return;
+    }
+
+    updateSlots([
+      ...effectiveSlots,
+      ...missingDateKeys.map((dateKey) => ({
+        date: dateKey,
+        time: normalizedTime,
+        bookings: 0,
+        bookedPeople: 0,
+      })),
+    ]);
+    setCustomTimeValue('');
+  };
+
   const handleCancel = () => {
     setIsCancellationConfirmOpen(false);
+    setCancellationReason('');
     hasConfirmedCancellationSaveRef.current = false;
     dismissUndoToast();
     onCancel();
@@ -1652,7 +1737,9 @@ function FreeTourScheduleEditorModal({
 
     hasConfirmedCancellationSaveRef.current = false;
     setIsCancellationConfirmOpen(false);
-    onSave(event);
+    onSave(event, {
+      cancellationReason: requiresCancellationConfirmation ? trimmedCancellationReason : '',
+    });
   };
 
   const handleDismissCancellationConfirm = () => {
@@ -1661,7 +1748,7 @@ function FreeTourScheduleEditorModal({
   };
 
   const handleConfirmCancellationSave = () => {
-    if (!editorFormRef.current) {
+    if (!editorFormRef.current || !trimmedCancellationReason) {
       return;
     }
 
@@ -1774,11 +1861,18 @@ function FreeTourScheduleEditorModal({
           </div>
         ) : null}
         <div className="free-tour-calendar-editor__time-grid">
-          {DEFAULT_FREE_TOUR_TIMES.map((time) => {
+          {timeOptions.map((time) => {
             const hasSelection = workingDateKeys.length > 0;
             const bookingCount = hasSelection
               ? workingDateKeys.reduce(
                   (total, dateKey) => total + (slotLookup.get(`${dateKey}-${time}`)?.bookings || 0),
+                  0
+                )
+              : 0;
+            const bookedPeopleCount = hasSelection
+              ? workingDateKeys.reduce(
+                  (total, dateKey) =>
+                    total + (slotLookup.get(`${dateKey}-${time}`)?.bookedPeople || 0),
                   0
                 )
               : 0;
@@ -1819,12 +1913,38 @@ function FreeTourScheduleEditorModal({
                     }`}
                     aria-hidden="true"
                   >
-                    {bookingCount}
+                    {formatFreeTourBookingSummary(bookingCount, bookedPeopleCount)}
                   </span>
                 ) : null}
               </button>
             );
           })}
+        </div>
+        <div className="free-tour-calendar-editor__time-tools">
+          <label className="free-tour-calendar-editor__time-custom">
+            <span className="free-tour-calendar-editor__time-custom-label">Custom time</span>
+            <input
+              type="time"
+              step="60"
+              value={customTimeValue}
+              onChange={(event) => setCustomTimeValue(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  addCustomTime();
+                }
+              }}
+              aria-label="Custom time"
+            />
+          </label>
+          <button
+            type="button"
+            className="story-admin-button story-admin-button--secondary"
+            onClick={addCustomTime}
+            disabled={!workingDateKeys.length}
+          >
+            Add custom time
+          </button>
         </div>
       </section>
     </div>
@@ -2181,11 +2301,21 @@ function FreeTourScheduleEditorModal({
                     'existing booking'
                   )}.`}
                 </p>
-                <p>
-                  Affected customers will receive the cancellation email and admin will
-                  receive the cancellation summary email.
-                </p>
               </div>
+              <label className="free-tour-calendar-editor__confirm-field">
+                <span className="free-tour-calendar-editor__confirm-field-label">
+                  Cancellation reason
+                </span>
+                <textarea
+                  ref={cancellationReasonFieldRef}
+                  aria-label="Cancellation reason"
+                  value={cancellationReason}
+                  onChange={(event) => setCancellationReason(event.target.value)}
+                  rows={5}
+                  maxLength={2000}
+                  placeholder="Explain why this booking is being cancelled."
+                />
+              </label>
               <div className="free-tour-calendar-editor__confirm-actions">
                 <button
                   type="button"
@@ -2198,6 +2328,7 @@ function FreeTourScheduleEditorModal({
                   type="button"
                   className="story-admin-button story-admin-button--primary"
                   onClick={handleConfirmCancellationSave}
+                  disabled={!trimmedCancellationReason}
                 >
                   Cancel bookings and save
                 </button>

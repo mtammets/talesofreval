@@ -1,5 +1,5 @@
 export const DEFAULT_FREE_TOUR_DAYS = 30;
-export const DEFAULT_FREE_TOUR_TIMES = ['10:00', '13:00'];
+export const DEFAULT_FREE_TOUR_TIMES = ['10:30', '13:00'];
 
 const pad = (value) => String(value).padStart(2, '0');
 
@@ -25,6 +25,7 @@ export const getFallbackTours = (
         date: isoDate,
         time,
         bookings: 0,
+        bookedPeople: 0,
       });
     }
   }

@@ -1,7 +1,7 @@
 const fs = require('fs/promises');
 const { runtimeSiteSettingsFile } = require('./storagePaths');
 const { normalizeSiteEmailTemplates } = require('./siteEmailTemplates');
-const { getFreeTourBookingCounts } = require('./freeTourBookingsStore');
+const { getFreeTourBookingStats } = require('./freeTourBookingsStore');
 const {
   applyBookingCountsToSchedule,
   normalizeFreeTourSchedule,
@@ -13,6 +13,18 @@ const localized = (value = {}, fallbackEn = '', fallbackEe = '') => ({
   en: value.en || fallbackEn,
   ee: value.ee || fallbackEe || fallbackEn,
 });
+
+const localizedList = (values = [], fallbackValues = []) => {
+  const sourceValues = Array.isArray(values) && values.length ? values : fallbackValues;
+
+  return sourceValues.map((value, index) =>
+    localized(
+      value,
+      fallbackValues[index]?.en || '',
+      fallbackValues[index]?.ee || fallbackValues[index]?.en || ''
+    )
+  );
+};
 
 const normalizeImageZoom = (value, fallback = 1) => {
   const resolvedValue = Number(value);
@@ -85,6 +97,12 @@ const normalizeImageGallery = (
   return [];
 };
 
+const resolvePreferredImageSrc = (images = [], preferredSrc = '') =>
+  images.find((image) => image?.src === preferredSrc)?.src || images[0]?.src || '';
+
+const resolvePreferredImage = (images = [], preferredSrc = '') =>
+  images.find((image) => image?.src === preferredSrc) || images[0] || null;
+
 const DEFAULT_SERVICE_PAGE_HERO_KEYS = {
   team: 'serviceTeamHero',
   private: 'servicePrivateHero',
@@ -92,6 +110,20 @@ const DEFAULT_SERVICE_PAGE_HERO_KEYS = {
   destination: 'serviceDestinationHero',
   wedding: 'serviceWeddingHero',
 };
+const DEFAULT_GOOGLE_PLAY_URL =
+  'https://play.google.com/store/apps/details?id=com.leplace.global&pli=1';
+const DEFAULT_APP_STORE_URL =
+  'https://apps.apple.com/ee/app/leplace-world/id1496776027';
+
+const PAYMENT_METHODS = ['Wise', 'Apple Pay', 'Google Pay', 'PayPal', 'Revolut'];
+
+const normalizePaymentLinks = (links = []) =>
+  PAYMENT_METHODS.map((name) => ({
+    name,
+    link: Array.isArray(links)
+      ? links.find((entry) => entry?.name === name)?.link || ''
+      : '',
+  }));
 
 const normalizeServiceItem = (item = {}, index = 0) => ({
   key: item.key || `service-${index + 1}`,
@@ -135,6 +167,7 @@ const normalizeTeamMember = (member = {}, index = 0) => ({
   name: member.name || '',
   email: member.email || '',
   phone: member.phone || '',
+  payment_links: normalizePaymentLinks(member.payment_links),
   imageKey: member.imageKey || '',
   image: member.image ? imageShape(member.image, 520, 520) : null,
 });
@@ -158,8 +191,12 @@ const normalizeSiteSettings = (settings = {}) => {
       titleLine2: localized(settings.homeHero?.titleLine2),
       subtitle: localized(settings.homeHero?.subtitle),
       imageKey: settings.homeHero?.imageKey || '',
+      defaultImageSrc: resolvePreferredImageSrc(
+        homeHeroImages,
+        settings.homeHero?.defaultImageSrc
+      ),
       images: homeHeroImages,
-      image: homeHeroImages[0] || null,
+      image: resolvePreferredImage(homeHeroImages, settings.homeHero?.defaultImageSrc),
     },
     storyPage: {
       imageKey: settings.storyPage?.imageKey || 'storyBg',
@@ -225,6 +262,91 @@ const normalizeSiteSettings = (settings = {}) => {
       text: localized(settings.homeReview?.text),
       reviewer: localized(settings.homeReview?.reviewer),
     },
+    homeExploreBanner: {
+      titleLine1: localized(
+        settings.homeExploreBanner?.titleLine1,
+        'Explore Alone,',
+        'Avasta omas tempos,'
+      ),
+      titleLine2: localized(
+        settings.homeExploreBanner?.titleLine2,
+        'Discover More!',
+        'avasta rohkem!'
+      ),
+      subtitle: localized(
+        settings.homeExploreBanner?.subtitle,
+        'Medieval adventure at your fingertips',
+        'Keskaegne seiklus sinu käeulatuses'
+      ),
+      readMoreLabel: localized(
+        settings.homeExploreBanner?.readMoreLabel,
+        'Read more',
+        'Loe lähemalt'
+      ),
+      googlePlayUrl:
+        settings.homeExploreBanner?.googlePlayUrl || DEFAULT_GOOGLE_PLAY_URL,
+      appStoreUrl:
+        settings.homeExploreBanner?.appStoreUrl || DEFAULT_APP_STORE_URL,
+    },
+    virtualTourPage: {
+      titleLine1: localized(
+        settings.virtualTourPage?.titleLine1,
+        'Explore Alone,',
+        'Avasta omas tempos,'
+      ),
+      titleLine2: localized(
+        settings.virtualTourPage?.titleLine2,
+        'Discover More!',
+        'avasta rohkem!'
+      ),
+      subtitle: localized(
+        settings.virtualTourPage?.subtitle,
+        'Location based app guided tours',
+        'Asukohapõhised äpijuhitud tuurid'
+      ),
+      contentTitle: localized(
+        settings.virtualTourPage?.contentTitle,
+        'Medieval adventure at your fingertips',
+        'Keskaegne seiklus sinu käeulatuses'
+      ),
+      featureItems: localizedList(settings.virtualTourPage?.featureItems, [
+        { en: 'Your time, your pace!', ee: 'Sinu aeg, sinu tempo!' },
+        { en: 'Interactive quizzes', ee: 'Interaktiivsed viktoriinid' },
+        { en: 'Photo challenges', ee: 'Fotoväljakutsed' },
+        {
+          en: 'In-depth tour with storytelling',
+          ee: 'Põhjalik jutustav tuur',
+        },
+      ]),
+      priceLabel: settings.virtualTourPage?.priceLabel || '3.99 €',
+      payNowLabel: localized(
+        settings.virtualTourPage?.payNowLabel,
+        'Pay now',
+        'Maksa nüüd'
+      ),
+      googlePlayUrl:
+        settings.virtualTourPage?.googlePlayUrl || DEFAULT_GOOGLE_PLAY_URL,
+      appStoreUrl:
+        settings.virtualTourPage?.appStoreUrl || DEFAULT_APP_STORE_URL,
+      aboutTitle: localized(
+        settings.virtualTourPage?.aboutTitle,
+        'What is LePlace',
+        'Mis on LePlace'
+      ),
+      aboutCopy: localized(
+        settings.virtualTourPage?.aboutCopy,
+        'LePlace transforms local tourism with interactive outdoor exploration games on your mobile phone and connects creators and organizations with people and places worldwide.',
+        'LePlace muudab kohaliku turismi mobiilis mängitavate interaktiivsete avastusmängudega ning ühendab loojad ja organisatsioonid inimeste ja paikadega üle kogu maailma.'
+      ),
+      readMoreLabel: localized(
+        settings.virtualTourPage?.readMoreLabel,
+        'Read more',
+        'Loe lähemalt'
+      ),
+      readMoreUrl:
+        settings.virtualTourPage?.readMoreUrl ||
+        'https://connect.leplace.online/storyline-talesofreval',
+    },
     footer: {
       freeTourHeading: localized(settings.footer?.freeTourHeading),
       firstTime: localized(settings.footer?.firstTime),
@@ -259,11 +381,11 @@ const normalizeSiteSettings = (settings = {}) => {
 };
 
 const withFreeTourBookingCounts = async (settings) => {
-  const bookingCounts = await getFreeTourBookingCounts();
+  const bookingStats = await getFreeTourBookingStats();
 
   return {
     ...settings,
-    freeTourSchedule: applyBookingCountsToSchedule(settings.freeTourSchedule, bookingCounts),
+    freeTourSchedule: applyBookingCountsToSchedule(settings.freeTourSchedule, bookingStats),
   };
 };
 

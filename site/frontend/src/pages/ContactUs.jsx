@@ -426,10 +426,6 @@ function ContactUs({
                   <p>{siteSettings.contactPage.bankLine1}</p>
                   <p>{siteSettings.contactPage.bankLine2}</p>
                 </div>
-                <div className="contact-us-info-group contact-us-info-links">
-                  <a href={`mailto:${siteSettings.contactPage.email}`}>{siteSettings.contactPage.email}</a>
-                  <a href={`tel:${siteSettings.contactPage.phone}`}>{siteSettings.contactPage.phone}</a>
-                </div>
               </div>
             </div>
           </div>

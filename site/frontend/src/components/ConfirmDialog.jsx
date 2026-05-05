@@ -72,6 +72,7 @@ function ConfirmDialog({
       title={title}
       description={message}
       onClose={onCancel}
+      closeOnBackdropClick
       compact
       hideClose={hideClose}
       noBackdropBlur={noBackdropBlur}

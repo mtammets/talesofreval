@@ -3,6 +3,7 @@ import PageHero from './PageHero';
 function HomeLanding({
   texts,
   backgroundMediaItems = [],
+  initialImageIndex = 0,
   isEditable = false,
   onEditBackground,
 }) {
@@ -19,6 +20,7 @@ function HomeLanding({
       className="home-landing"
       mediaClassName="home-landing-media"
       backgroundMediaItems={backgroundMediaItems}
+      initialImageIndex={initialImageIndex}
       isEditable={isEditable}
       onEditBackground={onEditBackground}
     >

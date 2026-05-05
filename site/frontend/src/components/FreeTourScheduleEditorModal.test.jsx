@@ -7,6 +7,7 @@ import { DEFAULT_SITE_EMAIL_TEMPLATES } from '../utils/siteEmailTemplates';
 
 jest.mock('react-toastify', () => ({
   toast: {
+    error: jest.fn(),
     info: jest.fn(),
     dismiss: jest.fn(),
   },
@@ -193,7 +194,7 @@ describe('FreeTourScheduleEditorModal', () => {
     fireEvent.click(screen.getByText('16'));
     expect(screen.getByRole('button', { name: /save settings/i }).disabled).toBe(true);
 
-    fireEvent.click(screen.getByRole('button', { name: '10:00' }));
+    fireEvent.click(screen.getByRole('button', { name: '10:30' }));
 
     const enabledSaveButton = screen.getByRole('button', { name: /save settings/i });
     expect(enabledSaveButton.disabled).toBe(false);
@@ -270,9 +271,21 @@ describe('FreeTourScheduleEditorModal', () => {
     expect(screen.queryByRole('dialog', { name: 'Cancel existing bookings?' })).toBeNull();
 
     fireEvent.submit(screen.getByRole('button', { name: /save settings/i }).closest('form'));
-    fireEvent.click(screen.getByRole('button', { name: 'Cancel bookings and save' }));
+    const confirmButton = screen.getByRole('button', { name: 'Cancel bookings and save' });
+
+    expect(confirmButton.disabled).toBe(true);
+
+    fireEvent.change(screen.getByRole('textbox', { name: 'Cancellation reason' }), {
+      target: { value: 'Guide is unavailable tonight.' },
+    });
+
+    expect(confirmButton.disabled).toBe(false);
+    fireEvent.click(confirmButton);
 
     expect(onSave).toHaveBeenCalledTimes(1);
+    expect(onSave.mock.calls[0][1]).toEqual({
+      cancellationReason: 'Guide is unavailable tonight.',
+    });
   });
 
   test('enables save when a free tour email template changes', () => {
@@ -687,14 +700,14 @@ describe('FreeTourScheduleEditorModal', () => {
     expect(screen.queryByText('1 day already has times')).not.toBeNull();
   });
 
-  test('shows the booking count for each visible time slot', () => {
+  test('shows booking and guest totals for each visible time slot', () => {
     render(
       <FreeTourScheduleEditorModal
         schedule={{
           isCustomized: true,
           slots: [
-            { date: '2099-06-15', time: '10:00', bookings: 3 },
-            { date: '2099-06-15', time: '13:00', bookings: 1 },
+            { date: '2099-06-15', time: '10:00', bookings: 3, bookedPeople: 7 },
+            { date: '2099-06-15', time: '13:00', bookings: 1, bookedPeople: 2 },
           ],
         }}
         setSchedule={jest.fn()}
@@ -706,10 +719,50 @@ describe('FreeTourScheduleEditorModal', () => {
 
     expect(
       screen.getByRole('button', { name: '10:00' }).querySelector('.free-tour-calendar-editor__time-count')?.textContent
-    ).toBe('3');
+    ).toBe('3(7)');
     expect(
       screen.getByRole('button', { name: '13:00' }).querySelector('.free-tour-calendar-editor__time-count')?.textContent
-    ).toBe('1');
+    ).toBe('1(2)');
+  });
+
+  test('shows 10:30 as the default morning slot', () => {
+    render(
+      <FreeTourScheduleEditorModal
+        schedule={{ isCustomized: true, slots: [] }}
+        setSchedule={jest.fn()}
+        onSave={jest.fn()}
+        onCancel={jest.fn()}
+        isSaving={false}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: '10:30' })).not.toBeNull();
+    expect(screen.getByRole('button', { name: '13:00' })).not.toBeNull();
+  });
+
+  test('adds a custom time for the selected day', () => {
+    function TestHarness() {
+      const [schedule, setSchedule] = useState(buildSchedule());
+
+      return (
+        <FreeTourScheduleEditorModal
+          schedule={schedule}
+          setSchedule={setSchedule}
+          onSave={jest.fn()}
+          onCancel={jest.fn()}
+          isSaving={false}
+        />
+      );
+    }
+
+    render(<TestHarness />);
+
+    fireEvent.change(screen.getByLabelText('Custom time'), {
+      target: { value: '15:45' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Add custom time' }));
+
+    expect(screen.getByRole('button', { name: '15:45' })).not.toBeNull();
   });
 
   test('selects the whole visible month with the icon shortcut', () => {

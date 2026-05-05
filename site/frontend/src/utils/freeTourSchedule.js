@@ -46,6 +46,9 @@ export const normalizeFreeTourSlots = (slots = []) => {
         date,
         time,
         bookings: Number.isFinite(Number(slot?.bookings)) ? Number(slot.bookings) : 0,
+        bookedPeople: Number.isFinite(Number(slot?.bookedPeople))
+          ? Number(slot.bookedPeople)
+          : 0,
       };
     })
     .filter(Boolean)

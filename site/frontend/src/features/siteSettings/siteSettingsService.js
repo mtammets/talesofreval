@@ -87,6 +87,30 @@ export const updateReviewSiteSettings = async (tokenOrFormData, maybeFormData) =
   return response.data;
 };
 
+export const updateHomeExploreBannerSiteSettings = async (
+  tokenOrPayload,
+  maybePayload
+) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/home-explore-banner`,
+    data: resolvePayload(tokenOrPayload, maybePayload),
+  });
+  return response.data;
+};
+
+export const updateVirtualTourPageSiteSettings = async (
+  tokenOrPayload,
+  maybePayload
+) => {
+  const response = await adminRequest({
+    method: 'put',
+    url: `${API_URL}/admin/virtual-tour-page`,
+    data: resolvePayload(tokenOrPayload, maybePayload),
+  });
+  return response.data;
+};
+
 export const updateContactPageSiteSettings = async (tokenOrFormData, maybeFormData) => {
   const response = await adminRequest({
     method: 'put',
@@ -123,6 +147,8 @@ const siteSettingsService = {
   updateServicesSiteSettings,
   updateTeamSiteSettings,
   updateReviewSiteSettings,
+  updateHomeExploreBannerSiteSettings,
+  updateVirtualTourPageSiteSettings,
   updateContactPageSiteSettings,
   updateFooterSiteSettings,
   updateFreeTourScheduleSiteSettings,

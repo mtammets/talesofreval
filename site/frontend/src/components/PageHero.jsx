@@ -9,6 +9,7 @@ function PageHero({
   backgroundImages = [],
   backgroundMedia = null,
   backgroundMediaItems = [],
+  initialImageIndex = 0,
   isEditable = false,
   onEditBackground,
   overlay = null,
@@ -54,15 +55,33 @@ function PageHero({
       : [];
   }, [backgroundImage, backgroundImages, backgroundMedia, backgroundMediaItems]);
   const heroImageSignature = heroMediaEntries.map((entry) => entry.src).join('||');
+  const resolvedInitialImageIndex =
+    Number.isInteger(initialImageIndex) &&
+    initialImageIndex >= 0 &&
+    initialImageIndex < heroMediaEntries.length
+      ? initialImageIndex
+      : 0;
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [loadedImageIndexes, setLoadedImageIndexes] = useState([]);
 
   useEffect(() => {
-    setActiveImageIndex(0);
-    setLoadedImageIndexes(
-      heroMediaEntries.length > 1 ? [0, 1] : heroMediaEntries.length ? [0] : []
-    );
-  }, [heroImageSignature, heroMediaEntries.length]);
+    if (!heroMediaEntries.length) {
+      setActiveImageIndex(0);
+      setLoadedImageIndexes([]);
+      return;
+    }
+
+    const initialIndexes =
+      heroMediaEntries.length > 1
+        ? [
+            resolvedInitialImageIndex,
+            (resolvedInitialImageIndex + 1) % heroMediaEntries.length,
+          ]
+        : [resolvedInitialImageIndex];
+
+    setActiveImageIndex(resolvedInitialImageIndex);
+    setLoadedImageIndexes([...new Set(initialIndexes)]);
+  }, [heroImageSignature, heroMediaEntries.length, resolvedInitialImageIndex]);
 
   useEffect(() => {
     if (heroMediaEntries.length < 2) {
@@ -113,8 +132,8 @@ function PageHero({
                       transformOrigin: mediaItem.objectPosition || '50% 50%',
                     }}
                     alt=""
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                    fetchpriority={index === 0 ? 'high' : 'auto'}
+                    loading={index === resolvedInitialImageIndex ? 'eager' : 'lazy'}
+                    fetchpriority={index === resolvedInitialImageIndex ? 'high' : 'auto'}
                     decoding="async"
                   />
                 </div>

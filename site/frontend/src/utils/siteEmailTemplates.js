@@ -12,6 +12,11 @@ export const SITE_EMAIL_TEMPLATE_TOKENS = Object.freeze([
   Object.freeze({ key: 'people', token: '{people}', label: 'Group size' }),
   Object.freeze({ key: 'email', token: '{email}', label: 'Guest email' }),
   Object.freeze({ key: 'message', token: '{message}', label: 'Message' }),
+  Object.freeze({
+    key: 'cancellation_reason',
+    token: '{cancellation_reason}',
+    label: 'Cancellation reason',
+  }),
   Object.freeze({ key: 'cancelled_list', token: '{cancelled_list}', label: 'Cancelled bookings list' }),
 ]);
 
@@ -36,7 +41,10 @@ export const DEFAULT_SITE_EMAIL_TEMPLATES = Object.freeze({
     subject: 'Free Tour Booking Cancellation',
     body: `Greetings!
 
-We are sorry to let you know that the free tour registration below has been cancelled.
+We are sorry to let you know that the free tour registration below has been cancelled for the following reason:
+
+{cancellation_reason}
+
 Tour date: {date_1}
 Name: {name}
 
@@ -61,6 +69,9 @@ Number of people: {people}`,
   freeTourCancellationSummary: Object.freeze({
     subject: 'Free Tour Booking Cancellation Summary',
     body: `The following free tour registrations were cancelled because their slot was removed:
+
+Cancellation reason:
+{cancellation_reason}
 
 {cancelled_list}`,
   }),
@@ -139,7 +150,7 @@ export const SITE_EMAIL_TEMPLATE_OPTIONS = Object.freeze([
     subjectLabel: 'Free tour cancellation subject',
     bodyLabel: 'Free tour cancellation body',
     ariaLabel: 'Edit Free tour cancellation email',
-    tokenKeys: ['date_1', 'date_2', 'time', 'name', 'people', 'email'],
+    tokenKeys: ['date_1', 'date_2', 'time', 'name', 'people', 'email', 'cancellation_reason'],
     fallback: DEFAULT_SITE_EMAIL_TEMPLATES.freeTourCancellation,
   }),
   Object.freeze({
@@ -165,7 +176,7 @@ export const SITE_EMAIL_TEMPLATE_OPTIONS = Object.freeze([
     subjectLabel: 'Free tour cancellation summary subject',
     bodyLabel: 'Free tour cancellation summary body',
     ariaLabel: 'Edit Free tour cancellation summary email',
-    tokenKeys: ['cancelled_list'],
+    tokenKeys: ['cancellation_reason', 'cancelled_list'],
     fallback: DEFAULT_SITE_EMAIL_TEMPLATES.freeTourCancellationSummary,
   }),
   Object.freeze({
@@ -334,6 +345,9 @@ const plainTextToHtml = (value) => {
     .join('');
 };
 
+const formatHtmlToken = (tokenValue) =>
+  escapeHtml(tokenValue).replace(/\r?\n/g, '<br />');
+
 const buildTokenChipMarkup = ({ token, label }) =>
   `<span class="free-tour-calendar-editor__merge-token" data-free-tour-token="${escapeAttribute(token)}" contenteditable="false">${escapeHtml(label)}</span>`;
 
@@ -402,6 +416,7 @@ export const buildSiteEmailPreviewTokens = ({
   people = 2,
   email = 'john@example.com',
   message = 'I would like to book a tour for Friday.\nPlease let me know the available options.',
+  cancellation_reason = 'The guide became unavailable due to illness.',
   cancelled_list = 'Sun Jun 15 2099 at 13:00 - John Doe (john@example.com)\nMon Jun 16 2099 at 10:00 - Jane Doe (jane@example.com)',
 } = {}) => ({
   event_type,
@@ -412,6 +427,7 @@ export const buildSiteEmailPreviewTokens = ({
   people,
   email,
   message,
+  cancellation_reason,
   cancelled_list,
 });
 
@@ -426,7 +442,7 @@ export const renderSiteEmailTemplatePreview = (
   const renderedBodySource = replaceTemplateTokens(
     normalized.body,
     tokens,
-    hasHtmlBody ? escapeHtml : (tokenValue) => String(tokenValue ?? '')
+    hasHtmlBody ? formatHtmlToken : (tokenValue) => String(tokenValue ?? '')
   );
 
   return {

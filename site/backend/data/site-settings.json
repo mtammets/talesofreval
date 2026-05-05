@@ -13,6 +13,7 @@
       "ee": "Pane oma kujutlusvõime kõnelema!"
     },
     "imageKey": "homeBg",
+    "defaultImageSrc": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1440w.webp",
     "images": [
       {
         "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1440w.webp",
@@ -215,50 +216,43 @@
       }
     ],
     "image": {
-      "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1440w.webp",
-      "name": "TUUL6405.webp",
+      "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1440w.webp",
+      "name": "1_Hero 1.webp",
       "width": 1440,
-      "height": 2160,
+      "height": 960,
       "format": "webp",
       "pixelRatio": 1,
-      "focusX": 51.49,
-      "focusY": 49.46,
-      "zoom": 1,
+      "focusX": 94.51,
+      "focusY": 24.75,
       "variants": [
         {
-          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-768w.webp",
+          "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-768w.webp",
           "width": 768,
-          "height": 1152,
+          "height": 512,
           "format": "webp"
         },
         {
-          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1024w.webp",
+          "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1024w.webp",
           "width": 1024,
-          "height": 1536,
+          "height": 683,
           "format": "webp"
         },
         {
-          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1280w.webp",
+          "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1280w.webp",
           "width": 1280,
-          "height": 1920,
+          "height": 853,
           "format": "webp"
         },
         {
-          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1440w.webp",
+          "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1440w.webp",
           "width": 1440,
-          "height": 2160,
+          "height": 960,
           "format": "webp"
         },
         {
-          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-1920w.webp",
-          "width": 1920,
-          "height": 2880,
-          "format": "webp"
-        },
-        {
-          "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-2133w.webp",
-          "width": 2133,
-          "height": 3200,
+          "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1800w.webp",
+          "width": 1800,
+          "height": 1200,
           "format": "webp"
         }
       ]
@@ -665,9 +659,31 @@
     "members": [
       {
         "key": "contact-member-1",
-        "name": "Tales of Reval Team",
+        "name": "Kaupo",
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
+        "payment_links": [
+          {
+            "name": "Wise",
+            "link": "https://wise.com/pay/me/kaupor2"
+          },
+          {
+            "name": "Apple Pay",
+            "link": "https://busk.co/70586/tip"
+          },
+          {
+            "name": "Google Pay",
+            "link": "https://busk.co/70586/tip"
+          },
+          {
+            "name": "PayPal",
+            "link": "https://paypal.me/Stimmlich"
+          },
+          {
+            "name": "Revolut",
+            "link": "https://revolut.me/stimmlich"
+          }
+        ],
         "imageKey": "contactMember1",
         "image": {
           "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-520w.webp",
@@ -708,9 +724,31 @@
       },
       {
         "key": "contact-member-2",
-        "name": "Tales of Reval Team",
+        "name": "Koit",
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
+        "payment_links": [
+          {
+            "name": "Wise",
+            "link": "https://wise.com/pay/me/koitgeorgp"
+          },
+          {
+            "name": "Apple Pay",
+            "link": ""
+          },
+          {
+            "name": "Google Pay",
+            "link": ""
+          },
+          {
+            "name": "PayPal",
+            "link": "https://paypal.me/Gregoriusdurchnacht"
+          },
+          {
+            "name": "Revolut",
+            "link": "https://revolut.me/koitgeqtru"
+          }
+        ],
         "imageKey": "contactMember2",
         "image": {
           "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-520w.webp",
@@ -751,9 +789,31 @@
       },
       {
         "key": "contact-member-3",
-        "name": "Guest Experience Host",
+        "name": "Nicole",
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
+        "payment_links": [
+          {
+            "name": "Wise",
+            "link": ""
+          },
+          {
+            "name": "Apple Pay",
+            "link": ""
+          },
+          {
+            "name": "Google Pay",
+            "link": ""
+          },
+          {
+            "name": "PayPal",
+            "link": "https://paypal.me/smolnicco"
+          },
+          {
+            "name": "Revolut",
+            "link": "https://revolut.me/marinicole"
+          }
+        ],
         "imageKey": "contactMember3",
         "image": {
           "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-520w.webp",
@@ -794,9 +854,31 @@
       },
       {
         "key": "contact-member-4",
-        "name": "Tales of Reval Host",
+        "name": "Ivar",
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
+        "payment_links": [
+          {
+            "name": "Wise",
+            "link": "https://wise.com/pay/me/ivarp13"
+          },
+          {
+            "name": "Apple Pay",
+            "link": ""
+          },
+          {
+            "name": "Google Pay",
+            "link": ""
+          },
+          {
+            "name": "PayPal",
+            "link": "https://paypal.me/wilhelmweltwanderer"
+          },
+          {
+            "name": "Revolut",
+            "link": "https://revolut.me/weltwanderer"
+          }
+        ],
         "imageKey": "contactMember4",
         "image": {
           "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-520w.webp",
@@ -847,9 +929,31 @@
     "teamMembers": [
       {
         "key": "contact-member-1",
-        "name": "Tales of Reval Team",
+        "name": "Kaupo",
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
+        "payment_links": [
+          {
+            "name": "Wise",
+            "link": "https://wise.com/pay/me/kaupor2"
+          },
+          {
+            "name": "Apple Pay",
+            "link": "https://busk.co/70586/tip"
+          },
+          {
+            "name": "Google Pay",
+            "link": "https://busk.co/70586/tip"
+          },
+          {
+            "name": "PayPal",
+            "link": "https://paypal.me/Stimmlich"
+          },
+          {
+            "name": "Revolut",
+            "link": "https://revolut.me/stimmlich"
+          }
+        ],
         "imageKey": "contactMember1",
         "image": {
           "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-520w.webp",
@@ -890,9 +994,31 @@
       },
       {
         "key": "contact-member-2",
-        "name": "Tales of Reval Team",
+        "name": "Koit",
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
+        "payment_links": [
+          {
+            "name": "Wise",
+            "link": "https://wise.com/pay/me/koitgeorgp"
+          },
+          {
+            "name": "Apple Pay",
+            "link": ""
+          },
+          {
+            "name": "Google Pay",
+            "link": ""
+          },
+          {
+            "name": "PayPal",
+            "link": "https://paypal.me/Gregoriusdurchnacht"
+          },
+          {
+            "name": "Revolut",
+            "link": "https://revolut.me/koitgeqtru"
+          }
+        ],
         "imageKey": "contactMember2",
         "image": {
           "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-520w.webp",
@@ -933,9 +1059,31 @@
       },
       {
         "key": "contact-member-3",
-        "name": "Guest Experience Host",
+        "name": "Nicole",
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
+        "payment_links": [
+          {
+            "name": "Wise",
+            "link": ""
+          },
+          {
+            "name": "Apple Pay",
+            "link": ""
+          },
+          {
+            "name": "Google Pay",
+            "link": ""
+          },
+          {
+            "name": "PayPal",
+            "link": "https://paypal.me/smolnicco"
+          },
+          {
+            "name": "Revolut",
+            "link": "https://revolut.me/marinicole"
+          }
+        ],
         "imageKey": "contactMember3",
         "image": {
           "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-520w.webp",
@@ -976,9 +1124,31 @@
       },
       {
         "key": "contact-member-4",
-        "name": "Tales of Reval Host",
+        "name": "Ivar",
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
+        "payment_links": [
+          {
+            "name": "Wise",
+            "link": "https://wise.com/pay/me/ivarp13"
+          },
+          {
+            "name": "Apple Pay",
+            "link": ""
+          },
+          {
+            "name": "Google Pay",
+            "link": ""
+          },
+          {
+            "name": "PayPal",
+            "link": "https://paypal.me/wilhelmweltwanderer"
+          },
+          {
+            "name": "Revolut",
+            "link": "https://revolut.me/weltwanderer"
+          }
+        ],
         "imageKey": "contactMember4",
         "image": {
           "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-520w.webp",
@@ -1063,14 +1233,90 @@
       "ee": "Tripadvisori arvustus"
     }
   },
+  "homeExploreBanner": {
+    "titleLine1": {
+      "en": "Explore Alone,",
+      "ee": "Avasta omas tempos,"
+    },
+    "titleLine2": {
+      "en": "Discover More!",
+      "ee": "avasta rohkem!"
+    },
+    "subtitle": {
+      "en": "Medieval adventure at your fingertips",
+      "ee": "Keskaegne seiklus sinu käeulatuses"
+    },
+    "readMoreLabel": {
+      "en": "Read more",
+      "ee": "Loe lähemalt"
+    },
+    "googlePlayUrl": "https://play.google.com/store/apps/details?id=com.leplace.global&pli=1",
+    "appStoreUrl": "https://apps.apple.com/ee/app/leplace-world/id1496776027"
+  },
+  "virtualTourPage": {
+    "titleLine1": {
+      "en": "Explore Alone,",
+      "ee": "Avasta omas tempos,"
+    },
+    "titleLine2": {
+      "en": "Discover More!",
+      "ee": "avasta rohkem!"
+    },
+    "subtitle": {
+      "en": "Location based app guided tours",
+      "ee": "Asukohapõhised äpijuhitud tuurid"
+    },
+    "contentTitle": {
+      "en": "Medieval adventure at your fingertips",
+      "ee": "Keskaegne seiklus sinu käeulatuses"
+    },
+    "featureItems": [
+      {
+        "en": "Your time, your pace!",
+        "ee": "Sinu aeg, sinu tempo!"
+      },
+      {
+        "en": "Interactive quizzes",
+        "ee": "Interaktiivsed viktoriinid"
+      },
+      {
+        "en": "Photo challenges",
+        "ee": "Fotoväljakutsed"
+      },
+      {
+        "en": "In-depth tour with storytelling",
+        "ee": "Põhjalik jutustav tuur"
+      }
+    ],
+    "priceLabel": "3.99 €",
+    "payNowLabel": {
+      "en": "Pay now",
+      "ee": "Maksa nüüd"
+    },
+    "googlePlayUrl": "https://play.google.com/store/apps/details?id=com.leplace.global&pli=1",
+    "appStoreUrl": "https://apps.apple.com/ee/app/leplace-world/id1496776027",
+    "aboutTitle": {
+      "en": "What is LePlace",
+      "ee": "Mis on LePlace"
+    },
+    "aboutCopy": {
+      "en": "LePlace transforms local tourism with interactive outdoor exploration games on your mobile phone and connects creators and organizations with people and places worldwide.",
+      "ee": "LePlace muudab kohaliku turismi mobiilis mängitavate interaktiivsete avastusmängudega ning ühendab loojad ja organisatsioonid inimeste ja paikadega üle kogu maailma."
+    },
+    "readMoreLabel": {
+      "en": "Read more",
+      "ee": "Loe lähemalt"
+    },
+    "readMoreUrl": "https://connect.leplace.online/storyline-talesofreval"
+  },
   "footer": {
     "freeTourHeading": {
       "en": "Join our free tour",
       "ee": "Liitu meie tasuta tuuriga"
     },
     "firstTime": {
-      "en": "Daily 10:00",
-      "ee": "Iga päev 10:00"
+      "en": "Daily 10:30",
+      "ee": "Iga päev 10:30"
     },
     "secondTime": {
       "en": "and 13:00",
@@ -1139,6 +1385,66 @@
     "isCustomized": true,
     "slots": [
       {
+        "id": "2026-05-11-13:00",
+        "date": "2026-05-11",
+        "time": "13:00",
+        "bookings": 0
+      },
+      {
+        "id": "2026-05-12-10:30",
+        "date": "2026-05-12",
+        "time": "10:30",
+        "bookings": 0
+      },
+      {
+        "id": "2026-05-12-13:00",
+        "date": "2026-05-12",
+        "time": "13:00",
+        "bookings": 0
+      },
+      {
+        "id": "2026-05-13-10:30",
+        "date": "2026-05-13",
+        "time": "10:30",
+        "bookings": 0
+      },
+      {
+        "id": "2026-05-13-13:00",
+        "date": "2026-05-13",
+        "time": "13:00",
+        "bookings": 0
+      },
+      {
+        "id": "2026-05-14-10:30",
+        "date": "2026-05-14",
+        "time": "10:30",
+        "bookings": 0
+      },
+      {
+        "id": "2026-05-14-13:00",
+        "date": "2026-05-14",
+        "time": "13:00",
+        "bookings": 0
+      },
+      {
+        "id": "2026-05-16-10:30",
+        "date": "2026-05-16",
+        "time": "10:30",
+        "bookings": 0
+      },
+      {
+        "id": "2026-05-16-13:00",
+        "date": "2026-05-16",
+        "time": "13:00",
+        "bookings": 0
+      },
+      {
+        "id": "2026-05-17-10:30",
+        "date": "2026-05-17",
+        "time": "10:30",
+        "bookings": 0
+      },
+      {
         "id": "2026-05-17-13:00",
         "date": "2026-05-17",
         "time": "13:00",
@@ -1153,7 +1459,7 @@
     },
     "freeTourCancellation": {
       "subject": "Free Tour Booking Cancellation",
-      "body": "Greetings!\n\nWe are sorry to let you know that the free tour registration below has been cancelled.\nTour date: {date_1}\nName: {name}\n\nIf you would like to join another tour, please visit https://www.talesofreval.ee or contact us at info@talesofreval.ee.\n\nWith warm regards\n\nTales of Reval\nhttps://www.talesofreval.ee\ninfo@talesofreval.ee\n+372 5560 4421"
+      "body": "<p>Greetings!</p><p><br></p><p>We are sorry to let you know that the free tour registration below has been cancelled for the following reason:</p><p>{cancellation_reason}</p><p>Tour date: {date_1}<br>Name: {name}</p><p>If you would like to join another tour, please visit <a href=\"https://www.talesofreval.ee\" rel=\"noopener noreferrer\" target=\"_blank\">https://www.talesofreval.ee</a> or contact us at info@talesofreval.ee.</p><p><br></p><p>With warm regards</p><p><br></p><p>Tales of Reval<br><a href=\"https://www.talesofreval.ee\" rel=\"noopener noreferrer\" target=\"_blank\">https://www.talesofreval.ee</a><br>info@talesofreval.ee<br>+372 5560 4421</p>"
     },
     "freeTourAdmin": {
       "subject": "Free Tour Booking",
@@ -1161,7 +1467,7 @@
     },
     "freeTourCancellationSummary": {
       "subject": "Free Tour Booking Cancellation Summary",
-      "body": "The following free tour registrations were cancelled because their slot was removed:\n\n{cancelled_list}"
+      "body": "The following free tour registrations were cancelled because their slot was removed:\n\nCancellation reason:\n{cancellation_reason}\n\n{cancelled_list}"
     },
     "bookingClient": {
       "subject": "Copy of Booking Email",
@@ -1173,7 +1479,7 @@
     },
     "contactClient": {
       "subject": "Copy of Contact Us Email",
-      "body": "Greetings!\n\nThis message includes a copy of the email sent to info@talesofreval.ee regarding your most recent contact us message.\n\nName: {name}\nEmail: {email}\n\nMessage:\n{message}"
+      "body": "<p>Greetings!</p><p><br></p><p>This message includes a copy of the email sent to info@talesofreval.ee regarding your most recent contact us message.</p><p><br></p><p>Name: {name}<br>Email: {email}</p><p>Message:<br>{message}</p>"
     },
     "contactAdmin": {
       "subject": "Contact Us",

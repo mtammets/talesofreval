@@ -170,7 +170,7 @@ const MISC_EE = {
 
 const FOOTER_EN = {
   "join-our-free-tour:": "Join our free tour",
-  "footer-first-time": "Daily 10:00",
+  "footer-first-time": "Daily 10:30",
   "footer-second-time": "and 13:00",
   "language-:-english": "Language: English",
   "duration:-90-minutes": "Duration: 90 minutes",
@@ -187,7 +187,7 @@ const FOOTER_EN = {
 
 const FOOTER_EE = {
   "join-our-free-tour:": "Liitu meie tasuta tuuriga",
-  "footer-first-time": "Iga päev 10:00",
+  "footer-first-time": "Iga päev 10:30",
   "footer-second-time": "ja 13:00",
   "language-:-english": "Keel: inglise",
   "duration:-90-minutes": "Kestus: 90 minutit",

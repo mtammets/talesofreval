@@ -106,11 +106,26 @@ const getActiveFreeTourBookings = async () => {
   return bookings.filter((booking) => booking.status === BOOKING_STATUS_ACTIVE);
 };
 
-const getFreeTourBookingCounts = async () => {
+const getFreeTourBookingStats = async () => {
   const bookings = await getActiveFreeTourBookings();
 
-  return bookings.reduce((counts, booking) => {
-    counts.set(booking.slotId, (counts.get(booking.slotId) || 0) + 1);
+  return bookings.reduce((stats, booking) => {
+    const current = stats.get(booking.slotId) || { bookings: 0, bookedPeople: 0 };
+
+    stats.set(booking.slotId, {
+      bookings: current.bookings + 1,
+      bookedPeople: current.bookedPeople + normalizePeople(booking.people),
+    });
+
+    return stats;
+  }, new Map());
+};
+
+const getFreeTourBookingCounts = async () => {
+  const bookingStats = await getFreeTourBookingStats();
+
+  return [...bookingStats.entries()].reduce((counts, [slotId, stats]) => {
+    counts.set(slotId, stats.bookings || 0);
     return counts;
   }, new Map());
 };
@@ -205,6 +220,7 @@ module.exports = {
   readFreeTourBookings,
   writeFreeTourBookings,
   getActiveFreeTourBookings,
+  getFreeTourBookingStats,
   getFreeTourBookingCounts,
   upsertFreeTourBooking,
   cancelFreeTourBookingsForSlotIds,

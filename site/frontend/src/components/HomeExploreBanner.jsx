@@ -6,22 +6,23 @@ import appStoreImage from '../img/home-explore-app-store.png';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRightUp } from '../icons/ArrowRightUp.tsx';
 import { getFallbackText } from '../content/fallbackContent';
+import { getLocalizedSiteText } from '../content/siteSettingsDefaults';
 
 const GOOGLE_PLAY_URL = 'https://play.google.com/store/apps/details?id=com.leplace.global&pli=1';
 const APP_STORE_URL = 'https://apps.apple.com/ee/app/leplace-world/id1496776027';
 
-function HomeExploreBanner({ texts = {}, language = 'en' }) {
+function HomeExploreBanner({ texts = {}, language = 'en', content = null }) {
   const navigate = useNavigate();
-  const bannerAriaLabel =
-    texts?.["explore-alone-discover-more"]?.text ||
-    getFallbackText('misc', 'explore-alone-discover-more', language, 'Explore Alone, Discover More');
   const exploreAloneText =
+    getLocalizedSiteText(content?.titleLine1, language) ||
     texts?.["explore-alone"]?.text ||
     getFallbackText('misc', 'explore-alone', language, 'Explore Alone,');
   const discoverMoreText =
+    getLocalizedSiteText(content?.titleLine2, language) ||
     texts?.["discover-more"]?.text ||
     getFallbackText('misc', 'discover-more', language, 'Discover More!');
   const subtitleText =
+    getLocalizedSiteText(content?.subtitle, language) ||
     texts?.["medieval-adventure-at-your-fingertips"]?.text ||
     getFallbackText(
       'misc',
@@ -30,8 +31,20 @@ function HomeExploreBanner({ texts = {}, language = 'en' }) {
       'Medieval adventure at your fingertips'
     );
   const readMoreText =
+    getLocalizedSiteText(content?.readMoreLabel, language) ||
     texts?.["read-more"]?.text ||
     getFallbackText('misc', 'read-more', language, 'Read more');
+  const bannerAriaLabel =
+    `${exploreAloneText} ${discoverMoreText}`.trim() ||
+    texts?.["explore-alone-discover-more"]?.text ||
+    getFallbackText(
+      'misc',
+      'explore-alone-discover-more',
+      language,
+      'Explore Alone, Discover More'
+    );
+  const googlePlayUrl = content?.googlePlayUrl || GOOGLE_PLAY_URL;
+  const appStoreUrl = content?.appStoreUrl || APP_STORE_URL;
   const phonePreviewAlt =
     language === 'ee'
       ? 'Tales of Revali GPS-mängu telefoni eelvaade'
@@ -99,7 +112,7 @@ function HomeExploreBanner({ texts = {}, language = 'en' }) {
 
       <a
         className="home-explore-banner__store home-explore-banner__store--google"
-        href={GOOGLE_PLAY_URL}
+        href={googlePlayUrl}
         target="_blank"
         rel="noopener noreferrer"
         onClick={stopBannerNavigation}
@@ -109,7 +122,7 @@ function HomeExploreBanner({ texts = {}, language = 'en' }) {
 
       <a
         className="home-explore-banner__store home-explore-banner__store--apple"
-        href={APP_STORE_URL}
+        href={appStoreUrl}
         target="_blank"
         rel="noopener noreferrer"
         onClick={stopBannerNavigation}
