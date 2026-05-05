@@ -39,6 +39,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
     {
       key: 'team',
       link: 'team',
+      imageKey: 'serviceTeam',
       image: team,
       title: compact ? FIGMA_SERVICE_TITLES.team : teamEventsText,
       description: null
@@ -46,6 +47,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
     {
       key: 'private',
       link: 'private',
+      imageKey: 'servicePrivate',
       image: private_tour,
       title: compact ? FIGMA_SERVICE_TITLES.private : privateTourText,
       description: null
@@ -53,6 +55,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
     {
       key: 'quick',
       link: 'quick',
+      imageKey: 'serviceQuick',
       image: quick,
       title: compact ? FIGMA_SERVICE_TITLES.quick : quickTourText,
       description: null
@@ -60,6 +63,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
     {
       key: 'destination',
       link: 'destination',
+      imageKey: 'serviceDestination',
       image: destination,
       title: compact ? FIGMA_SERVICE_TITLES.destination : destinationManagementText,
       description: null
@@ -67,6 +71,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
     {
       key: 'wedding',
       link: 'wedding',
+      imageKey: 'serviceWedding',
       image: pulmad,
       title: compact ? FIGMA_SERVICE_TITLES.wedding : fantasyWeddingsText,
       description: null
@@ -77,7 +82,14 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
       ? itemsOverride.map((item, index) => ({
         key: item.key || fallbackItems[index]?.key || `service-${index + 1}`,
         link: item.link || fallbackItems[index]?.link || `service-${index + 1}`,
-        image: item.image || resolveSiteImage(item.image, item.imageKey) || fallbackItems[index]?.image,
+        image:
+          item.image
+            ? {
+                ...item.image,
+                imageKey: item.imageKey || fallbackItems[index]?.imageKey || '',
+              }
+            : resolveSiteImage(item.image, item.imageKey) || fallbackItems[index]?.image,
+        imageKey: item.imageKey || fallbackItems[index]?.imageKey || '',
         title: getLocalizedSiteText(item.title, language, fallbackItems[index]?.title || ''),
         description: compact
           ? null
@@ -95,6 +107,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
                 key={item.key}
                 link={item.link}
                 image={item.image}
+                imageKey={item.imageKey}
                 title={item.title}
                 description={item.description}
                 compact={compact}
@@ -108,6 +121,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
                 key={item.key}
                 link={item.link}
                 image={item.image}
+                imageKey={item.imageKey}
                 title={item.title}
                 description={item.description}
                 compact={compact}
@@ -123,6 +137,7 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
                 key={item.key}
                 link={item.link}
                 image={item.image}
+                imageKey={item.imageKey}
                 title={item.title}
                 description={item.description}
                 compact={compact}

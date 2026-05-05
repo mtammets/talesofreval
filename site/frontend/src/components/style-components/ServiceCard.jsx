@@ -10,6 +10,7 @@ const SERVICE_CARD_MEDIA_SIZES = '(max-width: 768px) 100vw, (max-width: 1100px) 
 
 function ServiceCard({
   image,
+  imageKey = '',
   bgimage,
   title,
   mobile,
@@ -23,9 +24,16 @@ function ServiceCard({
   const imageValue = image || bgimage || '';
   const responsiveMedia =
     imageValue && typeof imageValue === 'object'
-      ? resolveSiteImageMedia(imageValue, '', SERVICE_CARD_MEDIA_SIZES)
+      ? resolveSiteImageMedia(
+          imageValue,
+          imageKey || imageValue?.imageKey || '',
+          SERVICE_CARD_MEDIA_SIZES
+        )
       : null;
-  const imageSrc = responsiveMedia?.src || imageValue?.src || imageValue || '';
+  const imageSrc =
+    responsiveMedia?.src ||
+    imageValue?.src ||
+    (typeof imageValue === 'string' ? imageValue : '');
   const imagePosition = responsiveMedia?.objectPosition || getImageObjectPosition(imageValue);
   const mobileImagePosition =
     responsiveMedia?.mobileObjectPosition || imagePosition;

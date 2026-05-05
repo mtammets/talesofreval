@@ -30,4 +30,29 @@ describe('ServiceCard', () => {
     expect(image?.style.getPropertyValue('--service-desktop-scale')).toBe('1.18');
     expect(image?.style.getPropertyValue('--service-mobile-scale')).toBe('1.64');
   });
+
+  test('keeps rendering a fallback asset when only crop metadata is saved', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <ServiceCard
+          link="team"
+          title="Team events"
+          imageKey="serviceTeam"
+          image={{
+            focusX: 42,
+            focusY: 58,
+            mobileFocusX: 51,
+            mobileFocusY: 49,
+            zoom: 1.12,
+            mobileZoom: 1.25,
+          }}
+        />
+      </MemoryRouter>
+    );
+
+    const image = container.querySelector('.service-media-image');
+
+    expect(image?.getAttribute('src')).toBeTruthy();
+    expect(image?.getAttribute('src')).not.toBe('[object Object]');
+  });
 });

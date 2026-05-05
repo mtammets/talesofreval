@@ -322,6 +322,7 @@ function HomeServicesEditorModal({
                     imageUrl={activePreviewUrl}
                     onChange={(focus) => updateItemImageFocus(activeItemIndex, focus)}
                     aspectRatio={HOMEPAGE_SERVICE_CARD_PREVIEW_RATIO}
+                    mobileAspectRatio="1 / 1"
                     label={null}
                     helpText={null}
                     allowZoom

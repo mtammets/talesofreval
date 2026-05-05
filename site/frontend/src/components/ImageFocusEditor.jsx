@@ -16,6 +16,7 @@ function ImageFocusEditor({
   imageUrl = '',
   onChange,
   aspectRatio = '1 / 1',
+  mobileAspectRatio = null,
   label = 'Preview',
   helpText = 'Drag the image until the visible view looks right.',
   previewVariant = 'default',
@@ -45,7 +46,9 @@ function ImageFocusEditor({
   );
   const showZoomControls = allowZoom || previewVariant === 'hero';
   const resolvedAspectRatio =
-    allowResponsiveCrop && activeViewport === 'mobile' ? '390 / 640' : aspectRatio;
+    allowResponsiveCrop && activeViewport === 'mobile'
+      ? mobileAspectRatio || '390 / 640'
+      : aspectRatio;
 
   useEffect(() => {
     if (!allowResponsiveCrop && activeViewport !== 'desktop') {
