@@ -120,6 +120,24 @@ const DEFAULT_GOOGLE_PLAY_URL =
   'https://play.google.com/store/apps/details?id=com.leplace.global&pli=1';
 const DEFAULT_APP_STORE_URL =
   'https://apps.apple.com/ee/app/leplace-world/id1496776027';
+const DEFAULT_PAYMENT_CARD_COPY = {
+  buttonLabel: {
+    en: 'Tip your guide',
+    ee: 'Jäta giidile jootraha',
+  },
+  title: {
+    en: 'Tip your guide',
+    ee: 'Jäta giidile jootraha',
+  },
+  intro: {
+    en: 'You enjoyed your tour? Or just wanna hug this guy, send us a tip! None of it goes to charity.',
+    ee: 'Kui tuur meeldis või tahad lihtsalt giidile tänu avaldada, saada tipp otse talle. Mitte sentigi ei lähe heategevusse.',
+  },
+  closeLabel: {
+    en: 'Cancel',
+    ee: 'Sulge',
+  },
+};
 
 const PAYMENT_METHODS = ['Wise', 'Apple Pay', 'Google Pay', 'PayPal', 'Revolut'];
 
@@ -185,6 +203,29 @@ const normalizeSocialLinks = (links = {}) => ({
   airbnb: links.airbnb || '',
 });
 
+const normalizePaymentCardCopy = (copy = {}) => ({
+  buttonLabel: localized(
+    copy.buttonLabel,
+    DEFAULT_PAYMENT_CARD_COPY.buttonLabel.en,
+    DEFAULT_PAYMENT_CARD_COPY.buttonLabel.ee
+  ),
+  title: localized(
+    copy.title,
+    DEFAULT_PAYMENT_CARD_COPY.title.en,
+    DEFAULT_PAYMENT_CARD_COPY.title.ee
+  ),
+  intro: localized(
+    copy.intro,
+    DEFAULT_PAYMENT_CARD_COPY.intro.en,
+    DEFAULT_PAYMENT_CARD_COPY.intro.ee
+  ),
+  closeLabel: localized(
+    copy.closeLabel,
+    DEFAULT_PAYMENT_CARD_COPY.closeLabel.en,
+    DEFAULT_PAYMENT_CARD_COPY.closeLabel.ee
+  ),
+});
+
 const normalizeSiteSettings = (settings = {}) => {
   const homeHeroImages = normalizeImageGallery(
     settings.homeHero?.images,
@@ -233,20 +274,24 @@ const normalizeSiteSettings = (settings = {}) => {
       const sharedTeamMembers = Array.isArray(settings.contactPage?.teamMembers) && settings.contactPage.teamMembers.length
         ? settings.contactPage.teamMembers
         : settings.homeTeam?.members;
+      const sharedPaymentCard = settings.contactPage?.paymentCard || settings.homeTeam?.paymentCard;
       const normalizedTeamHeading = localized(sharedTeamHeading);
       const normalizedTeamMembers = Array.isArray(sharedTeamMembers)
         ? sharedTeamMembers.map(normalizeTeamMember)
         : [];
+      const normalizedPaymentCard = normalizePaymentCardCopy(sharedPaymentCard);
 
       return {
         homeTeam: {
           heading: normalizedTeamHeading,
+          paymentCard: normalizedPaymentCard,
           members: normalizedTeamMembers,
         },
         contactPage: {
           imageKey: settings.contactPage?.imageKey || 'contactBg',
           image: settings.contactPage?.image ? imageShape(settings.contactPage.image) : null,
           teamHeading: normalizedTeamHeading,
+          paymentCard: normalizedPaymentCard,
           teamMembers: normalizedTeamMembers,
           formTitle: localized(settings.contactPage?.formTitle),
           nameLabel: localized(settings.contactPage?.nameLabel),

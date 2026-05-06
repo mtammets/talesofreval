@@ -30,6 +30,7 @@ import person3 from '../img/person3.webp';
 import bgcontact from '../img/bgcontact.webp';
 import storyBgImage from '../img/storybg.webp';
 import gpsGameImage from '../img/gps-game.webp';
+import { DEFAULT_PAYMENT_CARD_COPY } from './paymentCardDefaults';
 import { createEmptyPaymentLinks } from './paymentMethods';
 import { normalizeSiteEmailTemplates } from '../utils/siteEmailTemplates';
 
@@ -183,6 +184,7 @@ export const DEFAULT_SITE_SETTINGS = {
   },
   homeTeam: {
     heading: { en: 'Our team', ee: 'Meie tiim' },
+    paymentCard: DEFAULT_PAYMENT_CARD_COPY,
     members: [
       {
         key: 'member-1',
@@ -277,6 +279,7 @@ export const DEFAULT_SITE_SETTINGS = {
     imageKey: 'contactBg',
     image: null,
     teamHeading: { en: 'Our team', ee: 'Meie tiim' },
+    paymentCard: DEFAULT_PAYMENT_CARD_COPY,
     teamMembers: [
       {
         key: 'contact-member-1',

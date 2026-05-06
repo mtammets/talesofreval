@@ -4,22 +4,9 @@ import google_logo from '../img/google-logo.png';
 import paypal_logo from '../img/paypal-logo.png';
 import apple_logo from '../img/apple-logo.png';
 import wise_logo from '../img/wise-logo.png';
+import { getLocalizedSiteText } from '../content/siteSettingsDefaults';
+import { DEFAULT_PAYMENT_CARD_COPY } from '../content/paymentCardDefaults';
 import { normalizePaymentLinks } from '../content/paymentMethods';
-
-const PAYMENT_COPY = {
-  en: {
-    title: 'Tip your guide',
-    intro:
-      'You enjoyed your tour? Or just wanna hug this guy, send us a tip! None of it goes to charity.',
-    cancel: 'Cancel',
-  },
-  ee: {
-    title: 'Jäta giidile jootraha',
-    intro:
-      'Kui tuur meeldis või tahad lihtsalt giidile tänu avaldada, saada tipp otse talle. Mitte sentigi ei lähe heategevusse.',
-    cancel: 'Sulge',
-  },
-};
 
 const PAYMENT_METHOD_META = {
   Wise: {
@@ -78,9 +65,25 @@ const PaymentMethod = ({ name, link }) => {
   );
 };
 
-function PaymentCard({ links, closePaymentCard }) {
-  const language = localStorage.getItem('language') || 'en';
-  const copy = PAYMENT_COPY[language] || PAYMENT_COPY.en;
+function PaymentCard({ links, closePaymentCard, copy = null, language = null }) {
+  const resolvedLanguage = language || localStorage.getItem('language') || 'en';
+  const resolvedCopy = {
+    title: getLocalizedSiteText(
+      copy?.title,
+      resolvedLanguage,
+      getLocalizedSiteText(DEFAULT_PAYMENT_CARD_COPY.title, resolvedLanguage)
+    ),
+    intro: getLocalizedSiteText(
+      copy?.intro,
+      resolvedLanguage,
+      getLocalizedSiteText(DEFAULT_PAYMENT_CARD_COPY.intro, resolvedLanguage)
+    ),
+    closeLabel: getLocalizedSiteText(
+      copy?.closeLabel,
+      resolvedLanguage,
+      getLocalizedSiteText(DEFAULT_PAYMENT_CARD_COPY.closeLabel, resolvedLanguage)
+    ),
+  };
   const methods = useMemo(() => normalizePaymentLinks(links), [links]);
   const topRow = methods.slice(0, 3);
   const bottomRow = methods.slice(3);
@@ -115,8 +118,8 @@ function PaymentCard({ links, closePaymentCard }) {
         aria-labelledby="payment-card-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 id="payment-card-title">{copy.title}</h2>
-        <p className="payment-card__intro">{copy.intro}</p>
+        <h2 id="payment-card-title">{resolvedCopy.title}</h2>
+        <p className="payment-card__intro">{resolvedCopy.intro}</p>
 
         <div className="payment-card__row payment-card__row--three">
           {topRow.map((method) => (
@@ -136,7 +139,7 @@ function PaymentCard({ links, closePaymentCard }) {
             className="payment-card__cancel"
             onClick={closePaymentCard}
           >
-            {copy.cancel}
+            {resolvedCopy.closeLabel}
           </button>
         </div>
       </div>

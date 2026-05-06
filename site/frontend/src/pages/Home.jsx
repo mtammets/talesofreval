@@ -27,6 +27,7 @@ import {
   resolveSiteImageMedia,
   resolveSiteImageMediaList,
 } from '../content/siteSettingsDefaults';
+import { DEFAULT_PAYMENT_CARD_COPY } from '../content/paymentCardDefaults';
 import { normalizePaymentLinks } from '../content/paymentMethods';
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
@@ -87,6 +88,9 @@ function Home({
   );
   const [isPreparingHeroImages, setIsPreparingHeroImages] = useState(false);
   const [teamHeading, setTeamHeading] = useState(cloneValue(siteSettings.homeTeam.heading));
+  const [teamPaymentCard, setTeamPaymentCard] = useState(
+    cloneValue(siteSettings.homeTeam.paymentCard || DEFAULT_PAYMENT_CARD_COPY)
+  );
   const [teamMembers, setTeamMembers] = useState(
     cloneValue(siteSettings.homeTeam.members.map(normalizeTeamMember))
   );
@@ -123,6 +127,7 @@ function Home({
 
   useEffect(() => {
     setTeamHeading(cloneValue(siteSettings.homeTeam.heading));
+    setTeamPaymentCard(cloneValue(siteSettings.homeTeam.paymentCard || DEFAULT_PAYMENT_CARD_COPY));
     setTeamMembers(cloneValue(siteSettings.homeTeam.members.map(normalizeTeamMember)));
     setReviewHeading(cloneValue(siteSettings.homeReview.heading));
     setReviewText(cloneValue(siteSettings.homeReview.text));
@@ -395,6 +400,7 @@ function Home({
     try {
       const formData = new FormData();
       formData.append('heading', JSON.stringify(teamHeading));
+      formData.append('paymentCard', JSON.stringify(teamPaymentCard));
       formData.append('members', JSON.stringify(teamMembers));
       Object.entries(teamImageFiles).forEach(([index, file]) => {
         if (file) {
@@ -506,6 +512,7 @@ function Home({
           texts={resolvedMiscTexts}
           heading={siteSettings.homeTeam.heading}
           items={siteSettings.homeTeam.members}
+          paymentCard={siteSettings.homeTeam.paymentCard}
           showPaymentButton
           language={language}
           adminAction={
@@ -567,6 +574,7 @@ function Home({
       {adminToken && isTeamEditorOpen ? (
         <HomeTeamEditorModal
           heading={{ value: teamHeading, set: setTeamHeading }}
+          paymentCard={{ value: teamPaymentCard, set: setTeamPaymentCard }}
           members={{ value: teamMembers, set: setTeamMembers }}
           imageFiles={teamImageFiles}
           setImageFiles={setTeamImageFiles}
@@ -575,6 +583,9 @@ function Home({
             setIsTeamEditorOpen(false);
             setTeamImageFiles({});
             setTeamHeading(cloneValue(siteSettings.homeTeam.heading));
+            setTeamPaymentCard(
+              cloneValue(siteSettings.homeTeam.paymentCard || DEFAULT_PAYMENT_CARD_COPY)
+            );
             setTeamMembers(cloneValue(siteSettings.homeTeam.members));
           }}
           isSaving={isSavingSection === 'team'}

@@ -7,6 +7,7 @@ function OurTeam({
   showPaymentButton = false,
   heading,
   items,
+  paymentCard = null,
   language = 'en',
   adminAction = null,
 }) {
@@ -20,7 +21,13 @@ function OurTeam({
         <h2 className='padding-20-bottom'>{ourTeamText}</h2>
         {adminAction}
       </div>
-      <OurTeamList limit={limit} showPaymentButton={showPaymentButton} items={items} />
+      <OurTeamList
+        limit={limit}
+        showPaymentButton={showPaymentButton}
+        items={items}
+        paymentCard={paymentCard}
+        language={language}
+      />
     </div>
   );
 }

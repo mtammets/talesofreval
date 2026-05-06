@@ -22,6 +22,7 @@ import {
   resolveSiteImage,
   resolveSiteImageMedia,
 } from '../content/siteSettingsDefaults';
+import { DEFAULT_PAYMENT_CARD_COPY } from '../content/paymentCardDefaults';
 import { ArrowRight } from '../icons/ArrowRight.tsx';
 import {
   HERO_IMAGE_PREPARATION_OPTIONS,
@@ -35,7 +36,8 @@ const buildContactPageFormData = (
   contact,
   imageFiles = {},
   heroImageFile = null,
-  heroImage = undefined
+  heroImage = undefined,
+  paymentCard = undefined
 ) => {
   const formData = new FormData();
 
@@ -68,6 +70,10 @@ const buildContactPageFormData = (
     formData.append('image', JSON.stringify(heroImage));
   }
 
+  if (paymentCard !== undefined) {
+    formData.append('paymentCard', JSON.stringify(paymentCard));
+  }
+
   return formData;
 };
 
@@ -92,6 +98,9 @@ function ContactUs({
   const [isSavingContact, setIsSavingContact] = useState(false);
   const [isSavingHero, setIsSavingHero] = useState(false);
   const [contactTeamHeading, setContactTeamHeading] = useState(cloneValue(siteSettings.contactPage.teamHeading));
+  const [contactTeamPaymentCard, setContactTeamPaymentCard] = useState(
+    cloneValue(siteSettings.contactPage.paymentCard || DEFAULT_PAYMENT_CARD_COPY)
+  );
   const [contactTeamMembers, setContactTeamMembers] = useState(cloneValue(siteSettings.contactPage.teamMembers));
   const [contactTeamImageFiles, setContactTeamImageFiles] = useState({});
   const [contactForm, setContactForm] = useState(cloneValue(siteSettings.contactPage));
@@ -118,6 +127,9 @@ function ContactUs({
 
   useEffect(() => {
     setContactTeamHeading(cloneValue(siteSettings.contactPage.teamHeading));
+    setContactTeamPaymentCard(
+      cloneValue(siteSettings.contactPage.paymentCard || DEFAULT_PAYMENT_CARD_COPY)
+    );
     setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers));
     setContactForm(cloneValue(siteSettings.contactPage));
     setContactHeroDraftImage(cloneValue(siteSettings.contactPage.image || null));
@@ -184,7 +196,10 @@ function ContactUs({
         contactTeamHeading,
         contactTeamMembers,
         contactForm,
-        contactTeamImageFiles
+        contactTeamImageFiles,
+        null,
+        undefined,
+        contactTeamPaymentCard
       );
 
       const nextSettings = await siteSettingsService.updateContactPageSiteSettings(adminToken, formData);
@@ -435,6 +450,7 @@ function ContactUs({
       {adminToken && isTeamEditorOpen ? (
         <HomeTeamEditorModal
           heading={{ value: contactTeamHeading, set: setContactTeamHeading }}
+          paymentCard={{ value: contactTeamPaymentCard, set: setContactTeamPaymentCard }}
           members={{ value: contactTeamMembers, set: setContactTeamMembers }}
           imageFiles={contactTeamImageFiles}
           setImageFiles={setContactTeamImageFiles}
@@ -443,11 +459,14 @@ function ContactUs({
             setIsTeamEditorOpen(false);
             setContactTeamImageFiles({});
             setContactTeamHeading(cloneValue(siteSettings.contactPage.teamHeading));
+            setContactTeamPaymentCard(
+              cloneValue(siteSettings.contactPage.paymentCard || DEFAULT_PAYMENT_CARD_COPY)
+            );
             setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers));
           }}
           isSaving={isSavingTeam}
           modalTitle="Edit team"
-          modalDescription="Update the shared team cards used across the site."
+          modalDescription="Update the shared team cards and tip payment copy used across the site."
         />
       ) : null}
 

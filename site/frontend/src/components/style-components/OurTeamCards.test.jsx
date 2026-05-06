@@ -25,6 +25,21 @@ describe('storyteller cards', () => {
     expect(screen.queryByText('+372 5000 0000')).toBeNull();
   });
 
+  test('tippable storyteller card uses a custom button label when provided', () => {
+    render(
+      <OurTeamCard
+        image={null}
+        title="Guide Name"
+        links={[]}
+        startPayment={() => {}}
+        showPaymentButton
+        paymentButtonLabel="Leave a tip"
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Leave a tip' })).not.toBeNull();
+  });
+
   test('contact storyteller card shows only the name', () => {
     render(
       <ContactsTeamCard

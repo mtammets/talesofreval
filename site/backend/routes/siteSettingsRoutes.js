@@ -453,6 +453,7 @@ router.put(
     const settings = await readSiteSettings();
     const members = parseJsonField(req.body.members, settings.homeTeam.members);
     const heading = parseJsonField(req.body.heading, settings.homeTeam.heading);
+    const paymentCard = parseJsonField(req.body.paymentCard, settings.homeTeam.paymentCard);
 
     const fileMap = new Map((req.files || []).map((file) => [file.fieldname, file]));
     const processedImages = await Promise.all(
@@ -488,11 +489,13 @@ router.put(
       homeTeam: {
         ...settings.homeTeam,
         heading,
+        paymentCard,
         members: nextMembers,
       },
       contactPage: {
         ...settings.contactPage,
         teamHeading: heading,
+        paymentCard,
         teamMembers: nextMembers,
       },
     };
@@ -615,6 +618,10 @@ router.put(
     const settings = await readSiteSettings();
     const teamHeading = parseJsonField(req.body.teamHeading, settings.contactPage.teamHeading);
     const teamMembers = parseJsonField(req.body.teamMembers, settings.contactPage.teamMembers);
+    const paymentCard = parseJsonField(
+      req.body.paymentCard,
+      settings.contactPage.paymentCard || settings.homeTeam.paymentCard
+    );
     const providedHeroImage = parseJsonField(req.body.image, settings.contactPage.image);
     const fileMap = new Map((req.files || []).map((file) => [file.fieldname, file]));
     const processedTeamImages = await Promise.all(
@@ -663,12 +670,14 @@ router.put(
       homeTeam: {
         ...settings.homeTeam,
         heading: teamHeading,
+        paymentCard,
         members: nextTeamMembers,
       },
       contactPage: {
         ...settings.contactPage,
         image: nextHeroImage,
         teamHeading,
+        paymentCard,
         teamMembers: nextTeamMembers,
         formTitle: parseJsonField(req.body.formTitle, settings.contactPage.formTitle),
         nameLabel: parseJsonField(req.body.nameLabel, settings.contactPage.nameLabel),

@@ -5,7 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getStorytellers, reset } from '../features/storytellers/storytellerSlice';
 import PaymentCard from './PaymentCard';
 import { FALLBACK_STORYTELLERS } from '../content/fallbackContent';
-import { resolveSiteImage } from '../content/siteSettingsDefaults';
+import { getLocalizedSiteText, resolveSiteImage } from '../content/siteSettingsDefaults';
+import { DEFAULT_PAYMENT_CARD_COPY } from '../content/paymentCardDefaults';
 import { normalizePaymentLinks } from '../content/paymentMethods';
 
 const normalizeRosterImage = (image, imageKey = '') => {
@@ -17,11 +18,23 @@ const normalizeRosterImage = (image, imageKey = '') => {
   return fallbackSrc ? { src: fallbackSrc } : null;
 };
 
-function OurTeamList({ limit, showPaymentButton = false, items = null }) {
+function OurTeamList({
+  limit,
+  showPaymentButton = false,
+  items = null,
+  paymentCard = null,
+  language = 'en',
+}) {
   const dispatch = useDispatch();
   const { storytellers, isError, message } = useSelector((state) => state.storytellers);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [links, setLinks] = useState([]);
+  const resolvedLanguage = language || localStorage.getItem('language') || 'en';
+  const paymentButtonLabel = getLocalizedSiteText(
+    paymentCard?.buttonLabel,
+    resolvedLanguage,
+    getLocalizedSiteText(DEFAULT_PAYMENT_CARD_COPY.buttonLabel, resolvedLanguage)
+  );
 
   useEffect(() => {
     if (items?.length) {
@@ -77,6 +90,7 @@ function OurTeamList({ limit, showPaymentButton = false, items = null }) {
             links={storyteller.payment_links || []}
             startPayment={startPayment}
             showPaymentButton={showPaymentButton}
+            paymentButtonLabel={paymentButtonLabel}
           />
         ) : (
           <ContactsTeamCard
@@ -90,7 +104,12 @@ function OurTeamList({ limit, showPaymentButton = false, items = null }) {
       )}
 
       {paymentOpen ? (
-        <PaymentCard links={links} closePaymentCard={() => setPaymentOpen(false)} />
+        <PaymentCard
+          links={links}
+          copy={paymentCard}
+          language={resolvedLanguage}
+          closePaymentCard={() => setPaymentOpen(false)}
+        />
       ) : null}
     </div>
   );

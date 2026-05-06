@@ -7593,6 +7593,25 @@ button.year-event-switch.disabled{
   gap: 12px;
 }
 
+.home-team-editor__copy{
+  display: grid;
+  gap: 16px;
+}
+
+.home-team-editor__copy-header{
+  color: #202533;
+}
+
+.home-team-editor__copy-header strong{
+  font-size: 15px;
+}
+
+.home-team-editor__copy-header p{
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: rgba(32, 37, 51, 0.68);
+}
+
 .home-team-editor__actions{
   display: flex;
   justify-content: flex-end;

@@ -44,6 +44,7 @@ const reindexIndexedRecord = (record = {}, removedIndex) =>
 
 function HomeTeamEditorModal({
   heading,
+  paymentCard = null,
   members,
   imageFiles,
   setImageFiles,
@@ -90,6 +91,20 @@ function HomeTeamEditorModal({
     heading.set((current) => ({
       ...current,
       [language]: value,
+    }));
+  };
+
+  const updatePaymentCard = (field, language, value) => {
+    if (!paymentCard?.set) {
+      return;
+    }
+
+    paymentCard.set((current) => ({
+      ...current,
+      [field]: {
+        ...(current?.[field] || {}),
+        [language]: value,
+      },
     }));
   };
 
@@ -331,6 +346,97 @@ function HomeTeamEditorModal({
         </div>
 
         <div className="home-team-editor">
+          {paymentCard?.value ? (
+            <div className="home-team-editor__copy home-editor-card">
+              <div className="home-team-editor__copy-header">
+                <strong>Tip card copy</strong>
+                <p>Editable button and payment popup text shared across the team section.</p>
+              </div>
+
+              <div className="story-admin-grid two">
+                <label>
+                  Button label (EN)
+                  <input
+                    type="text"
+                    value={paymentCard.value.buttonLabel?.en || ''}
+                    onChange={(event) =>
+                      updatePaymentCard('buttonLabel', 'en', event.target.value)
+                    }
+                  />
+                </label>
+                <label>
+                  Button label (ET)
+                  <input
+                    type="text"
+                    value={paymentCard.value.buttonLabel?.ee || ''}
+                    onChange={(event) =>
+                      updatePaymentCard('buttonLabel', 'ee', event.target.value)
+                    }
+                  />
+                </label>
+              </div>
+
+              <div className="story-admin-grid two">
+                <label>
+                  Popup title (EN)
+                  <input
+                    type="text"
+                    value={paymentCard.value.title?.en || ''}
+                    onChange={(event) => updatePaymentCard('title', 'en', event.target.value)}
+                  />
+                </label>
+                <label>
+                  Popup title (ET)
+                  <input
+                    type="text"
+                    value={paymentCard.value.title?.ee || ''}
+                    onChange={(event) => updatePaymentCard('title', 'ee', event.target.value)}
+                  />
+                </label>
+              </div>
+
+              <div className="story-admin-grid two">
+                <label>
+                  Popup intro (EN)
+                  <textarea
+                    value={paymentCard.value.intro?.en || ''}
+                    onChange={(event) => updatePaymentCard('intro', 'en', event.target.value)}
+                  />
+                </label>
+                <label>
+                  Popup intro (ET)
+                  <textarea
+                    value={paymentCard.value.intro?.ee || ''}
+                    onChange={(event) => updatePaymentCard('intro', 'ee', event.target.value)}
+                  />
+                </label>
+              </div>
+
+              <div className="story-admin-grid two">
+                <label>
+                  Close button (EN)
+                  <input
+                    type="text"
+                    value={paymentCard.value.closeLabel?.en || ''}
+                    onChange={(event) =>
+                      updatePaymentCard('closeLabel', 'en', event.target.value)
+                    }
+                  />
+                </label>
+                <label>
+                  Close button (ET)
+                  <input
+                    type="text"
+                    value={paymentCard.value.closeLabel?.ee || ''}
+                    onChange={(event) =>
+                      updatePaymentCard('closeLabel', 'ee', event.target.value)
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+          ) : null}
+
           <div className="home-team-editor__header">
             <div className="home-team-editor__actions">
               <button
