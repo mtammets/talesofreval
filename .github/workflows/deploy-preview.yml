@@ -56,33 +56,26 @@ jobs:
       - name: Validate SSH private key
         run: ssh-keygen -y -f ~/.ssh/preview_deploy_key > /dev/null
 
-      - name: Add preview host key
+      - name: Prepare SSH known_hosts
         run: |
           set -euo pipefail
 
           touch ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-          for attempt in 1 2 3 4 5; do
-            echo "Scanning preview host key (attempt ${attempt}/5)..."
-
-            if ssh-keyscan -T 15 -H -p "$PREVIEW_PORT" "$PREVIEW_HOST" > /tmp/preview_known_hosts 2>/dev/null && [ -s /tmp/preview_known_hosts ]; then
-              cat /tmp/preview_known_hosts >> ~/.ssh/known_hosts
-              sort -u ~/.ssh/known_hosts -o ~/.ssh/known_hosts
-              exit 0
-            fi
-
-            sleep 5
-          done
-
-          echo "Failed to fetch preview host key from ${PREVIEW_HOST}:${PREVIEW_PORT}" >&2
-          exit 1
-
       - name: Test SSH connection
         run: |
           set -euo pipefail
 
-          ssh -i ~/.ssh/preview_deploy_key -p "$PREVIEW_PORT" "${PREVIEW_USER}@${PREVIEW_HOST}" 'echo "Connected to preview server."'
+          ssh \
+            -i ~/.ssh/preview_deploy_key \
+            -p "$PREVIEW_PORT" \
+            -o BatchMode=yes \
+            -o ConnectTimeout=20 \
+            -o StrictHostKeyChecking=accept-new \
+            -o UserKnownHostsFile=~/.ssh/known_hosts \
+            "${PREVIEW_USER}@${PREVIEW_HOST}" \
+            'echo "Connected to preview server."'
 
       - name: Sync preview files
         run: |
@@ -97,7 +90,7 @@ jobs:
             --exclude='frontend/node_modules/' \
             --exclude='backend/uploads/' \
             --exclude='uploads/' \
-            -e "ssh -i ~/.ssh/preview_deploy_key -p ${PREVIEW_PORT}" \
+            -e "ssh -i ~/.ssh/preview_deploy_key -p ${PREVIEW_PORT} -o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts" \
             site/ "${PREVIEW_USER}@${PREVIEW_HOST}:${REMOTE_PATH}/"
 
       - name: Reload preview app
@@ -106,7 +99,14 @@ jobs:
 
           REMOTE_PATH="/data01/${PREVIEW_USER}/domeenid/www.talesofreval.ee/tor-preview"
 
-          ssh -i ~/.ssh/preview_deploy_key -p "$PREVIEW_PORT" "${PREVIEW_USER}@${PREVIEW_HOST}" <<EOF
+          ssh \
+            -i ~/.ssh/preview_deploy_key \
+            -p "$PREVIEW_PORT" \
+            -o BatchMode=yes \
+            -o ConnectTimeout=20 \
+            -o StrictHostKeyChecking=accept-new \
+            -o UserKnownHostsFile=~/.ssh/known_hosts \
+            "${PREVIEW_USER}@${PREVIEW_HOST}" <<EOF
             set -e
             cd "$REMOTE_PATH"
             npm install --omit=dev
