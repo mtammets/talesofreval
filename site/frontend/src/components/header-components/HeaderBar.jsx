@@ -10,6 +10,7 @@ function HeaderBar({
   setOurServicesOpen,
   texts,
   misc_texts,
+  bookNowLabel,
   serviceItems,
   isEditMode = false,
   adminToken,
@@ -61,8 +62,12 @@ function HeaderBar({
           <div className="action language">
             <span onClick={setLanguage} style={{ cursor: "pointer" }}>{eestiKeelesText}</span>
           </div>
-          <div className="action book-now" onClick={() => setShowBookNow(true)}>
-            <BookNow texts={texts} />
+          <div className="action book-now">
+            <BookNow
+              texts={texts}
+              label={bookNowLabel}
+              onClick={() => setShowBookNow(true)}
+            />
           </div>
         </div>
       </div>

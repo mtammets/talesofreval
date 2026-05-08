@@ -5,7 +5,13 @@ import MobileServices from './MobileServices';
 import { Link, useLocation } from 'react-router-dom';
 import { scrollViewportTop } from '../../utils/scrollViewportTop';
 
-function MobileDropdown({ setOurServicesOpen, setShowBookNow, texts, misc_texts }) {
+function MobileDropdown({
+  setOurServicesOpen,
+  setShowBookNow,
+  texts,
+  misc_texts,
+  bookNowLabel,
+}) {
   const [mobileScreen, setMobileScreen] = useState(window.innerWidth < 768);
   const location = useLocation();
 
@@ -59,8 +65,8 @@ function MobileDropdown({ setOurServicesOpen, setShowBookNow, texts, misc_texts 
           <li><h4 className='padding-20-top padding-40-bottom'>{contactsText}</h4></li>
         </Link>
       </ul>
-      <div className="mobile-book-now-container" onClick={handleBookNow}>
-        <BookNow texts={texts} />
+      <div className="mobile-book-now-container">
+        <BookNow texts={texts} label={bookNowLabel} onClick={handleBookNow} />
       </div>
     </div>
   );

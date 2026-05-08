@@ -12,6 +12,8 @@ function HomeHeroEditorModal({
   setTitleLine2,
   subtitle,
   setSubtitle,
+  bookNowLabel,
+  setBookNowLabel,
   currentImages = [],
   currentImageUrls = [],
   setCurrentImages,
@@ -169,6 +171,29 @@ function HomeHeroEditorModal({
                 value={subtitle.ee}
                 onChange={(event) =>
                   setSubtitle((current) => ({ ...current, ee: event.target.value }))
+                }
+              />
+            </label>
+          </div>
+
+          <div className="story-admin-grid two">
+            <label>
+              Book now label (EN)
+              <input
+                type="text"
+                value={bookNowLabel.en}
+                onChange={(event) =>
+                  setBookNowLabel((current) => ({ ...current, en: event.target.value }))
+                }
+              />
+            </label>
+            <label>
+              Book now label (ET)
+              <input
+                type="text"
+                value={bookNowLabel.ee}
+                onChange={(event) =>
+                  setBookNowLabel((current) => ({ ...current, ee: event.target.value }))
                 }
               />
             </label>

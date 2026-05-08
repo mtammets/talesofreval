@@ -246,6 +246,11 @@ const normalizeSiteSettings = (settings = {}) => {
       titleLine1: localized(settings.homeHero?.titleLine1),
       titleLine2: localized(settings.homeHero?.titleLine2),
       subtitle: localized(settings.homeHero?.subtitle),
+      bookNowLabel: localized(
+        settings.homeHero?.bookNowLabel,
+        'Book now',
+        'Broneeri'
+      ),
       imageKey: settings.homeHero?.imageKey || '',
       defaultImageSrc: resolvePreferredImageSrc(
         homeHeroImages,

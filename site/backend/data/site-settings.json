@@ -12,6 +12,10 @@
       "en": "Let Your Imagination Find Its Voice!",
       "ee": "Pane oma kujutlusvõime kõnelema!"
     },
+    "bookNowLabel": {
+      "en": "Send a pigeon",
+      "ee": "Läheta kirjatuvi"
+    },
     "imageKey": "homeBg",
     "defaultImageSrc": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-1440w.webp",
     "images": [
@@ -25,6 +29,9 @@
         "focusX": 51.49,
         "focusY": 49.46,
         "zoom": 1,
+        "mobileFocusX": 51.49,
+        "mobileFocusY": 49.46,
+        "mobileZoom": 1,
         "variants": [
           {
             "src": "/uploads/site/1776680104855-264dbfd3-0cd3-4a16-93ba-9cadee432e17-768w.webp",
@@ -73,6 +80,10 @@
         "pixelRatio": 1,
         "focusX": 94.51,
         "focusY": 24.75,
+        "zoom": 1,
+        "mobileFocusX": 94.51,
+        "mobileFocusY": 24.75,
+        "mobileZoom": 1,
         "variants": [
           {
             "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-768w.webp",
@@ -115,6 +126,10 @@
         "pixelRatio": 2,
         "focusX": 49.55,
         "focusY": 33.53,
+        "zoom": 1,
+        "mobileFocusX": 49.55,
+        "mobileFocusY": 33.53,
+        "mobileZoom": 1,
         "variants": [
           {
             "src": "/uploads/site/1776675102372-8000bd82-c668-49bd-a0db-be60034a1986-768w.webp",
@@ -169,6 +184,10 @@
         "pixelRatio": 2,
         "focusX": 46.04,
         "focusY": 27.03,
+        "zoom": 1,
+        "mobileFocusX": 46.04,
+        "mobileFocusY": 27.03,
+        "mobileZoom": 1,
         "variants": [
           {
             "src": "/uploads/site/1776675283105-91e68070-5454-4652-a161-029ba7711ad2-768w.webp",
@@ -224,6 +243,10 @@
       "pixelRatio": 1,
       "focusX": 94.51,
       "focusY": 24.75,
+      "zoom": 1,
+      "mobileFocusX": 94.51,
+      "mobileFocusY": 24.75,
+      "mobileZoom": 1,
       "variants": [
         {
           "src": "/uploads/site/1776679236199-9ed5db4f-43f7-4635-aa05-6482426ca133-768w.webp",
@@ -531,6 +554,9 @@
           "focusX": 49.41,
           "focusY": 64.43,
           "zoom": 1,
+          "mobileFocusX": 49.41,
+          "mobileFocusY": 64.43,
+          "mobileZoom": 1,
           "variants": [
             {
               "src": "/uploads/site/1776686440463-10474cc8-aa66-4bfd-9dbf-9eb5c3c86262-320w.webp",
@@ -601,6 +627,9 @@
           "focusX": 41.19,
           "focusY": 50,
           "zoom": 1,
+          "mobileFocusX": 41.19,
+          "mobileFocusY": 50,
+          "mobileZoom": 1,
           "variants": [
             {
               "src": "/uploads/site/1776687129687-bd458ef9-88cf-4266-8b3b-75465a5401a6-320w.webp",
@@ -656,10 +685,31 @@
       "en": "Our team",
       "ee": "Meie tiim"
     },
+    "paymentCard": {
+      "buttonLabel": {
+        "en": "Tip your guide",
+        "ee": "Jäta giidile jootraha"
+      },
+      "title": {
+        "en": "Tip your guide",
+        "ee": "Jäta giidile jootraha"
+      },
+      "intro": {
+        "en": "You enjoyed your tour? Or just wanna hug this guy, send us a tip! None of it goes to charity.",
+        "ee": "Kui tuur meeldis või tahad lihtsalt giidile tänu avaldada, saada tipp otse talle. Mitte sentigi ei lähe heategevusse."
+      },
+      "closeLabel": {
+        "en": "Cancel",
+        "ee": "Sulge"
+      }
+    },
     "members": [
       {
         "key": "contact-member-1",
-        "name": "Kaupo",
+        "name": {
+          "en": "Kaupo",
+          "ee": "Kaupo"
+        },
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "payment_links": [
@@ -694,6 +744,10 @@
           "pixelRatio": 2,
           "focusX": 50,
           "focusY": 17.26,
+          "zoom": 1,
+          "mobileFocusX": 50,
+          "mobileFocusY": 17.26,
+          "mobileZoom": 1,
           "variants": [
             {
               "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-260w.webp",
@@ -724,7 +778,10 @@
       },
       {
         "key": "contact-member-2",
-        "name": "Koit",
+        "name": {
+          "en": "Koit",
+          "ee": "Koit"
+        },
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "payment_links": [
@@ -759,6 +816,10 @@
           "pixelRatio": 2,
           "focusX": 50.04,
           "focusY": 0,
+          "zoom": 1,
+          "mobileFocusX": 50.04,
+          "mobileFocusY": 0,
+          "mobileZoom": 1,
           "variants": [
             {
               "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-260w.webp",
@@ -789,7 +850,10 @@
       },
       {
         "key": "contact-member-3",
-        "name": "Nicole",
+        "name": {
+          "en": "Nicole",
+          "ee": "Nicole"
+        },
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "payment_links": [
@@ -824,6 +888,10 @@
           "pixelRatio": 2,
           "focusX": 48.2,
           "focusY": 14.92,
+          "zoom": 1,
+          "mobileFocusX": 48.2,
+          "mobileFocusY": 14.92,
+          "mobileZoom": 1,
           "variants": [
             {
               "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-260w.webp",
@@ -854,7 +922,10 @@
       },
       {
         "key": "contact-member-4",
-        "name": "Ivar",
+        "name": {
+          "en": "Ivar",
+          "ee": "Ivar"
+        },
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "payment_links": [
@@ -889,6 +960,10 @@
           "pixelRatio": 2,
           "focusX": 50,
           "focusY": 11.08,
+          "zoom": 1,
+          "mobileFocusX": 50,
+          "mobileFocusY": 11.08,
+          "mobileZoom": 1,
           "variants": [
             {
               "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-260w.webp",
@@ -926,10 +1001,31 @@
       "en": "Our team",
       "ee": "Meie tiim"
     },
+    "paymentCard": {
+      "buttonLabel": {
+        "en": "Tip your guide",
+        "ee": "Jäta giidile jootraha"
+      },
+      "title": {
+        "en": "Tip your guide",
+        "ee": "Jäta giidile jootraha"
+      },
+      "intro": {
+        "en": "You enjoyed your tour? Or just wanna hug this guy, send us a tip! None of it goes to charity.",
+        "ee": "Kui tuur meeldis või tahad lihtsalt giidile tänu avaldada, saada tipp otse talle. Mitte sentigi ei lähe heategevusse."
+      },
+      "closeLabel": {
+        "en": "Cancel",
+        "ee": "Sulge"
+      }
+    },
     "teamMembers": [
       {
         "key": "contact-member-1",
-        "name": "Kaupo",
+        "name": {
+          "en": "Kaupo",
+          "ee": "Kaupo"
+        },
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "payment_links": [
@@ -964,6 +1060,10 @@
           "pixelRatio": 2,
           "focusX": 50,
           "focusY": 17.26,
+          "zoom": 1,
+          "mobileFocusX": 50,
+          "mobileFocusY": 17.26,
+          "mobileZoom": 1,
           "variants": [
             {
               "src": "/uploads/site/1776671066511-ff079bbf-8fbe-4919-8686-a7272701ccc4-260w.webp",
@@ -994,7 +1094,10 @@
       },
       {
         "key": "contact-member-2",
-        "name": "Koit",
+        "name": {
+          "en": "Koit",
+          "ee": "Koit"
+        },
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "payment_links": [
@@ -1029,6 +1132,10 @@
           "pixelRatio": 2,
           "focusX": 50.04,
           "focusY": 0,
+          "zoom": 1,
+          "mobileFocusX": 50.04,
+          "mobileFocusY": 0,
+          "mobileZoom": 1,
           "variants": [
             {
               "src": "/uploads/site/1776670796809-e71d6ab3-669a-4544-baa7-bae9ba0546e1-260w.webp",
@@ -1059,7 +1166,10 @@
       },
       {
         "key": "contact-member-3",
-        "name": "Nicole",
+        "name": {
+          "en": "Nicole",
+          "ee": "Nicole"
+        },
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "payment_links": [
@@ -1094,6 +1204,10 @@
           "pixelRatio": 2,
           "focusX": 48.2,
           "focusY": 14.92,
+          "zoom": 1,
+          "mobileFocusX": 48.2,
+          "mobileFocusY": 14.92,
+          "mobileZoom": 1,
           "variants": [
             {
               "src": "/uploads/site/1776669438350-6fa76f7b-2072-4f1c-b114-1ac59f7778a0-260w.webp",
@@ -1124,7 +1238,10 @@
       },
       {
         "key": "contact-member-4",
-        "name": "Ivar",
+        "name": {
+          "en": "Ivar",
+          "ee": "Ivar"
+        },
         "email": "info@talesofreval.ee",
         "phone": "+372 5560 4421",
         "payment_links": [
@@ -1159,6 +1276,10 @@
           "pixelRatio": 2,
           "focusX": 50,
           "focusY": 11.08,
+          "zoom": 1,
+          "mobileFocusX": 50,
+          "mobileFocusY": 11.08,
+          "mobileZoom": 1,
           "variants": [
             {
               "src": "/uploads/site/1776671132413-c88da2d5-db4b-4fc4-81af-465318f9762b-260w.webp",
@@ -1388,67 +1509,78 @@
         "id": "2026-05-11-13:00",
         "date": "2026-05-11",
         "time": "13:00",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       },
       {
         "id": "2026-05-12-10:30",
         "date": "2026-05-12",
         "time": "10:30",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       },
       {
         "id": "2026-05-12-13:00",
         "date": "2026-05-12",
         "time": "13:00",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       },
       {
         "id": "2026-05-13-10:30",
         "date": "2026-05-13",
         "time": "10:30",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       },
       {
         "id": "2026-05-13-13:00",
         "date": "2026-05-13",
         "time": "13:00",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       },
       {
         "id": "2026-05-14-10:30",
         "date": "2026-05-14",
         "time": "10:30",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       },
       {
         "id": "2026-05-14-13:00",
         "date": "2026-05-14",
         "time": "13:00",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       },
       {
         "id": "2026-05-16-10:30",
         "date": "2026-05-16",
         "time": "10:30",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       },
       {
         "id": "2026-05-16-13:00",
         "date": "2026-05-16",
         "time": "13:00",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       },
       {
         "id": "2026-05-17-10:30",
         "date": "2026-05-17",
         "time": "10:30",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       },
       {
         "id": "2026-05-17-13:00",
         "date": "2026-05-17",
         "time": "13:00",
-        "bookings": 0
+        "bookings": 0,
+        "bookedPeople": 0
       }
     ]
   },

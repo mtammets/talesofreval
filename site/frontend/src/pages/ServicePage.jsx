@@ -21,6 +21,7 @@ import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
 import {
   FALLBACK_MISC_TEXTS,
   FALLBACK_MISC_TEXTS_EE,
+  getFallbackText,
 } from '../content/fallbackContent';
 import { getFallbackService } from '../content/fallbackServices';
 import {
@@ -217,6 +218,11 @@ function ServicePage({
   const language = localStorage.getItem('language') || 'en';
   const { service, isLoading, isError, message } = useSelector((state) => state.services);
   const { misc_texts } = useSelector((state) => state.texts);
+  const bookNowLabel = getLocalizedSiteText(
+    siteSettings?.homeHero?.bookNowLabel,
+    language,
+    getFallbackText('header', 'book-now', language, 'Book now')
+  );
 
   const [isHeroEditorOpen, setIsHeroEditorOpen] = useState(false);
   const [serviceHeroImageFile, setServiceHeroImageFile] = useState(null);
@@ -722,11 +728,12 @@ function ServicePage({
           <div className="service-review-container">
             <h4 className="cardo padding-20-bottom">{review}</h4>
             <p className="padding-20-bottom">{reviewAuthor}</p>
-            <div
-              className="service-page-review-book-now"
-              onClick={() => setShowBookNow(true)}
-            >
-              <BookNow texts={misc_texts} />
+            <div className="service-page-review-book-now">
+              <BookNow
+                texts={misc_texts}
+                label={bookNowLabel}
+                onClick={() => setShowBookNow(true)}
+              />
             </div>
           </div>
         </div>

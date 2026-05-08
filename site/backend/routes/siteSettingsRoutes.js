@@ -223,6 +223,10 @@ router.put(
         titleLine1: parseJsonField(req.body.titleLine1, settings.homeHero.titleLine1),
         titleLine2: parseJsonField(req.body.titleLine2, settings.homeHero.titleLine2),
         subtitle: parseJsonField(req.body.subtitle, settings.homeHero.subtitle),
+        bookNowLabel: parseJsonField(
+          req.body.bookNowLabel,
+          settings.homeHero.bookNowLabel
+        ),
         defaultImageSrc,
         images: nextHeroImages,
         image: nextHeroImages.find((image) => image?.src === defaultImageSrc) || nextHeroImages[0] || null,

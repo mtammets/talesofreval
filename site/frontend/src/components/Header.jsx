@@ -4,9 +4,11 @@ import DesktopHeader from './header-components/DesktopHeader.jsx';
 import MobileHeader from './header-components/MobileHeader.jsx';
 import { getHeaderTexts, getMiscTexts, reset } from '../features/texts/textSlice';
 import {
+  getFallbackText,
   getFallbackTextsForCategory,
   hasTextEntries,
 } from '../content/fallbackContent';
+import { getLocalizedSiteText } from '../content/siteSettingsDefaults';
 
 function Header({
   setShowBookNow,
@@ -55,6 +57,11 @@ function Header({
   const resolvedMiscTexts = hasTextEntries(misc_texts)
     ? misc_texts
     : getFallbackTextsForCategory('misc', language);
+  const resolvedBookNowLabel = getLocalizedSiteText(
+    siteSettings?.homeHero?.bookNowLabel,
+    language,
+    getFallbackText('header', 'book-now', language, 'Book now')
+  );
   const isVirtualPage = window.location.pathname.startsWith('/virtual');
 
   return (
@@ -65,6 +72,7 @@ function Header({
           virtual={isVirtualPage}
           texts={resolvedHeaderTexts}
           misc_texts={resolvedMiscTexts}
+          bookNowLabel={resolvedBookNowLabel}
           setShowBookNow={setShowBookNow}
           adminToken={adminToken}
           setAdminToken={setAdminToken}
@@ -76,6 +84,7 @@ function Header({
           virtual={isVirtualPage}
           texts={resolvedHeaderTexts}
           misc_texts={resolvedMiscTexts}
+          bookNowLabel={resolvedBookNowLabel}
           setShowBookNow={setShowBookNow}
           adminToken={adminToken}
           setAdminToken={setAdminToken}

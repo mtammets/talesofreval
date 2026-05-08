@@ -107,6 +107,9 @@ function Home({
   const [heroTitleLine1, setHeroTitleLine1] = useState(cloneValue(siteSettings.homeHero.titleLine1));
   const [heroTitleLine2, setHeroTitleLine2] = useState(cloneValue(siteSettings.homeHero.titleLine2));
   const [heroSubtitle, setHeroSubtitle] = useState(cloneValue(siteSettings.homeHero.subtitle));
+  const [heroBookNowLabel, setHeroBookNowLabel] = useState(
+    cloneValue(siteSettings.homeHero.bookNowLabel)
+  );
 
   useEffect(() => {
     if (localStorage.getItem('language') === null) {
@@ -138,6 +141,7 @@ function Home({
     setHeroTitleLine1(cloneValue(siteSettings.homeHero.titleLine1));
     setHeroTitleLine2(cloneValue(siteSettings.homeHero.titleLine2));
     setHeroSubtitle(cloneValue(siteSettings.homeHero.subtitle));
+    setHeroBookNowLabel(cloneValue(siteSettings.homeHero.bookNowLabel));
     setRetainedHeroImages(cloneValue(siteSettings.homeHero.images || []));
     setHeroDefaultImageKey(
       getInitialHomeHeroDefaultDraftKey(
@@ -348,6 +352,7 @@ function Home({
     setHeroTitleLine1(cloneValue(siteSettings.homeHero.titleLine1));
     setHeroTitleLine2(cloneValue(siteSettings.homeHero.titleLine2));
     setHeroSubtitle(cloneValue(siteSettings.homeHero.subtitle));
+    setHeroBookNowLabel(cloneValue(siteSettings.homeHero.bookNowLabel));
     setRetainedHeroImages(cloneValue(siteSettings.homeHero.images || []));
     setHeroDefaultImageKey(
       getInitialHomeHeroDefaultDraftKey(
@@ -366,6 +371,7 @@ function Home({
       formData.append('titleLine1', JSON.stringify(heroTitleLine1));
       formData.append('titleLine2', JSON.stringify(heroTitleLine2));
       formData.append('subtitle', JSON.stringify(heroSubtitle));
+      formData.append('bookNowLabel', JSON.stringify(heroBookNowLabel));
       formData.append('retainedImages', JSON.stringify(retainedHeroImages));
       formData.append('newImages', JSON.stringify(heroNewImages));
       const selectedDefaultItem =
@@ -570,6 +576,8 @@ function Home({
           setTitleLine2={setHeroTitleLine2}
           subtitle={heroSubtitle}
           setSubtitle={setHeroSubtitle}
+          bookNowLabel={heroBookNowLabel}
+          setBookNowLabel={setHeroBookNowLabel}
         />
       ) : null}
 

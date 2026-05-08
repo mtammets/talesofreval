@@ -17,6 +17,7 @@ function MobileHeader({
   setShowBookNow,
   texts,
   misc_texts,
+  bookNowLabel,
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -95,8 +96,8 @@ function MobileHeader({
                 <span onClick={setLanguage} style={{ cursor: "pointer" }}>{languageSwitchText}</span>
               </div>
             ) : (
-              <div className="mobile-book-now" onClick={handleBookNow}>
-                <BookNow texts={texts} />
+              <div className="mobile-book-now">
+                <BookNow texts={texts} label={bookNowLabel} onClick={handleBookNow} />
               </div>
             )}
 
@@ -109,7 +110,13 @@ function MobileHeader({
             </div>
           </div>
           {ourServicesOpen && (
-            <MobileDropdown texts={texts} misc_texts={misc_texts} setShowBookNow={setShowBookNow} setOurServicesOpen={setOurServicesOpen} />
+            <MobileDropdown
+              texts={texts}
+              misc_texts={misc_texts}
+              bookNowLabel={bookNowLabel}
+              setShowBookNow={setShowBookNow}
+              setOurServicesOpen={setOurServicesOpen}
+            />
           )}
         </div>
 

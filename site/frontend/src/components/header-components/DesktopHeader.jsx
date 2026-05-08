@@ -14,6 +14,7 @@ function DesktopHeader({
   setShowBookNow,
   texts,
   misc_texts,
+  bookNowLabel,
   serviceItems,
   isEditMode = false,
   adminToken,
@@ -89,6 +90,7 @@ function DesktopHeader({
         <HeaderBar
           texts={texts}
           misc_texts={misc_texts}
+          bookNowLabel={bookNowLabel}
           setShowBookNow={setShowBookNow}
           ourServicesOpen={ourServicesOpen}
           setOurServicesOpen={setOurServicesOpen}

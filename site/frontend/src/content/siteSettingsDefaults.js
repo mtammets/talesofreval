@@ -91,6 +91,10 @@ export const DEFAULT_SITE_SETTINGS = {
       en: 'Let Your Imagination Find Its Voice!',
       ee: 'Lase oma kujutlusvõimel hääl leida!',
     },
+    bookNowLabel: {
+      en: 'Book now',
+      ee: 'Broneeri',
+    },
     imageKey: 'homeBg',
     defaultImageSrc: '',
     images: [],
