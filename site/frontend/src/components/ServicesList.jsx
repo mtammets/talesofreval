@@ -15,6 +15,18 @@ const FIGMA_SERVICE_TITLES = {
   wedding: 'Fantasy Weddings'
 };
 
+const hasConfiguredImageSource = (image) => {
+  if (!image || typeof image !== 'object') {
+    return false;
+  }
+
+  if (image.src) {
+    return true;
+  }
+
+  return Array.isArray(image.variants) && image.variants.some((variant) => variant?.src);
+};
+
 function ServicesList({ texts, compact = false, itemsOverride = null, language = 'en' }) {
   const [smallScreen, setSmallScreen] = useState(window.innerWidth < 1100 && window.innerWidth > 768);
 
@@ -86,6 +98,13 @@ function ServicesList({ texts, compact = false, itemsOverride = null, language =
           item.image
             ? {
                 ...item.image,
+                src:
+                  hasConfiguredImageSource(item.image)
+                    ? item.image.src
+                    : resolveSiteImage(
+                        item.image,
+                        item.imageKey || fallbackItems[index]?.imageKey || ''
+                      ),
                 imageKey: item.imageKey || fallbackItems[index]?.imageKey || '',
               }
             : resolveSiteImage(item.image, item.imageKey) || fallbackItems[index]?.image,

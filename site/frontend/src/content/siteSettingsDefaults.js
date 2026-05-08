@@ -1,9 +1,7 @@
 import homeBg from '../img/home-bg.webp';
-import teamImage from '../img/team.webp';
 import privateImage from '../img/private.webp';
 import quickImage from '../img/quick.webp';
 import destinationImage from '../img/destination.webp';
-import weddingImage from '../img/pulmad.webp';
 import teamHeroImage from '../img/team-background.webp';
 import privateHeroImage from '../img/privatebg.webp';
 import quickHeroImage from '../img/quickbg.webp';
@@ -36,11 +34,11 @@ import { normalizeSiteEmailTemplates } from '../utils/siteEmailTemplates';
 
 export const SITE_IMAGE_ASSETS = {
   homeBg,
-  serviceTeam: teamImage,
+  serviceTeam: teamSectionImage3,
   servicePrivate: privateImage,
   serviceQuick: quickImage,
   serviceDestination: destinationImage,
-  serviceWedding: weddingImage,
+  serviceWedding: weddingSectionImage1,
   serviceTeamHero: teamHeroImage,
   servicePrivateHero: privateHeroImage,
   serviceQuickHero: quickHeroImage,
