@@ -34,6 +34,47 @@ const loadImageElement = (file) =>
     image.src = objectUrl;
   });
 
+const loadImageBitmap = async (file) => {
+  if (typeof createImageBitmap !== 'function') {
+    return null;
+  }
+
+  try {
+    // Normalize EXIF orientation before drawing so phone photos keep their real layout.
+    return await createImageBitmap(file, {
+      imageOrientation: 'from-image',
+    });
+  } catch (error) {
+    return null;
+  }
+};
+
+const loadImageSource = async (file) => {
+  const bitmap = await loadImageBitmap(file);
+
+  if (bitmap) {
+    return {
+      source: bitmap,
+      width: bitmap.width || 0,
+      height: bitmap.height || 0,
+      cleanup: () => {
+        if (typeof bitmap.close === 'function') {
+          bitmap.close();
+        }
+      },
+    };
+  }
+
+  const image = await loadImageElement(file);
+
+  return {
+    source: image,
+    width: image.naturalWidth || image.width,
+    height: image.naturalHeight || image.height,
+    cleanup: () => {},
+  };
+};
+
 const replaceExtension = (filename = '', extension = '.webp') => {
   const baseName = filename.replace(/\.[^.]+$/, '') || 'image';
   return `${baseName}${extension}`;
@@ -96,64 +137,64 @@ export const prepareImageFileForUpload = async (file, options = {}) => {
     ...HERO_IMAGE_PREPARATION_OPTIONS,
     ...options,
   };
-  const image = await loadImageElement(file);
-  const targetDimensions = fitWithin(
-    image.naturalWidth || image.width,
-    image.naturalHeight || image.height,
-    settings.maxWidth,
-    settings.maxHeight
-  );
-  const needsTransform = shouldTransformImage({
-    file,
-    width: image.naturalWidth || image.width,
-    height: image.naturalHeight || image.height,
-    maxInputBytes: settings.maxInputBytes,
-    maxWidth: settings.maxWidth,
-    maxHeight: settings.maxHeight,
-  });
+  const { source, width, height, cleanup } = await loadImageSource(file);
 
-  if (!needsTransform && file.size <= settings.maxUploadBytes) {
-    return file;
-  }
+  try {
+    const targetDimensions = fitWithin(width, height, settings.maxWidth, settings.maxHeight);
+    const needsTransform = shouldTransformImage({
+      file,
+      width,
+      height,
+      maxInputBytes: settings.maxInputBytes,
+      maxWidth: settings.maxWidth,
+      maxHeight: settings.maxHeight,
+    });
 
-  const canvas = buildCanvas(targetDimensions.width, targetDimensions.height);
-  const context = canvas.getContext('2d', { alpha: false });
-
-  if (!context) {
-    throw new Error('Could not open browser image processor.');
-  }
-
-  context.drawImage(image, 0, 0, targetDimensions.width, targetDimensions.height);
-
-  let bestBlob = null;
-
-  for (const quality of settings.qualitySteps) {
-    const blob = await canvasToBlob(canvas, settings.outputType, quality);
-
-    if (!bestBlob || blob.size < bestBlob.size) {
-      bestBlob = blob;
+    if (!needsTransform && file.size <= settings.maxUploadBytes) {
+      return file;
     }
 
-    if (blob.size <= settings.targetBytes) {
-      bestBlob = blob;
-      break;
+    const canvas = buildCanvas(targetDimensions.width, targetDimensions.height);
+    const context = canvas.getContext('2d', { alpha: false });
+
+    if (!context) {
+      throw new Error('Could not open browser image processor.');
     }
-  }
 
-  if (!bestBlob) {
-    throw new Error('Could not optimize image for upload.');
-  }
+    context.drawImage(source, 0, 0, targetDimensions.width, targetDimensions.height);
 
-  if (bestBlob.size > settings.maxUploadBytes) {
-    throw new Error(
-      `Image "${file.name}" is still too large after optimization. Try a different source image.`
-    );
-  }
+    let bestBlob = null;
 
-  return new File([bestBlob], replaceExtension(file.name, '.webp'), {
-    type: bestBlob.type || settings.outputType,
-    lastModified: Date.now(),
-  });
+    for (const quality of settings.qualitySteps) {
+      const blob = await canvasToBlob(canvas, settings.outputType, quality);
+
+      if (!bestBlob || blob.size < bestBlob.size) {
+        bestBlob = blob;
+      }
+
+      if (blob.size <= settings.targetBytes) {
+        bestBlob = blob;
+        break;
+      }
+    }
+
+    if (!bestBlob) {
+      throw new Error('Could not optimize image for upload.');
+    }
+
+    if (bestBlob.size > settings.maxUploadBytes) {
+      throw new Error(
+        `Image "${file.name}" is still too large after optimization. Try a different source image.`
+      );
+    }
+
+    return new File([bestBlob], replaceExtension(file.name, '.webp'), {
+      type: bestBlob.type || settings.outputType,
+      lastModified: Date.now(),
+    });
+  } finally {
+    cleanup();
+  }
 };
 
 export const prepareImageFilesForUpload = async (files = [], options = {}) => {

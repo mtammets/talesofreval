@@ -7,7 +7,7 @@ function BookNow({ texts, label = null, onClick = undefined }) {
     typeof window !== 'undefined'
       ? window.localStorage.getItem('language') || 'en'
       : 'en';
-  const [showRestingPigeon, setShowRestingPigeon] = useState(false);
+  const [showRestingPigeon, setShowRestingPigeon] = useState(true);
   const fallbackLabel = language === 'ee' ? 'Broneeri' : 'Book now';
   const bookNowText = label || texts?.["book-now"]?.text || fallbackLabel;
   const activeIcon = showRestingPigeon ? restingPigeonIcon : mailPigeonIcon;

@@ -8,16 +8,16 @@ describe('BookNow', () => {
     const button = screen.getByRole('button', { name: 'Reserve now' });
     const icon = container.querySelector('.button-icon');
 
-    expect(icon?.getAttribute('data-icon-state')).toBe('mail-pigeon');
-
-    fireEvent.click(button);
-
-    expect(handleClick).toHaveBeenCalledTimes(1);
     expect(icon?.getAttribute('data-icon-state')).toBe('resting-pigeon');
 
     fireEvent.click(button);
 
-    expect(handleClick).toHaveBeenCalledTimes(2);
+    expect(handleClick).toHaveBeenCalledTimes(1);
     expect(icon?.getAttribute('data-icon-state')).toBe('mail-pigeon');
+
+    fireEvent.click(button);
+
+    expect(handleClick).toHaveBeenCalledTimes(2);
+    expect(icon?.getAttribute('data-icon-state')).toBe('resting-pigeon');
   });
 });
