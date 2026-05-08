@@ -50,6 +50,8 @@ const frontendPort = Number(process.env.FRONTEND_PORT || 5173);
 const backendPort = Number(process.env.BACKEND_PORT || 5020);
 const localUrl = `http://localhost:${frontendPort}/`;
 const networkUrls = getNetworkUrls(frontendPort);
+const publicSiteUrl =
+  process.env.REACT_APP_PUBLIC_SITE_URL || networkUrls[0] || localUrl;
 
 console.log("");
 console.log("Tales Of Reval full-stack dev runner");
@@ -66,6 +68,7 @@ if (networkUrls.length > 1) {
 
 console.log(`Frontend port: ${frontendPort}`);
 console.log(`Backend port:  ${backendPort}`);
+console.log(`QR base URL:   ${publicSiteUrl}`);
 console.log("Content mode:  local static content");
 console.log("Email mode:    backend + server SMTP");
 console.log("");
@@ -111,7 +114,8 @@ const frontendProcess = spawnCommand(
       HOST: "0.0.0.0",
       PORT: String(frontendPort),
       BROWSER: "none",
-      WDS_SOCKET_PORT: String(frontendPort)
+      WDS_SOCKET_PORT: String(frontendPort),
+      REACT_APP_PUBLIC_SITE_URL: publicSiteUrl
     }
   }
 );

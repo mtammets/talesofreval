@@ -13,6 +13,7 @@ import {
 } from '../utils/prepareImageFilesForUpload';
 import AdminModalShell from './AdminModalShell';
 import ConfirmDialog from './ConfirmDialog';
+import GuideQrCard from './GuideQrCard';
 import ImageFocusEditor from './ImageFocusEditor';
 
 const HOMEPAGE_TEAM_CARD_PREVIEW_RATIO = '296 / 160';
@@ -573,28 +574,34 @@ function HomeTeamEditorModal({
                 </label>
               </div>
 
-              <div className="home-team-editor__media home-editor-card">
-                {activeImageFile ? (
-                  <div className="home-team-editor__media-actions">
-                    <button
-                      type="button"
-                      className="story-admin-button story-admin-button--secondary"
-                      onClick={() => restoreMemberImageSnapshot(activeMemberIndex)}
-                    >
-                      Use current
-                    </button>
-                  </div>
-                ) : null}
+              <div className="home-team-editor__media">
+                <div className="home-editor-card">
+                  {activeImageFile ? (
+                    <div className="home-team-editor__media-actions">
+                      <button
+                        type="button"
+                        className="story-admin-button story-admin-button--secondary"
+                        onClick={() => restoreMemberImageSnapshot(activeMemberIndex)}
+                      >
+                        Use current
+                      </button>
+                    </div>
+                  ) : null}
 
-                <ImageFocusEditor
-                  image={activeMember.image}
-                  imageUrl={activePreviewUrl}
-                  onChange={(focus) => updateMemberImageFocus(activeMemberIndex, focus)}
-                  aspectRatio={HOMEPAGE_TEAM_CARD_PREVIEW_RATIO}
-                  label={null}
-                  helpText={null}
-                  allowZoom
-                />
+                  <ImageFocusEditor
+                    image={activeMember.image}
+                    imageUrl={activePreviewUrl}
+                    onChange={(focus) => updateMemberImageFocus(activeMemberIndex, focus)}
+                    aspectRatio={HOMEPAGE_TEAM_CARD_PREVIEW_RATIO}
+                    label={null}
+                    helpText={null}
+                    allowZoom
+                  />
+                </div>
+
+                <div className="home-editor-card">
+                  <GuideQrCard member={activeMember} />
+                </div>
               </div>
             </div>
           ) : null}

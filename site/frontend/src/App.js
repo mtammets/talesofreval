@@ -38,6 +38,10 @@ const VirtualTour = lazyWithRetry(
   () => import('./pages/VirtualTour'),
   'lazy-retry:virtual-tour'
 );
+const GuideTipPage = lazyWithRetry(
+  () => import('./pages/GuideTipPage'),
+  'lazy-retry:guide-tip-page'
+);
 const AdminLoginPage = lazyWithRetry(
   () => import('./pages/AdminLoginPage'),
   'lazy-retry:admin-login'
@@ -62,9 +66,17 @@ function AppShell() {
   const [showFreeBookNow, setShowFreeBookNow] = useState(false);
   const [isFreeTourCalendarEditorOpen, setIsFreeTourCalendarEditorOpen] = useState(false);
   const [siteSettings, setSiteSettings] = useState(DEFAULT_SITE_SETTINGS);
+  const [siteSettingsLoaded, setSiteSettingsLoaded] = useState(false);
   const [editControlsVisible, setEditControlsVisible] = useState(Boolean(getStoredStoryAdminAuth()));
   const location = useLocation();
   const isAdminLogin = location.pathname === '/login';
+  const isGuideTipPage = location.pathname.startsWith('/tip/');
+
+  useEffect(() => {
+    if (localStorage.getItem('language') === null) {
+      localStorage.setItem('language', 'en');
+    }
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -77,6 +89,10 @@ function AppShell() {
         }
       } catch (error) {
         console.warn('Site settings fallback active:', error?.message || error);
+      } finally {
+        if (isMounted) {
+          setSiteSettingsLoaded(true);
+        }
       }
     };
 
@@ -176,20 +192,25 @@ function AppShell() {
 
   return (
     <>
-      <Header
-        setShowBookNow={setShowBookNow}
-        adminToken={adminToken}
-        setAdminToken={setAdminToken}
-        siteSettings={siteSettings}
-        isEditMode={editControlsVisible}
-      />
-      <AdminToolbar
-        adminToken={adminToken}
-        setAdminToken={setAdminToken}
-        editControlsVisible={editControlsVisible}
-        setEditControlsVisible={setEditControlsVisible}
-        onOpenFreeTourCalendar={() => setIsFreeTourCalendarEditorOpen(true)}
-      />
+      {!isGuideTipPage ? (
+        <Header
+          setShowBookNow={setShowBookNow}
+          adminToken={adminToken}
+          setAdminToken={setAdminToken}
+          siteSettings={siteSettings}
+          isEditMode={editControlsVisible}
+        />
+      ) : null}
+      {!isGuideTipPage ? (
+        <AdminToolbar
+          adminToken={adminToken}
+          setAdminToken={setAdminToken}
+          editControlsVisible={editControlsVisible}
+          setEditControlsVisible={setEditControlsVisible}
+          onOpenFreeTourCalendar={() => setIsFreeTourCalendarEditorOpen(true)}
+        />
+      ) : null}
+      {!isGuideTipPage ? (
         <Suspense fallback={null}>
           {!isAdminLogin && showBookNow ? (
             <BookNowPopup showBookNow={showBookNow} setShowBookNow={setShowBookNow} />
@@ -201,8 +222,18 @@ function AppShell() {
             />
           ) : null}
         </Suspense>
-        <Suspense fallback={<RouteFallback />}>
-          <Routes>
+      ) : null}
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
+            <Route
+              path="/tip/:guideId"
+              element={
+                <GuideTipPage
+                  siteSettings={siteSettings}
+                  isSiteSettingsReady={siteSettingsLoaded}
+                />
+              }
+            />
             <Route
               path="/story"
               element={
@@ -285,18 +316,20 @@ function AppShell() {
               }
             />
             <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </Suspense>
-      <Footer
-        setShowFreeBookNow={setShowFreeBookNow}
-        adminToken={adminToken}
-        setAdminToken={setAdminToken}
-        siteSettings={siteSettings}
-        setSiteSettings={setSiteSettings}
-        isEditMode={editControlsVisible}
-        isCalendarEditorOpen={isFreeTourCalendarEditorOpen}
-        setIsCalendarEditorOpen={setIsFreeTourCalendarEditorOpen}
-      />
+        </Routes>
+      </Suspense>
+      {!isGuideTipPage ? (
+        <Footer
+          setShowFreeBookNow={setShowFreeBookNow}
+          adminToken={adminToken}
+          setAdminToken={setAdminToken}
+          siteSettings={siteSettings}
+          setSiteSettings={setSiteSettings}
+          isEditMode={editControlsVisible}
+          isCalendarEditorOpen={isFreeTourCalendarEditorOpen}
+          setIsCalendarEditorOpen={setIsFreeTourCalendarEditorOpen}
+        />
+      ) : null}
     </>
   );
 }
