@@ -136,36 +136,14 @@ const upsertFreeTourBooking = async (bookingInput = {}) => {
     status: BOOKING_STATUS_ACTIVE,
   });
   const bookings = await readFreeTourBookings();
-  const existingBooking = bookings.find(
-    (booking) =>
-      booking.status === BOOKING_STATUS_ACTIVE &&
-      booking.slotId === nextBooking.slotId &&
-      booking.email === nextBooking.email
-  );
-
-  if (existingBooking) {
-    const updatedBooking = {
-      ...existingBooking,
-      name: nextBooking.name || existingBooking.name,
-      people: nextBooking.people,
-      updatedAt: new Date().toISOString(),
-    };
-    const savedBookings = await writeFreeTourBookings(
-      bookings.map((booking) => (booking.id === existingBooking.id ? updatedBooking : booking))
-    );
-
-    return {
-      created: false,
-      booking: savedBookings.find((booking) => booking.id === existingBooking.id) || updatedBooking,
-    };
-  }
+  const timestamp = new Date().toISOString();
 
   const savedBookings = await writeFreeTourBookings([
     ...bookings,
     {
       ...nextBooking,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: timestamp,
+      updatedAt: timestamp,
       cancelledAt: null,
     },
   ]);
