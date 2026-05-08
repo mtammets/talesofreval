@@ -18,6 +18,7 @@ import {
 } from '../utils/guideTips';
 
 const GUIDE_TIP_MEDIA_SIZES = '(max-width: 768px) calc(100vw - 48px), 440px';
+const GUIDE_TIP_THEME_COLOR = '#202533';
 
 function GuideTipPage({
   siteSettings = DEFAULT_SITE_SETTINGS,
@@ -86,6 +87,8 @@ function GuideTipPage({
     <div className="guide-tip-page">
       <Helmet>
         <title>{guide ? `${titleText} - ${guideName}` : 'Tales of Reval'}</title>
+        <meta name="theme-color" content={GUIDE_TIP_THEME_COLOR} />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta
           name="description"
           content={

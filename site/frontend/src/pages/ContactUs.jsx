@@ -19,6 +19,7 @@ import {
   HERO_MEDIA_SIZES,
   createPreviewMediaAsset,
   getLocalizedSiteText,
+  normalizeLocalizedSiteTextValue,
   resolveSiteImage,
   resolveSiteImageMedia,
 } from '../content/siteSettingsDefaults';
@@ -30,6 +31,10 @@ import {
 } from '../utils/prepareImageFilesForUpload';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
+const normalizeTeamMember = (member) => ({
+  ...member,
+  name: normalizeLocalizedSiteTextValue(member?.name),
+});
 const buildContactPageFormData = (
   heading,
   members,
@@ -101,7 +106,9 @@ function ContactUs({
   const [contactTeamPaymentCard, setContactTeamPaymentCard] = useState(
     cloneValue(siteSettings.contactPage.paymentCard || DEFAULT_PAYMENT_CARD_COPY)
   );
-  const [contactTeamMembers, setContactTeamMembers] = useState(cloneValue(siteSettings.contactPage.teamMembers));
+  const [contactTeamMembers, setContactTeamMembers] = useState(
+    cloneValue(siteSettings.contactPage.teamMembers.map(normalizeTeamMember))
+  );
   const [contactTeamImageFiles, setContactTeamImageFiles] = useState({});
   const [contactForm, setContactForm] = useState(cloneValue(siteSettings.contactPage));
   const [contactHeroImageFile, setContactHeroImageFile] = useState(null);
@@ -130,7 +137,7 @@ function ContactUs({
     setContactTeamPaymentCard(
       cloneValue(siteSettings.contactPage.paymentCard || DEFAULT_PAYMENT_CARD_COPY)
     );
-    setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers));
+    setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers.map(normalizeTeamMember)));
     setContactForm(cloneValue(siteSettings.contactPage));
     setContactHeroDraftImage(cloneValue(siteSettings.contactPage.image || null));
   }, [siteSettings]);
@@ -462,7 +469,9 @@ function ContactUs({
             setContactTeamPaymentCard(
               cloneValue(siteSettings.contactPage.paymentCard || DEFAULT_PAYMENT_CARD_COPY)
             );
-            setContactTeamMembers(cloneValue(siteSettings.contactPage.teamMembers));
+            setContactTeamMembers(
+              cloneValue(siteSettings.contactPage.teamMembers.map(normalizeTeamMember))
+            );
           }}
           isSaving={isSavingTeam}
           modalTitle="Edit team"

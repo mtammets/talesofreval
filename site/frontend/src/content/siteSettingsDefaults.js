@@ -188,7 +188,7 @@ export const DEFAULT_SITE_SETTINGS = {
     members: [
       {
         key: 'member-1',
-        name: 'Marek Tammets',
+        name: { en: 'Marek Tammets', ee: 'Marek Tammets' },
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
         payment_links: createEmptyPaymentLinks(),
@@ -197,7 +197,7 @@ export const DEFAULT_SITE_SETTINGS = {
       },
       {
         key: 'member-2',
-        name: 'Tales of Reval Team',
+        name: { en: 'Tales of Reval Team', ee: 'Tales of Reval Team' },
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
         payment_links: createEmptyPaymentLinks(),
@@ -206,7 +206,7 @@ export const DEFAULT_SITE_SETTINGS = {
       },
       {
         key: 'member-3',
-        name: 'Guest Experience Host',
+        name: { en: 'Guest Experience Host', ee: 'Guest Experience Host' },
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
         payment_links: createEmptyPaymentLinks(),
@@ -215,7 +215,7 @@ export const DEFAULT_SITE_SETTINGS = {
       },
       {
         key: 'member-4',
-        name: 'Tales of Reval Host',
+        name: { en: 'Tales of Reval Host', ee: 'Tales of Reval Host' },
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
         payment_links: createEmptyPaymentLinks(),
@@ -283,7 +283,7 @@ export const DEFAULT_SITE_SETTINGS = {
     teamMembers: [
       {
         key: 'contact-member-1',
-        name: 'Marek Tammets',
+        name: { en: 'Marek Tammets', ee: 'Marek Tammets' },
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
         imageKey: 'contactMember1',
@@ -291,7 +291,7 @@ export const DEFAULT_SITE_SETTINGS = {
       },
       {
         key: 'contact-member-2',
-        name: 'Tales of Reval Team',
+        name: { en: 'Tales of Reval Team', ee: 'Tales of Reval Team' },
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
         imageKey: 'contactMember2',
@@ -299,7 +299,7 @@ export const DEFAULT_SITE_SETTINGS = {
       },
       {
         key: 'contact-member-3',
-        name: 'Guest Experience Host',
+        name: { en: 'Guest Experience Host', ee: 'Guest Experience Host' },
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
         imageKey: 'contactMember3',
@@ -307,7 +307,7 @@ export const DEFAULT_SITE_SETTINGS = {
       },
       {
         key: 'contact-member-4',
-        name: 'Tales of Reval Host',
+        name: { en: 'Tales of Reval Host', ee: 'Tales of Reval Host' },
         email: 'info@talesofreval.ee',
         phone: '+372 5560 4421',
         imageKey: 'contactMember4',
@@ -368,6 +368,10 @@ export const DEFAULT_SITE_SETTINGS = {
 };
 
 export const getLocalizedSiteText = (value, language = 'en', fallback = '') => {
+  if (typeof value === 'string') {
+    return value || fallback;
+  }
+
   if (!value || typeof value !== 'object') {
     return fallback;
   }
@@ -377,6 +381,27 @@ export const getLocalizedSiteText = (value, language = 'en', fallback = '') => {
   }
 
   return value.en || value.ee || fallback;
+};
+
+export const normalizeLocalizedSiteTextValue = (value, fallback = '') => {
+  if (typeof value === 'string') {
+    return {
+      en: value || fallback,
+      ee: value || fallback,
+    };
+  }
+
+  if (!value || typeof value !== 'object') {
+    return {
+      en: fallback,
+      ee: fallback,
+    };
+  }
+
+  return {
+    en: value.en || value.ee || fallback,
+    ee: value.ee || value.en || fallback,
+  };
 };
 
 const normalizeResponsiveVariants = (variants = []) =>

@@ -11,7 +11,10 @@ import {
 describe('guide tip helpers', () => {
   const member = {
     key: 'contact-member-1',
-    name: 'Kaupo Tamm',
+    name: {
+      en: 'Kaupo Tamm',
+      ee: 'Kaupo Tamm ET',
+    },
     payment_links: [
       { name: 'Wise', link: 'https://wise.com/example' },
       { name: 'Apple Pay', link: '' },
@@ -47,5 +50,9 @@ describe('guide tip helpers', () => {
   test('creates a printable qr filename from the guide name', () => {
     expect(getGuideDisplayName(member)).toBe('Kaupo Tamm');
     expect(getGuideQrFileName(member)).toBe('tales-of-reval-tip-kaupo-tamm.png');
+  });
+
+  test('returns the localized guide display name when a language is provided', () => {
+    expect(getGuideDisplayName(member, 'ee')).toBe('Kaupo Tamm ET');
   });
 });

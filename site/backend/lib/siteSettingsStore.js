@@ -9,10 +9,19 @@ const {
 
 const DATA_FILE = runtimeSiteSettingsFile;
 
-const localized = (value = {}, fallbackEn = '', fallbackEe = '') => ({
-  en: value.en || fallbackEn,
-  ee: value.ee || fallbackEe || fallbackEn,
-});
+const localized = (value = {}, fallbackEn = '', fallbackEe = '') => {
+  if (typeof value === 'string') {
+    return {
+      en: value || fallbackEn,
+      ee: fallbackEe || value || fallbackEn,
+    };
+  }
+
+  return {
+    en: value.en || fallbackEn,
+    ee: value.ee || fallbackEe || value.en || fallbackEn,
+  };
+};
 
 const localizedList = (values = [], fallbackValues = []) => {
   const sourceValues = Array.isArray(values) && values.length ? values : fallbackValues;
@@ -188,7 +197,7 @@ const normalizeServicePageContent = (content = {}, serviceKey = '') => ({
 
 const normalizeTeamMember = (member = {}, index = 0) => ({
   key: member.key || `member-${index + 1}`,
-  name: member.name || '',
+  name: localized(member.name),
   email: member.email || '',
   phone: member.phone || '',
   payment_links: normalizePaymentLinks(member.payment_links),

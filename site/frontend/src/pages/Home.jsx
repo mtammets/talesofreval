@@ -23,6 +23,7 @@ import {
   HERO_MEDIA_SIZES,
   createPreviewMediaAsset,
   getLocalizedSiteText,
+  normalizeLocalizedSiteTextValue,
   resolveSiteImage,
   resolveSiteImageMedia,
   resolveSiteImageMediaList,
@@ -46,6 +47,7 @@ const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 const MAX_HOME_HERO_IMAGES = 6;
 const normalizeTeamMember = (member) => ({
   ...member,
+  name: normalizeLocalizedSiteTextValue(member?.name),
   payment_links: normalizePaymentLinks(member?.payment_links),
 });
 
@@ -586,7 +588,7 @@ function Home({
             setTeamPaymentCard(
               cloneValue(siteSettings.homeTeam.paymentCard || DEFAULT_PAYMENT_CARD_COPY)
             );
-            setTeamMembers(cloneValue(siteSettings.homeTeam.members));
+            setTeamMembers(cloneValue(siteSettings.homeTeam.members.map(normalizeTeamMember)));
           }}
           isSaving={isSavingSection === 'team'}
         />

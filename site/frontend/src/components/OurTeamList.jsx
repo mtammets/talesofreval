@@ -62,7 +62,7 @@ function OurTeamList({
   const roster = items?.length
     ? items.map((member) => ({
         _id: member.key,
-        name: member.name,
+        name: getLocalizedSiteText(member.name, resolvedLanguage, 'Guide'),
         email: member.email,
         phone: member.phone,
         payment_links: normalizePaymentLinks(member.payment_links),

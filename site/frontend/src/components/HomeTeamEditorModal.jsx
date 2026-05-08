@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { resolveSiteImage } from '../content/siteSettingsDefaults';
+import { getLocalizedSiteText, resolveSiteImage } from '../content/siteSettingsDefaults';
 import {
   PAYMENT_METHODS,
   createEmptyPaymentLinks,
@@ -23,7 +23,10 @@ const createTeamMemberKey = () =>
 
 const createEmptyTeamMember = () => ({
   key: createTeamMemberKey(),
-  name: '',
+  name: {
+    en: '',
+    ee: '',
+  },
   email: '',
   phone: '',
   payment_links: createEmptyPaymentLinks(),
@@ -60,6 +63,7 @@ function HomeTeamEditorModal({
   const [isPreparingImageIndex, setIsPreparingImageIndex] = useState(null);
   const [memberImageSnapshots, setMemberImageSnapshots] = useState({});
   const [pendingDeleteMemberIndex, setPendingDeleteMemberIndex] = useState(null);
+  const resolvedLanguage = localStorage.getItem('language') || 'en';
 
   useEffect(() => {
     const objectUrls = [];
@@ -116,6 +120,22 @@ function HomeTeamEditorModal({
           ? {
               ...member,
               [key]: value,
+            }
+          : member
+      )
+    );
+  };
+
+  const updateLocalizedMemberValue = (index, key, language, value) => {
+    members.set((current) =>
+      current.map((member, memberIndex) =>
+        memberIndex === index
+          ? {
+              ...member,
+              [key]: {
+                ...(member?.[key] || {}),
+                [language]: value,
+              },
             }
           : member
       )
@@ -466,6 +486,8 @@ function HomeTeamEditorModal({
               {members.value.map((member, index) => {
                 const previewUrl =
                   previewUrls[index] || resolveSiteImage(member.image, member.imageKey);
+                const memberName =
+                  getLocalizedSiteText(member.name, resolvedLanguage) || `Member ${index + 1}`;
                 const memberSummary = member.email || member.phone || 'New member';
 
                 return (
@@ -485,7 +507,7 @@ function HomeTeamEditorModal({
                       aria-hidden="true"
                     />
                     <span className="home-team-editor__tab-copy">
-                      <strong>{member.name || `Member ${index + 1}`}</strong>
+                      <strong>{memberName}</strong>
                       <span>{memberSummary}</span>
                     </span>
                   </button>
@@ -499,15 +521,38 @@ function HomeTeamEditorModal({
               <div className="home-team-editor__fields home-editor-card">
                 <div className="story-admin-grid two">
                   <label>
-                    Name
+                    Name (EN)
                     <input
                       type="text"
-                      value={activeMember.name}
+                      value={activeMember.name?.en || ''}
                       onChange={(event) =>
-                        updateMember(activeMemberIndex, 'name', event.target.value)
+                        updateLocalizedMemberValue(
+                          activeMemberIndex,
+                          'name',
+                          'en',
+                          event.target.value
+                        )
                       }
                     />
                   </label>
+                  <label>
+                    Name (ET)
+                    <input
+                      type="text"
+                      value={activeMember.name?.ee || ''}
+                      onChange={(event) =>
+                        updateLocalizedMemberValue(
+                          activeMemberIndex,
+                          'name',
+                          'ee',
+                          event.target.value
+                        )
+                      }
+                    />
+                  </label>
+                </div>
+
+                <div className="story-admin-grid two">
                   <label>
                     Email
                     <input

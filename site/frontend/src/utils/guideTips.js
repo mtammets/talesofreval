@@ -1,3 +1,4 @@
+import { getLocalizedSiteText } from '../content/siteSettingsDefaults';
 import { normalizePaymentLinks } from '../content/paymentMethods';
 
 const slugifySegment = (value = '') =>
@@ -9,7 +10,11 @@ const slugifySegment = (value = '') =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-export const getGuideDisplayName = (member = {}) => member?.name?.trim() || 'Guide';
+export const getGuideDisplayName = (member = {}, language = null) => {
+  const resolvedLanguage =
+    language || (typeof localStorage !== 'undefined' ? localStorage.getItem('language') : '') || 'en';
+  return getLocalizedSiteText(member?.name, resolvedLanguage, 'Guide') || 'Guide';
+};
 
 export const getGuideTipId = (member = {}) => {
   const preferredId = String(member?.key || '').trim();
