@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import destination from '../img/destination.webp';
 import private_tour from '../img/private.webp';
-import pulmad from '../img/pulmad.webp';
 import quick from '../img/quick.webp';
-import team from '../img/team.webp';
+import team from '../img/team-experiences.webp';
+import pulmad from '../img/weddings-fantasy.webp';
 import ServiceCard from './style-components/ServiceCard';
 import { getLocalizedSiteText, resolveSiteImage } from '../content/siteSettingsDefaults';
 

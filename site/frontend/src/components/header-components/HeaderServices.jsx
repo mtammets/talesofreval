@@ -1,8 +1,8 @@
 import destination from '../../img/destination.webp';
 import private_tour from '../../img/private.webp';
-import pulmad from '../../img/pulmad.webp';
 import quick from '../../img/quick.webp';
-import team from '../../img/team.webp';
+import team from '../../img/team-experiences.webp';
+import pulmad from '../../img/weddings-fantasy.webp';
 import { getLocalizedSiteText, resolveSiteImage } from '../../content/siteSettingsDefaults';
 import ServiceCard from '../style-components/ServiceCard';
 
@@ -12,6 +12,18 @@ const FALLBACK_SERVICE_IMAGES = {
   quick,
   destination,
   wedding: pulmad,
+};
+
+const hasConfiguredImageSource = (image) => {
+  if (!image || typeof image !== 'object') {
+    return false;
+  }
+
+  if (image.src) {
+    return true;
+  }
+
+  return Array.isArray(image.variants) && image.variants.some((variant) => variant?.src);
 };
 
 function HeaderServices({
@@ -65,7 +77,17 @@ function HeaderServices({
         key: item.key || fallbackItems[index]?.key || `service-${index + 1}`,
         link: item.link || fallbackItems[index]?.link || '',
         title: getLocalizedSiteText(item.title, language, fallbackItems[index]?.title || ''),
-        image: item.image || null,
+        image: item.image
+          ? {
+              ...item.image,
+              src: hasConfiguredImageSource(item.image)
+                ? item.image.src
+                : resolveSiteImage(
+                    item.image,
+                    item.imageKey || fallbackItems[index]?.imageKey || ''
+                  ),
+            }
+          : null,
         backgroundImage:
           resolveSiteImage(item.image, item.imageKey) ||
           FALLBACK_SERVICE_IMAGES[item.key] ||
