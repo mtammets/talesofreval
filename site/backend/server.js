@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const express = require('express');
@@ -17,6 +18,8 @@ const {
   ensureRuntimeStorageReady,
   runtimeSiteUploadsDir,
   runtimeStoryUploadsDir,
+  runtimeSiteSettingsFile,
+  runtimeStoryEventsFile,
 } = require('./lib/storagePaths');
 ensureRuntimeStorageReady();
 
@@ -31,10 +34,88 @@ const uploadStaticOptions = {
 const port = process.env.PORT || 3000;
 const bindHost = process.env.BIND_HOST;
 const previewNoIndex = process.env.PREVIEW_NOINDEX === 'true';
+const defaultPublicSiteUrl = 'https://www.talesofreval.ee';
 const adminRoutes = require('./routes/adminRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 const storyEventsRoutes = require('./routes/storyEventsRoutes');
 const siteSettingsRoutes = require('./routes/siteSettingsRoutes');
+
+const resolvePublicSiteUrl = () =>
+  (process.env.SITE_URL || process.env.MAIL_WEBSITE || defaultPublicSiteUrl).replace(
+    /\/+$/,
+    ''
+  );
+
+const getLastModified = (filePath) => {
+  try {
+    return fs.statSync(filePath).mtime;
+  } catch (_error) {
+    return new Date();
+  }
+};
+
+const formatSitemapDate = (value) => new Date(value).toISOString();
+
+const buildSitemapXml = () => {
+  const siteUrl = resolvePublicSiteUrl();
+  const siteSettingsUpdatedAt = getLastModified(runtimeSiteSettingsFile);
+  const storyEventsUpdatedAt = getLastModified(runtimeStoryEventsFile);
+  const storyPageUpdatedAt =
+    siteSettingsUpdatedAt > storyEventsUpdatedAt ? siteSettingsUpdatedAt : storyEventsUpdatedAt;
+  const routes = [
+    { path: '/', priority: '1.0', changefreq: 'weekly', lastmod: siteSettingsUpdatedAt },
+    { path: '/story', priority: '0.8', changefreq: 'monthly', lastmod: storyPageUpdatedAt },
+    { path: '/contacts', priority: '0.8', changefreq: 'monthly', lastmod: siteSettingsUpdatedAt },
+    { path: '/virtual', priority: '0.7', changefreq: 'monthly', lastmod: siteSettingsUpdatedAt },
+    {
+      path: '/service/team',
+      priority: '0.9',
+      changefreq: 'monthly',
+      lastmod: siteSettingsUpdatedAt,
+    },
+    {
+      path: '/service/private',
+      priority: '0.9',
+      changefreq: 'monthly',
+      lastmod: siteSettingsUpdatedAt,
+    },
+    {
+      path: '/service/quick',
+      priority: '0.8',
+      changefreq: 'monthly',
+      lastmod: siteSettingsUpdatedAt,
+    },
+    {
+      path: '/service/destination',
+      priority: '0.8',
+      changefreq: 'monthly',
+      lastmod: siteSettingsUpdatedAt,
+    },
+    {
+      path: '/service/wedding',
+      priority: '0.8',
+      changefreq: 'monthly',
+      lastmod: siteSettingsUpdatedAt,
+    },
+  ];
+
+  const urlEntries = routes
+    .map(
+      (route) => `  <url>
+    <loc>${new URL(route.path, siteUrl).toString()}</loc>
+    <lastmod>${formatSitemapDate(route.lastmod)}</lastmod>
+    <changefreq>${route.changefreq}</changefreq>
+    <priority>${route.priority}</priority>
+  </url>`
+    )
+    .join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlEntries}
+</urlset>
+`;
+};
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -48,6 +129,13 @@ if (previewNoIndex) {
   app.get('/robots.txt', (_req, res) => {
     res.type('text/plain').send('User-agent: *\nDisallow: /\n');
   });
+} else {
+  app.get('/robots.txt', (_req, res) => {
+    const sitemapUrl = new URL('/sitemap.xml', resolvePublicSiteUrl()).toString();
+    res
+      .type('text/plain')
+      .send(`User-agent: *\nAllow: /\n\nSitemap: ${sitemapUrl}\n`);
+  });
 }
 
 app.use('/email', emailRoutes);
@@ -57,8 +145,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/story-events', storyEventsRoutes);
 app.use('/api/site-settings', siteSettingsRoutes);
 
-app.get('/sitemap.xml', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'sitemap.xml'));
+app.get('/sitemap.xml', (_req, res) => {
+  res.type('application/xml').send(buildSitemapXml());
 });
 
 app.get('/health', (_req, res) => {

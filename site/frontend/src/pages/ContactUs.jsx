@@ -6,7 +6,6 @@ import { toast } from 'react-toastify';
 import bgcontact from '../img/bgcontact.webp';
 import ContactsTeam from '../components/ContactsTeam.jsx';
 import Spinner from '../components/Spinner';
-import { Helmet } from 'react-helmet';
 import HomeTeamEditorModal from '../components/HomeTeamEditorModal';
 import ContactSectionEditorModal from '../components/ContactSectionEditorModal';
 import HeroImageEditorModal from '../components/HeroImageEditorModal';
@@ -29,6 +28,11 @@ import {
   HERO_IMAGE_PREPARATION_OPTIONS,
   prepareImageFileForUpload,
 } from '../utils/prepareImageFilesForUpload';
+import SeoHead, {
+  buildBreadcrumbSchema,
+  buildTravelAgencySchema,
+  buildWebPageSchema,
+} from '../components/SeoHead';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 const normalizeTeamMember = (member) => ({
@@ -304,6 +308,10 @@ function ContactUs({
     language === 'ee'
       ? 'Võta Tales of Revaliga ühendust, et küsida meie keskaegsete tuuride, privaatsete elamuste ja tiimiürituste kohta Tallinnas.'
       : 'Get in touch with Tales of Reval for inquiries about our medieval tours, private tours, team events, and more. Contact us today to book your unique Tallinn experience.';
+  const pageMetaTitle =
+    language === 'ee'
+      ? 'Võta Tales of Revaliga ühendust | Tales of Reval'
+      : 'Contact Tales of Reval | Medieval Tours in Tallinn';
   const editText = language === 'ee' ? 'Muuda' : 'Edit';
   const contactHeroMedia =
     (contactHeroPreviewUrl
@@ -319,6 +327,32 @@ function ContactUs({
       HERO_MEDIA_SIZES
     ) ||
     createPreviewMediaAsset(bgcontact, HERO_MEDIA_SIZES);
+  const contactStructuredData = [
+    buildWebPageSchema({
+      title: pageMetaTitle,
+      description: contactMetaDescription,
+      path: '/contacts',
+      image: contactHeroMedia?.src,
+      type: 'ContactPage',
+      language,
+    }),
+    buildBreadcrumbSchema([
+      { name: language === 'ee' ? 'Avaleht' : 'Home', path: '/' },
+      { name: contactUsText, path: '/contacts' },
+    ]),
+    buildTravelAgencySchema({
+      description: contactMetaDescription,
+      image: contactHeroMedia?.src,
+      email: siteSettings.footer?.email || siteSettings.contactPage.email,
+      phone: siteSettings.footer?.phone || siteSettings.contactPage.phone,
+      address: getLocalizedSiteText(
+        siteSettings.footer?.address || siteSettings.contactPage.address,
+        language,
+        addressText
+      ),
+      sameAs: Object.values(siteSettings.footer?.socialLinks || {}),
+    }),
+  ];
 
   const handleContactHeroFileSelected = async (file) => {
     if (!file) {
@@ -349,11 +383,16 @@ function ContactUs({
 
   return (
     <div className='story-page contact-page'>
-      <Helmet>
-        <title>{contactUsText} - Tales of Reval</title>
-        <meta name="description" content={contactMetaDescription} />
-        <meta name="keywords" content="Contact Tales of Reval, Book a Tour in Tallinn, Inquire About Medieval Tours, Tour Booking Contact, Tallinn Tour Inquiries, Medieval Tour Customer Service, Private Tours in Tallinn, Team Events Tallinn, Unique Tallinn Experiences" />
-      </Helmet>
+      <SeoHead
+        title={pageMetaTitle}
+        description={contactMetaDescription}
+        path="/contacts"
+        image={contactHeroMedia?.src}
+        imageAlt={contactUsText}
+        language={language}
+        keywords="Contact Tales of Reval, Book a Tour in Tallinn, Inquire About Medieval Tours, Tour Booking Contact, Tallinn Tour Inquiries, Medieval Tour Customer Service, Private Tours in Tallinn, Team Events Tallinn, Unique Tallinn Experiences"
+        schema={contactStructuredData}
+      />
       <PageHero
         className="contact-page-hero"
         mediaClassName="story-landing"

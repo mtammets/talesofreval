@@ -3,9 +3,17 @@ import ButtonPrimary from '../components/style-components/ButtonPrimary'
 import ButtonSecondary from '../components/style-components/ButtonSecondary'
 import TripAdvisorButton from '../components/style-components/TripAdvisorButton'
 import SocialButton from '../components/style-components/SocialButton'
+import SeoHead from '../components/SeoHead'
 
 function StyleGuide() {
   return (
+    <>
+    <SeoHead
+      title="Style Guide | Tales of Reval"
+      description="Internal style guide for Tales of Reval."
+      path="/styles"
+      noindex
+    />
     <div className="container" style={{paddingTop: "15%"}}>
         <h1>Style Guide</h1>
 
@@ -63,6 +71,7 @@ function StyleGuide() {
       </section>
 
     </div>
+    </>
   )
 }
 

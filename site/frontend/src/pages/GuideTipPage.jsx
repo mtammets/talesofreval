@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { Helmet } from 'react-helmet';
 import { Link, useParams } from 'react-router-dom';
 
 import PaymentMethodButton from '../components/PaymentMethodButton';
@@ -16,6 +15,7 @@ import {
   getActiveGuidePaymentLinks,
   getGuideDisplayName,
 } from '../utils/guideTips';
+import SeoHead from '../components/SeoHead';
 
 const GUIDE_TIP_MEDIA_SIZES = '(max-width: 768px) calc(100vw - 48px), 440px';
 const GUIDE_TIP_THEME_COLOR = '#202533';
@@ -74,6 +74,12 @@ function GuideTipPage({
   const guideImageSrc = responsiveMedia?.src || resolveSiteImage(guide?.image, guide?.imageKey);
   const imagePosition = responsiveMedia?.objectPosition || '50% 50%';
   const imageScale = responsiveMedia?.zoom || 1;
+  const guideTipTitle = guide
+    ? `${titleText} - ${guideName} | Tales of Reval`
+    : 'Guide tip page | Tales of Reval';
+  const guideTipDescription = guide
+    ? `${titleText} ${guideName}. ${introText}`
+    : 'Direct tip page for Tales of Reval guides.';
 
   if (!isSiteSettingsReady) {
     return (
@@ -85,19 +91,17 @@ function GuideTipPage({
 
   return (
     <div className="guide-tip-page">
-      <Helmet>
-        <title>{guide ? `${titleText} - ${guideName}` : 'Tales of Reval'}</title>
-        <meta name="theme-color" content={GUIDE_TIP_THEME_COLOR} />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta
-          name="description"
-          content={
-            guide
-              ? `${titleText} ${guideName}. ${introText}`
-              : 'Direct tip page for Tales of Reval guides.'
-          }
-        />
-      </Helmet>
+      <SeoHead
+        title={guideTipTitle}
+        description={guideTipDescription}
+        path={`/tip/${guideId}`}
+        image={guideImageSrc}
+        imageAlt={guideName || 'Tales of Reval'}
+        language={language}
+        noindex
+        themeColor={GUIDE_TIP_THEME_COLOR}
+        statusBarStyle="black-translucent"
+      />
 
       <div
         className="guide-tip-page__backdrop"

@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import storyAdminService, {
   setStoredStoryAdminAuth,
 } from '../features/events/storyAdminService';
+import SeoHead from '../components/SeoHead';
 
 const getLoginErrorMessage = (error) => {
   const status = error.response?.status;
@@ -64,28 +65,36 @@ function AdminLoginPage({ adminToken, setAdminToken, setEditControlsVisible }) {
   };
 
   return (
-    <div className="story-admin-login-page" onClick={closeLogin}>
-      <div
-        className="story-admin-login-card"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <form onSubmit={submitLogin} className="story-admin-login-form">
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              placeholder="Enter password"
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete="current-password"
-            />
-          </label>
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Logging in…' : 'Log in'}
-          </button>
-        </form>
+    <>
+      <SeoHead
+        title="Admin Login | Tales of Reval"
+        description="Admin login for Tales of Reval content management."
+        path="/login"
+        noindex
+      />
+      <div className="story-admin-login-page" onClick={closeLogin}>
+        <div
+          className="story-admin-login-card"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <form onSubmit={submitLogin} className="story-admin-login-form">
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                placeholder="Enter password"
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="current-password"
+              />
+            </label>
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Logging in…' : 'Log in'}
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

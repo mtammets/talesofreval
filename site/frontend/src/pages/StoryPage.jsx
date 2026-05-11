@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -35,6 +34,10 @@ import {
   HERO_IMAGE_PREPARATION_OPTIONS,
   prepareImageFileForUpload,
 } from '../utils/prepareImageFilesForUpload';
+import SeoHead, {
+  buildBreadcrumbSchema,
+  buildWebPageSchema,
+} from '../components/SeoHead';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 
@@ -514,6 +517,7 @@ function StoryPage({
     language === 'ee'
       ? 'Tutvu Tales of Revali teekonnaga alates algusaegadest kuni tänaseni läbi kaasahaaravate lugude ja keskaegsete elamuste.'
       : 'Explore the journey of Tales of Reval, from its inception to the present day, through immersive storytelling experiences and medieval themed events.';
+  const pageMetaTitle = `${ourStoryText} | Tales of Reval`;
   const storyHeroMedia =
     (storyHeroPreviewUrl
       ? createPreviewMediaAsset(
@@ -527,6 +531,20 @@ function StoryPage({
       siteSettings.storyPage.imageKey,
       HERO_MEDIA_SIZES
     );
+  const storyStructuredData = [
+    buildWebPageSchema({
+      title: pageMetaTitle,
+      description: storyMetaDescription,
+      path: '/story',
+      image: storyHeroMedia?.src,
+      type: 'AboutPage',
+      language,
+    }),
+    buildBreadcrumbSchema([
+      { name: language === 'ee' ? 'Avaleht' : 'Home', path: '/' },
+      { name: ourStoryText, path: '/story' },
+    ]),
+  ];
 
   const handleStoryHeroFileSelected = async (file) => {
     if (!file) {
@@ -557,17 +575,16 @@ function StoryPage({
 
   return (
     <div className="story-page">
-      <Helmet>
-        <title>{ourStoryText} - Tales of Reval</title>
-        <meta
-          name="description"
-          content={storyMetaDescription}
-        />
-        <meta
-          name="keywords"
-          content="Medieval Themed Events, Tallinn Team Building Events, Private Medieval Events, Unique Event Hosting Tallinn, Corporate Events in Tallinn, Team Building Activities Tallinn, Special Events Tallinn, Medieval Feasts and Events, Customized Medieval Events, Tallinn Event Management"
-        />
-      </Helmet>
+      <SeoHead
+        title={pageMetaTitle}
+        description={storyMetaDescription}
+        path="/story"
+        image={storyHeroMedia?.src}
+        imageAlt={ourStoryText}
+        language={language}
+        keywords="Medieval Themed Events, Tallinn Team Building Events, Private Medieval Events, Unique Event Hosting Tallinn, Corporate Events in Tallinn, Team Building Activities Tallinn, Special Events Tallinn, Medieval Feasts and Events, Customized Medieval Events, Tallinn Event Management"
+        schema={storyStructuredData}
+      />
 
       <PageHero
         mediaClassName="story-landing"

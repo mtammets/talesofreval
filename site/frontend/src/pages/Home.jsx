@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -14,7 +13,6 @@ import OurTeam from '../components/OurTeam';
 import Reviews from '../components/Reviews';
 import { getHomeTexts, getMiscTexts, reset } from '../features/texts/textSlice';
 import {
-  getFallbackText,
   getFallbackTextsForCategory,
   hasTextEntries,
 } from '../content/fallbackContent';
@@ -42,6 +40,11 @@ import {
   getRetainedHomeHeroDraftKey,
   getSelectedHomeHeroDraftKey,
 } from '../utils/homeHeroDraftSelection';
+import SeoHead, {
+  buildTravelAgencySchema,
+  buildWebPageSchema,
+  buildWebsiteSchema,
+} from '../components/SeoHead';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 const MAX_HOME_HERO_IMAGES = 6;
@@ -65,6 +68,7 @@ function Home({
   siteSettings = DEFAULT_SITE_SETTINGS,
   setSiteSettings,
   isEditMode = false,
+  disableSeo = false,
 }) {
   const dispatch = useDispatch();
   const language = localStorage.getItem('language') || 'en';
@@ -182,11 +186,15 @@ function Home({
   const resolvedMiscTexts = hasTextEntries(misc_texts)
     ? misc_texts
     : getFallbackTextsForCategory('misc', language);
-  const homeMetaTitle = getFallbackText('header', 'home', language, 'Home');
+  const homeMetaTitle =
+    language === 'ee'
+      ? 'Keskaegsed tuurid ja elamuslood Tallinnas | Tales of Reval'
+      : 'Medieval Tours and Storytelling Experiences in Tallinn | Tales of Reval';
   const homeMetaDescription =
     language === 'ee'
       ? 'Koge Tallinna ehedamaid keskaegseid tuure. Avastage Tales of Revaliga ainulaadsed live-elamused ja ajaloolised seiklused.'
       : 'Experience the most authentic medieval tours in Tallinn. Discover unique live experiences and historical adventures with Tales of Reval.';
+  const homeAddress = getLocalizedSiteText(siteSettings.footer?.address, language, '');
 
   const heroTexts = useMemo(
     () => ({
@@ -293,6 +301,42 @@ function Home({
     : persistedHeroInitialIndex;
   const preloadHeroMedia =
     activeHeroMediaItems[activeHeroInitialIndex] || activeHeroMediaItems[0] || null;
+  const homeStructuredData = useMemo(
+    () => [
+      buildWebsiteSchema({
+        description: homeMetaDescription,
+        language,
+      }),
+      buildTravelAgencySchema({
+        description: homeMetaDescription,
+        image: preloadHeroMedia?.src,
+        email: siteSettings.footer?.email || siteSettings.contactPage?.email,
+        phone: siteSettings.footer?.phone || siteSettings.contactPage?.phone,
+        address: homeAddress,
+        sameAs: Object.values(siteSettings.footer?.socialLinks || {}),
+      }),
+      buildWebPageSchema({
+        title: homeMetaTitle,
+        description: homeMetaDescription,
+        path: '/',
+        image: preloadHeroMedia?.src,
+        type: 'WebPage',
+        language,
+      }),
+    ],
+    [
+      homeAddress,
+      homeMetaDescription,
+      homeMetaTitle,
+      language,
+      preloadHeroMedia?.src,
+      siteSettings.contactPage?.email,
+      siteSettings.contactPage?.phone,
+      siteSettings.footer?.email,
+      siteSettings.footer?.phone,
+      siteSettings.footer?.socialLinks,
+    ]
+  );
 
   const handleHeroFilesSelected = async (fileList) => {
     const files = Array.from(fileList || []);
@@ -477,26 +521,28 @@ function Home({
 
   return (
     <div className="home-page">
-      <Helmet>
-        <title>{homeMetaTitle} - Tales of Reval</title>
-        {preloadHeroMedia?.src ? (
-          <link
-            rel="preload"
-            as="image"
-            href={preloadHeroMedia.src}
-            imagesrcset={preloadHeroMedia.srcSet || undefined}
-            imagesizes={preloadHeroMedia.sizes || undefined}
-          />
-        ) : null}
-        <meta
-          name="description"
-          content={homeMetaDescription}
-        />
-        <meta
-          name="keywords"
-          content="Medieval Tours in Tallinn, Historical Experiences in Estonia, Interactive Medieval Experiences, Tallinn Guided Tours, Live Medieval Shows, Top Rated Tallinn Tours, Unique Tallinn Experiences, Authentic Tallinn Tours, Best Tallinn Attractions, Tallinn Tour Company"
-        />
-      </Helmet>
+      {!disableSeo ? (
+        <SeoHead
+          title={homeMetaTitle}
+          description={homeMetaDescription}
+          path="/"
+          image={preloadHeroMedia?.src}
+          imageAlt={homeMetaTitle}
+          language={language}
+          keywords="Medieval Tours in Tallinn, Historical Experiences in Estonia, Interactive Medieval Experiences, Tallinn Guided Tours, Live Medieval Shows, Top Rated Tallinn Tours, Unique Tallinn Experiences, Authentic Tallinn Tours, Best Tallinn Attractions, Tallinn Tour Company"
+          schema={homeStructuredData}
+        >
+          {preloadHeroMedia?.src ? (
+            <link
+              rel="preload"
+              as="image"
+              href={preloadHeroMedia.src}
+              imagesrcset={preloadHeroMedia.srcSet || undefined}
+              imagesizes={preloadHeroMedia.sizes || undefined}
+            />
+          ) : null}
+        </SeoHead>
+      ) : null}
 
       <HomeLanding
         texts={heroTexts}

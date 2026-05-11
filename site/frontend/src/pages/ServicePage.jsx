@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaArrowDown } from 'react-icons/fa';
@@ -38,6 +37,11 @@ import {
   SERVICE_SECTION_IMAGE_PREPARATION_OPTIONS,
   prepareImageFileForUpload,
 } from '../utils/prepareImageFilesForUpload';
+import SeoHead, {
+  buildBreadcrumbSchema,
+  buildServiceSchema,
+  buildWebPageSchema,
+} from '../components/SeoHead';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 const createLocalizedValue = (en = '', ee = '') => ({ en, ee });
@@ -622,35 +626,35 @@ function ServicePage({
 
   const seoData = {
     team: {
-      title: 'Team Service - Tales of Reval',
+      title: 'Team Building Events in Tallinn | Tales of Reval',
       description:
         'Team building events in Tallinn with Tales of Reval. Enhance teamwork with our interactive and motivational medieval themed events.',
       keywords:
         'Team Building Events Tallinn, Corporate Team Events, Interactive Team Building, Medieval Team Experiences, Custom Team Events, Team Activities Tallinn, Corporate Retreats Tallinn, Team Bonding Experiences, Unique Team Building, Team Building Service Tallinn',
     },
     private: {
-      title: 'Private Service - Tales of Reval',
+      title: 'Private Medieval Tours in Tallinn | Tales of Reval',
       description:
         'Private medieval tours in Tallinn with Tales of Reval. Enjoy exclusive and immersive historical experiences tailored just for you.',
       keywords:
         'Private Tours Tallinn, Custom Medieval Tours, Exclusive Tallinn Tours, Private Medieval Experiences, Tailored Tallinn Tours, VIP Tour Service, Private Tour Booking, Personalized Tour Guide, Custom Private Events, Private Tour Company',
     },
     destination: {
-      title: 'Destination Management Service - Tales of Reval',
+      title: 'Destination Management Services in Tallinn | Tales of Reval',
       description:
         'Comprehensive destination management services in Tallinn by Tales of Reval. Organize group travels, tours, and events with ease.',
       keywords:
         'Destination Management Tallinn, Group Travel Estonia, Customized Group Tours, Estonia Destination Services, Group Tours Tallinn, Comprehensive Tour Management, Event Planning Estonia, Group Adventure Planning, Full-Service Destination Management, Tallinn Group Activities',
     },
     wedding: {
-      title: 'Wedding Service - Tales of Reval',
+      title: 'Fantasy Weddings and Themed Celebrations | Tales of Reval',
       description:
         'Experience a fairytale wedding in Tallinn with Tales of Reval. We offer unique medieval themed wedding planning and hosting services.',
       keywords:
         'Medieval Wedding Planner, Tallinn Wedding Services, Unique Wedding Events, Historical Wedding Venues, Wedding Coordination Tallinn, Custom Wedding Planning, Medieval Themed Weddings, Tallinn Wedding Organizer, Authentic Wedding Experiences, Personalized Wedding Services',
     },
     quick: {
-      title: 'Quick Service - Tales of Reval',
+      title: 'Short Medieval Tours in Tallinn | Tales of Reval',
       description:
         'Quick and immersive tours in Tallinn by Tales of Reval. Perfect for those with limited time who want to experience the medieval charm.',
       keywords:
@@ -664,22 +668,47 @@ function ServicePage({
     keywords: seoKeywords,
   } = seoData[serviceType] || {};
   const pageMetaTitle =
-    language === 'ee' ? `${pageTitle} - Tales of Reval` : seoTitle || `${pageTitle} - Tales of Reval`;
+    language === 'ee'
+      ? `${pageTitle} Tallinnas | Tales of Reval`
+      : seoTitle || `${pageTitle} | Tales of Reval`;
   const pageMetaDescription = language === 'ee' ? intro : seoDescription || intro;
+  const servicePath = `/service/${serviceType}`;
+  const serviceStructuredData = [
+    buildWebPageSchema({
+      title: pageMetaTitle,
+      description: pageMetaDescription,
+      path: servicePath,
+      image: backgroundMedia?.src,
+      type: 'WebPage',
+      language,
+    }),
+    buildBreadcrumbSchema([
+      { name: language === 'ee' ? 'Avaleht' : 'Home', path: '/' },
+      { name: pageTitle, path: servicePath },
+    ]),
+    buildServiceSchema({
+      title: pageTitle,
+      description: pageMetaDescription,
+      path: servicePath,
+      image: backgroundMedia?.src,
+    }),
+  ];
 
   return (
     <div className="service-page">
-      <Helmet>
-        <title>{pageMetaTitle}</title>
-        <meta name="description" content={pageMetaDescription} />
-        <meta
-          name="keywords"
-          content={
-            seoKeywords ||
-            'Tours in tallinn, Free tours in Tallinn, Private tours in Tallinn, Best tour in Tallinn'
-          }
-        />
-      </Helmet>
+      <SeoHead
+        title={pageMetaTitle}
+        description={pageMetaDescription}
+        path={servicePath}
+        image={backgroundMedia?.src}
+        imageAlt={pageTitle}
+        language={language}
+        keywords={
+          seoKeywords ||
+          'Tours in tallinn, Free tours in Tallinn, Private tours in Tallinn, Best tour in Tallinn'
+        }
+        schema={serviceStructuredData}
+      />
       <PageHero
         className="service-page-hero"
         mediaClassName="service-landing"

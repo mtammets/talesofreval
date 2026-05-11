@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 
@@ -17,6 +16,10 @@ import {
 import siteSettingsService from '../features/siteSettings/siteSettingsService';
 import { setStoredStoryAdminAuth } from '../features/events/storyAdminService';
 import { ArrowRight } from '../icons/ArrowRight.tsx';
+import SeoHead, {
+  buildBreadcrumbSchema,
+  buildWebPageSchema,
+} from '../components/SeoHead';
 
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 
@@ -142,6 +145,24 @@ function VirtualTour({
     language === 'ee' ? 'Hangi Google Playst' : 'Get it on Google Play';
   const appStoreAlt =
     language === 'ee' ? "Laadi alla App Store'ist" : 'Download on the App Store';
+  const pageMetaTitle =
+    language === 'ee'
+      ? 'Äpiga juhitud keskaegne tuur Tallinnas | Tales of Reval'
+      : 'Self-Guided Medieval Tour App in Tallinn | Tales of Reval';
+  const virtualTourStructuredData = [
+    buildWebPageSchema({
+      title: pageMetaTitle,
+      description: pageDescription,
+      path: '/virtual',
+      image: phonesImage,
+      type: 'WebPage',
+      language,
+    }),
+    buildBreadcrumbSchema([
+      { name: language === 'ee' ? 'Avaleht' : 'Home', path: '/' },
+      { name: pageTitle, path: '/virtual' },
+    ]),
+  ];
 
   const handleSave = async (event) => {
     event.preventDefault();
@@ -172,10 +193,15 @@ function VirtualTour({
   return (
     <>
       <main className="virtual-tour-page">
-        <Helmet>
-          <title>{pageTitle} - Tales of Reval</title>
-          <meta name="description" content={pageDescription} />
-        </Helmet>
+        <SeoHead
+          title={pageMetaTitle}
+          description={pageDescription}
+          path="/virtual"
+          image={phonesImage}
+          imageAlt={pageTitle}
+          language={language}
+          schema={virtualTourStructuredData}
+        />
         <section
           className="virtual-tour-page__hero"
           style={{ backgroundImage: `url(${virtualBg})` }}

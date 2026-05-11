@@ -256,6 +256,7 @@ function AppShell() {
                     setAdminToken={setAdminToken}
                     siteSettings={siteSettings}
                     setSiteSettings={setSiteSettings}
+                    disableSeo
                   />
                   <AdminLoginPage
                     adminToken={adminToken}
