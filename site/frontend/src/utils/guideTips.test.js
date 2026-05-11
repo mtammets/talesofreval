@@ -3,12 +3,14 @@ import {
   getActiveGuidePaymentLinks,
   getGuideDisplayName,
   getGuideQrFileName,
+  getGuideTipOrigin,
   getGuideTipId,
   getGuideTipPath,
   getGuideTipUrl,
 } from './guideTips';
 
 describe('guide tip helpers', () => {
+  const originalPublicSiteUrl = process.env.REACT_APP_PUBLIC_SITE_URL;
   const member = {
     key: 'contact-member-1',
     name: {
@@ -24,6 +26,15 @@ describe('guide tip helpers', () => {
     ],
   };
 
+  afterEach(() => {
+    if (originalPublicSiteUrl === undefined) {
+      delete process.env.REACT_APP_PUBLIC_SITE_URL;
+      return;
+    }
+
+    process.env.REACT_APP_PUBLIC_SITE_URL = originalPublicSiteUrl;
+  });
+
   test('uses the persisted guide key for stable tip ids', () => {
     expect(getGuideTipId(member)).toBe('contact-member-1');
     expect(getGuideTipPath(member)).toBe('/tip/contact-member-1');
@@ -33,6 +44,17 @@ describe('guide tip helpers', () => {
     expect(getGuideTipUrl(member, 'https://www.talesofreval.ee')).toBe(
       'https://www.talesofreval.ee/tip/contact-member-1'
     );
+  });
+
+  test('defaults guide qr links to the live site origin', () => {
+    delete process.env.REACT_APP_PUBLIC_SITE_URL;
+    expect(getGuideTipOrigin()).toBe('https://talesofreval.ee');
+  });
+
+  test('allows overriding the live site origin explicitly', () => {
+    process.env.REACT_APP_PUBLIC_SITE_URL = 'https://custom.talesofreval.ee/';
+    expect(getGuideTipOrigin()).toBe('https://custom.talesofreval.ee');
+    delete process.env.REACT_APP_PUBLIC_SITE_URL;
   });
 
   test('finds guides by the tip route id', () => {

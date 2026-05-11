@@ -34,7 +34,7 @@ const uploadStaticOptions = {
 const port = process.env.PORT || 3000;
 const bindHost = process.env.BIND_HOST;
 const previewNoIndex = process.env.PREVIEW_NOINDEX === 'true';
-const defaultPublicSiteUrl = 'https://www.talesofreval.ee';
+const defaultPublicSiteUrl = 'https://talesofreval.ee';
 const adminRoutes = require('./routes/adminRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 const { isKnownFrontendRoute, renderAppHtml } = require('./lib/seo');
@@ -46,6 +46,9 @@ const resolvePublicSiteUrl = () =>
     /\/+$/,
     ''
   );
+
+const resolveGuideTipPublicSiteUrl = () =>
+  (process.env.PUBLIC_SITE_URL || defaultPublicSiteUrl).replace(/\/+$/, '');
 
 const getLastModified = (filePath) => {
   try {
@@ -129,6 +132,11 @@ if (previewNoIndex) {
 
   app.get('/robots.txt', (_req, res) => {
     res.type('text/plain').send('User-agent: *\nDisallow: /\n');
+  });
+
+  app.get('/tip/:guideId', (req, res) => {
+    const redirectUrl = new URL(req.originalUrl, resolveGuideTipPublicSiteUrl()).toString();
+    return res.redirect(302, redirectUrl);
   });
 } else {
   app.get('/robots.txt', (_req, res) => {

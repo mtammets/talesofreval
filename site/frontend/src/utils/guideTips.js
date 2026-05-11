@@ -1,6 +1,8 @@
 import { getLocalizedSiteText } from '../content/siteSettingsDefaults';
 import { normalizePaymentLinks } from '../content/paymentMethods';
 
+const DEFAULT_GUIDE_TIP_ORIGIN = 'https://talesofreval.ee';
+
 const slugifySegment = (value = '') =>
   String(value)
     .normalize('NFD')
@@ -36,11 +38,7 @@ export const getGuideTipOrigin = () => {
     return configuredOrigin.replace(/\/+$/, '');
   }
 
-  if (typeof window !== 'undefined') {
-    return window.location.origin;
-  }
-
-  return '';
+  return DEFAULT_GUIDE_TIP_ORIGIN;
 };
 
 export const getGuideTipUrl = (member = {}, origin = getGuideTipOrigin()) => {
