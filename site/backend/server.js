@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const express = require('express');
@@ -7,6 +8,7 @@ const express = require('express');
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
+app.disable('x-powered-by');
 app.set('trust proxy', 1);
 app.use(
   cors({
@@ -49,6 +51,28 @@ const resolvePublicSiteUrl = () =>
 
 const resolveGuideTipPublicSiteUrl = () =>
   (process.env.PUBLIC_SITE_URL || defaultPublicSiteUrl).replace(/\/+$/, '');
+
+const createCspNonce = () => crypto.randomBytes(16).toString('base64');
+
+const isHttpsRequest = (req) =>
+  req.secure || String(req.headers['x-forwarded-proto'] || '').includes('https');
+
+const buildContentSecurityPolicy = (nonce) =>
+  [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}'`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: https:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://leplace.leplace-api.com",
+    "frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com",
+    "manifest-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
+    'upgrade-insecure-requests',
+  ].join('; ');
 
 const getLastModified = (filePath) => {
   try {
@@ -123,6 +147,25 @@ ${urlEntries}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  const cspNonce = createCspNonce();
+  res.locals.cspNonce = cspNonce;
+  res.setHeader('Content-Security-Policy', buildContentSecurityPolicy(cspNonce));
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader(
+    'Permissions-Policy',
+    'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()'
+  );
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+
+  if (isHttpsRequest(req)) {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
+
+  next();
+});
 
 if (previewNoIndex) {
   app.use((_req, res, next) => {
@@ -180,6 +223,7 @@ if (process.env.NODE_ENV === 'production') {
 
     try {
       const html = await renderAppHtml({
+        cspNonce: res.locals.cspNonce,
         pathname: normalizedPath,
         siteUrl: resolvePublicSiteUrl(),
       });

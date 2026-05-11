@@ -7,6 +7,10 @@ export const SITE_URL =
 const DEFAULT_OG_IMAGE_PATH = '/logo512.png';
 const DEFAULT_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 const NOINDEX_ROBOTS = 'noindex,nofollow,noarchive';
+const resolveCspNonce = () =>
+  typeof document === 'undefined'
+    ? undefined
+    : document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') || undefined;
 
 const resolveLanguageCode = (language = 'en') => (language === 'ee' ? 'et' : 'en');
 const resolveLocale = (language = 'en') => (language === 'ee' ? 'et_EE' : 'en_US');
@@ -160,6 +164,7 @@ function SeoHead({
   const robotsContent = noindex ? NOINDEX_ROBOTS : DEFAULT_ROBOTS;
   const schemaItems = Array.isArray(schema) ? schema.filter(Boolean) : [schema].filter(Boolean);
   const cleanedDescription = toPlainText(description);
+  const cspNonce = resolveCspNonce();
 
   return (
     <Helmet>
@@ -187,7 +192,7 @@ function SeoHead({
       <meta name="twitter:image" content={imageUrl} />
       {children}
       {schemaItems.map((entry, index) => (
-        <script key={`structured-data-${index}`} type="application/ld+json">
+        <script key={`structured-data-${index}`} nonce={cspNonce} type="application/ld+json">
           {JSON.stringify(entry)}
         </script>
       ))}

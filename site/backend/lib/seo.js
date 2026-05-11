@@ -569,6 +569,7 @@ const stripExistingSeoTags = (html) =>
   html
     .replace(/<title\b[^>]*>[\s\S]*?<\/title>/gi, '')
     .replace(/<meta\b[^>]*name=["']description["'][^>]*>/gi, '')
+    .replace(/<meta\b[^>]*name=["']csp-nonce["'][^>]*>/gi, '')
     .replace(/<meta\b[^>]*name=["']keywords["'][^>]*>/gi, '')
     .replace(/<meta\b[^>]*name=["']robots["'][^>]*>/gi, '')
     .replace(/<meta\b[^>]*property=["']og:[^"']+["'][^>]*>/gi, '')
@@ -587,7 +588,7 @@ const injectHtmlLanguage = (html, language = DEFAULT_LANGUAGE) =>
     )}" data-react-helmet="lang">`;
   });
 
-const buildSeoTags = (seo) => {
+const buildSeoTags = (seo, cspNonce = '') => {
   const robotsValue = seo.noindex ? NOINDEX_ROBOTS : DEFAULT_ROBOTS;
   const tags = [
     `<title data-react-helmet="true">${escapeHtml(seo.title)}</title>`,
@@ -595,6 +596,12 @@ const buildSeoTags = (seo) => {
       seo.description
     )}"/>`,
   ];
+
+  if (cspNonce) {
+    tags.push(
+      `<meta data-react-helmet="true" name="csp-nonce" content="${escapeAttribute(cspNonce)}"/>`
+    );
+  }
 
   if (seo.keywords) {
     tags.push(
@@ -649,19 +656,19 @@ const buildSeoTags = (seo) => {
     }
 
     tags.push(
-      `<script data-react-helmet="true" type="application/ld+json">${escapeHtml(
-        JSON.stringify(schemaEntry)
-      )}</script>`
+      `<script data-react-helmet="true" type="application/ld+json"${
+        cspNonce ? ` nonce="${escapeAttribute(cspNonce)}"` : ''
+      }>${escapeHtml(JSON.stringify(schemaEntry))}</script>`
     );
   }
 
   return tags.join('');
 };
 
-const renderSeoHtml = (html, seo) =>
+const renderSeoHtml = (html, seo, cspNonce = '') =>
   injectHtmlLanguage(stripExistingSeoTags(html), DEFAULT_LANGUAGE).replace(
     /<\/head>/i,
-    `${buildSeoTags(seo)}</head>`
+    `${buildSeoTags(seo, cspNonce)}</head>`
   );
 
 const isKnownFrontendRoute = (pathname = '/') =>
@@ -679,7 +686,7 @@ const isKnownFrontendRoute = (pathname = '/') =>
     pathname
   ) !== null;
 
-const renderAppHtml = async ({ pathname = '/', siteUrl }) => {
+const renderAppHtml = async ({ cspNonce = '', pathname = '/', siteUrl }) => {
   const template = getIndexHtml();
   const siteSettings = await readSiteSettings();
   const seo = resolveSeoForPath(siteSettings, siteUrl, pathname);
@@ -688,7 +695,7 @@ const renderAppHtml = async ({ pathname = '/', siteUrl }) => {
     return null;
   }
 
-  return renderSeoHtml(template, seo);
+  return renderSeoHtml(template, seo, cspNonce);
 };
 
 module.exports = {
