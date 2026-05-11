@@ -22,6 +22,14 @@ function Reviews({reviews, misc_texts, variant = "default", content = null, lang
   const reviewRatingLabel =
     misc_texts?.["review-rating-label"]?.text ||
     getFallbackText('misc', 'review-rating-label', language, '5 out of 5 rating');
+  const reviewLinkText =
+    language === 'ee'
+      ? 'Loe Tripadvisori arvustusi'
+      : 'Read Tripadvisor reviews';
+  const reviewLinkLabel =
+    language === 'ee'
+      ? 'Loe Tales of Revali Tripadvisori arvustusi'
+      : 'Read Tales of Reval reviews on Tripadvisor';
 
   return (
     <div className={`review-container ${variant === "home" ? "review-container-home" : ""}`}>
@@ -42,11 +50,17 @@ function Reviews({reviews, misc_texts, variant = "default", content = null, lang
           </div>
         </div>
       </div>
-      <a className="review-read-more" href="https://www.tripadvisor.co.uk/Attraction_Review-g274958-d14768095-Reviews-Tales_of_Reval-Tallinn_Harju_County.html" target="_blank" rel="noopener noreferrer">
+      <a
+        className="review-read-more"
+        href="https://www.tripadvisor.co.uk/Attraction_Review-g274958-d14768095-Reviews-Tales_of_Reval-Tallinn_Harju_County.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={reviewLinkLabel}
+      >
         <span className="review-read-more__icon">
           <TripAdvisor size={variant === "home" ? "1.35rem" : "1.5rem"} />
         </span>
-        <span>{readMoreText}</span>
+        <span>{reviewLinkText || readMoreText}</span>
         <ArrowRightUp color="#202533" />
       </a>
     </div>

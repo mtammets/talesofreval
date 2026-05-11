@@ -37,6 +37,7 @@ const previewNoIndex = process.env.PREVIEW_NOINDEX === 'true';
 const defaultPublicSiteUrl = 'https://www.talesofreval.ee';
 const adminRoutes = require('./routes/adminRoutes');
 const emailRoutes = require('./routes/emailRoutes');
+const { isKnownFrontendRoute, renderAppHtml } = require('./lib/seo');
 const storyEventsRoutes = require('./routes/storyEventsRoutes');
 const siteSettingsRoutes = require('./routes/siteSettingsRoutes');
 
@@ -156,11 +157,34 @@ app.get('/health', (_req, res) => {
 app.use('/older', express.static(path.join(__dirname, '../../htdocs/old_webste/')));
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
-
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, '../', 'frontend', 'build', 'index.html'))
+  app.use(
+    express.static(path.join(__dirname, '../frontend/build'), {
+      index: false,
+    })
   );
+
+  app.get('*', async (req, res, next) => {
+    const normalizedPath = req.path === '/' ? '/' : req.path.replace(/\/+$/, '');
+
+    if (!isKnownFrontendRoute(normalizedPath)) {
+      return res.redirect(302, '/');
+    }
+
+    try {
+      const html = await renderAppHtml({
+        pathname: normalizedPath,
+        siteUrl: resolvePublicSiteUrl(),
+      });
+
+      if (!html) {
+        return res.redirect(302, '/');
+      }
+
+      return res.type('html').send(html);
+    } catch (error) {
+      return next(error);
+    }
+  });
 } else {
   app.get('/', (req, res) => res.send('Please set to production'));
 }
