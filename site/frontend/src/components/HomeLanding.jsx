@@ -1,4 +1,5 @@
 import PageHero from './PageHero';
+import { parseBracketLinkText } from '../utils/parseBracketLinkText';
 
 function HomeLanding({
   texts,
@@ -14,6 +15,7 @@ function HomeLanding({
   const storytellingText = texts["storytelling"] ? texts["storytelling"].text : null;
   const reinventedText = texts["reinvented"] ? texts["reinvented"].text : null;
   const imaginationVoiceText = texts["imagination-voice"] ? texts["imagination-voice"].text : null;
+  const { before, linkText, after } = parseBracketLinkText(imaginationVoiceText);
 
   return (
     <PageHero
@@ -31,7 +33,17 @@ function HomeLanding({
             {reinventedText}
           </h1>
           <p className="home-landing-text">
-            {imaginationVoiceText}
+            {linkText ? (
+              <>
+                {before}
+                <a className="home-landing-link" href="#footer-booking">
+                  {linkText}
+                </a>
+                {after}
+              </>
+            ) : (
+              imaginationVoiceText
+            )}
           </p>
         </div>
       </div>

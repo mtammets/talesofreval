@@ -31,13 +31,13 @@ const HEADER_EE = {
 const HOME_EN = {
   storytelling: "Storytelling",
   reinvented: "Reinvented",
-  "imagination-voice": "Let Your Imagination Find Its Voice!",
+  "imagination-voice": "Looking to join our free tour? [Click here!]",
 };
 
 const HOME_EE = {
   storytelling: "Lugude jutustamine",
   reinvented: "uuesti loodud",
-  "imagination-voice": "Lase oma kujutlusvõimel hääl leida!",
+  "imagination-voice": "Otsid meie annetuspõhist tuuri? [Kliki siia!]",
 };
 
 const MISC_EN = {

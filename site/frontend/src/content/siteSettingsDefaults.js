@@ -86,8 +86,8 @@ export const DEFAULT_SITE_SETTINGS = {
     titleLine1: { en: 'Storytelling', ee: 'Lugude jutustamine' },
     titleLine2: { en: 'Reinvented', ee: 'uuesti loodud' },
     subtitle: {
-      en: 'Let Your Imagination Find Its Voice!',
-      ee: 'Lase oma kujutlusvõimel hääl leida!',
+      en: 'Looking to join our free tour? [Click here!]',
+      ee: 'Otsid meie annetuspõhist tuuri? [Kliki siia!]',
     },
     bookNowLabel: {
       en: 'Book now',

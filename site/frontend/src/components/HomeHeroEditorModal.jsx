@@ -175,6 +175,10 @@ function HomeHeroEditorModal({
               />
             </label>
           </div>
+          <p className="story-admin-help">
+            Wrap the linked words in square brackets to send visitors to the footer booking
+            section, for example <code>Looking to join our free tour? [Click here!]</code>
+          </p>
 
           <div className="story-admin-grid two">
             <label>

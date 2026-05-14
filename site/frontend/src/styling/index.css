@@ -1764,6 +1764,22 @@ p.line-height-spaced{
   text-shadow: var(--home-hero-text-shadow);
 }
 
+.home-landing-link{
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.home-landing-link:hover,
+.home-landing-link:focus-visible{
+  opacity: 0.92;
+  text-decoration: none;
+}
+
+.footer-column-left{
+  scroll-margin-top: 112px;
+}
+
 /* BOOK NOW POPUP */
 body.book-now-modal-open{
   overflow: hidden;

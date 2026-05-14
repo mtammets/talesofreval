@@ -64,53 +64,53 @@ function FooterColumnLeft({ texts, content = null, setShowFreeBookNow }) {
     setShowFreeBookNow?.(true);
   };
 
-    return (
-      <div className="footer-column footer-column-left">
-        <h3 className="cardo footer-title">{joinFreeTourText}</h3>
-        <div className="footer-tour-times">
-          <p>{footerTimeText}</p>
-        </div>
-        <ul className="free-tour-info">
-          <li>{languageText[0]}: <span className="bold">{languageText[1]}</span></li>
-          <li>{durationText[0]}: <span className="bold">{durationText[1]}</span></li>
-          <li>{distanceText[0]}: <span className="bold">{distanceText[1]}</span></li>
-          <li>{startingPointText[0]}: <span className="bold">{startingPointText[1]}</span></li>
-        </ul>
-        <div className="footer-free-tour-cta">
-          <button
-            type="button"
-            className="footer-free-tour-book button-primary"
-            onClick={handleOpenFreeTourBooking}
-          >
-            <span className="button-text">{bookNowText}</span>
-            <span className="icon-span-right" aria-hidden="true">
-              <ArrowRight />
-            </span>
-          </button>
-        </div>
-        <div className="footer-map-card">
-          <iframe
-            className="footer-map-embed"
-            title={mapTitle}
-            src={mapPreviewSrc}
-            loading="lazy"
-            tabIndex="-1"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-          <a
-            className="footer-map-card__link"
-            href={mapLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={openMapText || getFallbackText('footer', 'open-map', language, 'Open map')}
-          />
-        </div>
-        {isMobileScreen ? null : (
-          <div className="footer-map-actions">
-            <ButtonPrimary text={openMapText} icon="ArrowRightUp" link={mapLink} />
-          </div>
-        )}
+  return (
+    <div className="footer-column footer-column-left" id="footer-booking">
+      <h3 className="cardo footer-title">{joinFreeTourText}</h3>
+      <div className="footer-tour-times">
+        <p>{footerTimeText}</p>
       </div>
+      <ul className="free-tour-info">
+        <li>{languageText[0]}: <span className="bold">{languageText[1]}</span></li>
+        <li>{durationText[0]}: <span className="bold">{durationText[1]}</span></li>
+        <li>{distanceText[0]}: <span className="bold">{distanceText[1]}</span></li>
+        <li>{startingPointText[0]}: <span className="bold">{startingPointText[1]}</span></li>
+      </ul>
+      <div className="footer-free-tour-cta">
+        <button
+          type="button"
+          className="footer-free-tour-book button-primary"
+          onClick={handleOpenFreeTourBooking}
+        >
+          <span className="button-text">{bookNowText}</span>
+          <span className="icon-span-right" aria-hidden="true">
+            <ArrowRight />
+          </span>
+        </button>
+      </div>
+      <div className="footer-map-card">
+        <iframe
+          className="footer-map-embed"
+          title={mapTitle}
+          src={mapPreviewSrc}
+          loading="lazy"
+          tabIndex="-1"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+        <a
+          className="footer-map-card__link"
+          href={mapLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={openMapText || getFallbackText('footer', 'open-map', language, 'Open map')}
+        />
+      </div>
+      {isMobileScreen ? null : (
+        <div className="footer-map-actions">
+          <ButtonPrimary text={openMapText} icon="ArrowRightUp" link={mapLink} />
+        </div>
+      )}
+    </div>
   );
 }
 
