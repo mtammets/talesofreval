@@ -627,6 +627,8 @@ function HomeTeamEditorModal({
                 <LocalizedImageAltFields
                   image={activeMember.image}
                   onChange={(patch) => updateMemberImageFocus(activeMemberIndex, patch)}
+                  layout="stacked"
+                  multiline
                 />
               </div>
 

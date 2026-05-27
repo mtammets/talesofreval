@@ -428,6 +428,8 @@ function StoryFeedEditorModal({
                     <LocalizedImageAltFields
                       image={form.image}
                       onChange={updateSingleImageFocus}
+                      layout="stacked"
+                      multiline
                     />
                   </>
                 ) : (
@@ -496,6 +498,8 @@ function StoryFeedEditorModal({
                         <LocalizedImageAltFields
                           image={item.image}
                           onChange={(patch) => updateGalleryImageFocus(index, patch)}
+                          layout="stacked"
+                          multiline
                           helperText={null}
                         />
                         <div className="story-feed-editor__gallery-actions">

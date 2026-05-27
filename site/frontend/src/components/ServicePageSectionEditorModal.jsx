@@ -141,6 +141,8 @@ function ServicePageSectionEditorModal({
                 <LocalizedImageAltFields
                   image={section.image || currentImage}
                   onChange={updateImageFocus}
+                  layout="stacked"
+                  multiline
                 />
               </div>
             </div>

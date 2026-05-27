@@ -311,6 +311,8 @@ function HomeServicesEditorModal({
                   <LocalizedImageAltFields
                     image={activeItem.image}
                     onChange={(patch) => updateItemImageFocus(activeItemIndex, patch)}
+                    layout="stacked"
+                    multiline
                   />
                 </div>
 

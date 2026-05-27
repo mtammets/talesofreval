@@ -106,6 +106,8 @@ function HeroImageEditorModal({
                       ...patch,
                     }))
                   }
+                  layout="stacked"
+                  multiline
                 />
               </div>
             </div>
