@@ -4,6 +4,8 @@ function LocalizedImageAltFields({
   image = null,
   onChange = null,
   helperText = 'Describe what is visible in the image for SEO and screen readers.',
+  layout = 'split',
+  multiline = false,
 }) {
   const alt = normalizeLocalizedSiteTextValue(image?.alt);
 
@@ -16,27 +18,31 @@ function LocalizedImageAltFields({
     });
   };
 
+  const FieldTag = multiline ? 'textarea' : 'input';
+  const fieldGridClassName =
+    layout === 'stacked'
+      ? 'localized-image-alt-fields localized-image-alt-fields--stacked'
+      : 'story-admin-grid two localized-image-alt-fields';
+
+  const renderField = (language, label) => (
+    <label>
+      {label}
+      <FieldTag
+        {...(multiline
+          ? { rows: 3 }
+          : { type: 'text' })}
+        maxLength={180}
+        value={alt[language]}
+        onChange={(event) => updateAlt(language, event.target.value)}
+      />
+    </label>
+  );
+
   return (
     <>
-      <div className="story-admin-grid two">
-        <label>
-          Alt text (EN)
-          <input
-            type="text"
-            maxLength={180}
-            value={alt.en}
-            onChange={(event) => updateAlt('en', event.target.value)}
-          />
-        </label>
-        <label>
-          Alt text (ET)
-          <input
-            type="text"
-            maxLength={180}
-            value={alt.ee}
-            onChange={(event) => updateAlt('ee', event.target.value)}
-          />
-        </label>
+      <div className={fieldGridClassName}>
+        {renderField('en', 'Alt text (EN)')}
+        {renderField('ee', 'Alt text (ET)')}
       </div>
       {helperText ? <p className="story-admin-help">{helperText}</p> : null}
     </>

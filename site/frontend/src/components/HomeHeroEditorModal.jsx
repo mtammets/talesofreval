@@ -281,6 +281,8 @@ function HomeHeroEditorModal({
                     <LocalizedImageAltFields
                       image={item.image}
                       onChange={item.onChange}
+                      layout="stacked"
+                      multiline
                       helperText={null}
                     />
                   </div>

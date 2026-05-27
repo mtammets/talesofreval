@@ -6961,6 +6961,25 @@ button.year-event-switch.disabled{
   color: rgba(32, 37, 51, 0.68);
 }
 
+.localized-image-alt-fields{
+  min-width: 0;
+}
+
+.localized-image-alt-fields label{
+  min-width: 0;
+}
+
+.localized-image-alt-fields--stacked{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.localized-image-alt-fields--stacked textarea{
+  min-height: 90px;
+  resize: vertical;
+}
+
 .hero-editor-preview{
   border: 1px solid rgba(32, 37, 51, 0.08);
   border-radius: 22px;
@@ -7010,7 +7029,7 @@ button.year-event-switch.disabled{
 
 .hero-editor-gallery__grid{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 14px;
 }
 
