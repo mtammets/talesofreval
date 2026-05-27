@@ -565,6 +565,10 @@
         "image": {
           "src": "/uploads/site/1776686440463-10474cc8-aa66-4bfd-9dbf-9eb5c3c86262-640w.webp",
           "name": "Frostgrave 2019_2.webp",
+          "alt": {
+            "en": "Medieval guide in a red cloak speaking to visitors on a street in Tallinn Old Town",
+            "ee": "Punases keepis keskaegne giid räägib külastajatega Tallinna vanalinna tänaval"
+          },
           "width": 640,
           "height": 520,
           "format": "webp",
@@ -621,7 +625,25 @@
           "ee": "Lühiformaadis Tallinna elamus külastajatele, kellel on vähe aega, kuid kes tahavad siiski meeldejäävat keskaegset lugu."
         },
         "imageKey": "serviceQuick",
-        "image": null
+        "image": {
+          "src": "",
+          "name": "",
+          "alt": {
+            "en": "Two smiling guides standing on a street in Tallinn Old Town",
+            "ee": "Kaks naeratavat giidi seisavad Tallinna vanalinna tänaval"
+          },
+          "width": 640,
+          "height": 520,
+          "format": "",
+          "pixelRatio": 1,
+          "focusX": 50,
+          "focusY": 50,
+          "zoom": 1,
+          "mobileFocusX": 50,
+          "mobileFocusY": 50,
+          "mobileZoom": 1,
+          "variants": []
+        }
       },
       {
         "key": "destination",
@@ -638,6 +660,10 @@
         "image": {
           "src": "/uploads/site/1776687129687-bd458ef9-88cf-4266-8b3b-75465a5401a6-640w.webp",
           "name": "Team-Visit-estonia.webp",
+          "alt": {
+            "en": "Medieval performers and hosts holding banners on the Tallinn waterfront",
+            "ee": "Keskaegsed esinejad ja võõrustajad hoiavad Tallinna mereäärsel promenaadil lippe"
+          },
           "width": 640,
           "height": 520,
           "format": "webp",
@@ -694,7 +720,25 @@
           "ee": "Fantaasiapulmade kontseptsioonid ja temaatilised peod koos õhtujuhtide, esinejate ning erilise keskaegse atmosfääriga."
         },
         "imageKey": "serviceWedding",
-        "image": null
+        "image": {
+          "src": "",
+          "name": "",
+          "alt": {
+            "en": "Three smiling women in medieval-style clothing at an outdoor event",
+            "ee": "Kolm naeratavat naist keskaegses stiilis rõivastes vabaõhuüritusel"
+          },
+          "width": 640,
+          "height": 520,
+          "format": "",
+          "pixelRatio": 1,
+          "focusX": 50,
+          "focusY": 50,
+          "zoom": 1,
+          "mobileFocusX": 50,
+          "mobileFocusY": 50,
+          "mobileZoom": 1,
+          "variants": []
+        }
       }
     ]
   },
