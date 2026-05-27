@@ -1,22 +1,19 @@
-name: Deploy preview
+name: Deploy live
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 concurrency:
-  group: deploy-preview
-  cancel-in-progress: true
+  group: deploy-live
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      PREVIEW_HOST: talesofreval.ee
-      PREVIEW_PORT: '22'
-      PREVIEW_USER: virt72693
+      LIVE_HOST: talesofreval.ee
+      LIVE_PORT: '22'
+      LIVE_USER: virt72693
 
     steps:
       - name: Check out repository
@@ -50,11 +47,11 @@ jobs:
 
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          printf '%s\n' "$PREVIEW_SSH_KEY" > ~/.ssh/preview_deploy_key
-          chmod 600 ~/.ssh/preview_deploy_key
+          printf '%s\n' "$PREVIEW_SSH_KEY" > ~/.ssh/live_deploy_key
+          chmod 600 ~/.ssh/live_deploy_key
 
       - name: Validate SSH private key
-        run: ssh-keygen -y -f ~/.ssh/preview_deploy_key > /dev/null
+        run: ssh-keygen -y -f ~/.ssh/live_deploy_key > /dev/null
 
       - name: Prepare SSH known_hosts
         run: |
@@ -68,20 +65,20 @@ jobs:
           set -euo pipefail
 
           ssh \
-            -i ~/.ssh/preview_deploy_key \
-            -p "$PREVIEW_PORT" \
+            -i ~/.ssh/live_deploy_key \
+            -p "$LIVE_PORT" \
             -o BatchMode=yes \
             -o ConnectTimeout=20 \
             -o StrictHostKeyChecking=accept-new \
             -o UserKnownHostsFile=~/.ssh/known_hosts \
-            "${PREVIEW_USER}@${PREVIEW_HOST}" \
-            'echo "Connected to preview server."'
+            "${LIVE_USER}@${LIVE_HOST}" \
+            'echo "Connected to live server."'
 
-      - name: Sync preview files
+      - name: Sync live files
         run: |
           set -euo pipefail
 
-          REMOTE_PATH="/data01/${PREVIEW_USER}/domeenid/www.talesofreval.ee/tor-preview"
+          REMOTE_PATH="/data01/${LIVE_USER}/domeenid/www.talesofreval.ee/tor-full-stack"
 
           rsync -az --delete \
             --exclude='.env' \
@@ -90,26 +87,26 @@ jobs:
             --exclude='frontend/node_modules/' \
             --exclude='backend/uploads/' \
             --exclude='uploads/' \
-            -e "ssh -i ~/.ssh/preview_deploy_key -p ${PREVIEW_PORT} -o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts" \
-            site/ "${PREVIEW_USER}@${PREVIEW_HOST}:${REMOTE_PATH}/"
+            -e "ssh -i ~/.ssh/live_deploy_key -p ${LIVE_PORT} -o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts" \
+            site/ "${LIVE_USER}@${LIVE_HOST}:${REMOTE_PATH}/"
 
-      - name: Reload preview app
+      - name: Reload live app
         run: |
           set -euo pipefail
 
-          REMOTE_PATH="/data01/${PREVIEW_USER}/domeenid/www.talesofreval.ee/tor-preview"
+          REMOTE_PATH="/data01/${LIVE_USER}/domeenid/www.talesofreval.ee/tor-full-stack"
 
           ssh \
-            -i ~/.ssh/preview_deploy_key \
-            -p "$PREVIEW_PORT" \
+            -i ~/.ssh/live_deploy_key \
+            -p "$LIVE_PORT" \
             -o BatchMode=yes \
             -o ConnectTimeout=20 \
             -o StrictHostKeyChecking=accept-new \
             -o UserKnownHostsFile=~/.ssh/known_hosts \
-            "${PREVIEW_USER}@${PREVIEW_HOST}" <<EOF
+            "${LIVE_USER}@${LIVE_HOST}" <<EOF
             set -e
             cd "$REMOTE_PATH"
             npm install --omit=dev
             node backend/scripts/syncRuntimeSiteSettings.js
-            pm2 reload tales-preview --update-env
+            pm2 reload tor-full --update-env
           EOF

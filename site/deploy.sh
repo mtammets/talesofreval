@@ -1,19 +1,17 @@
 #!/bin/bash
 
-# Navigate to the project directory
-cd /data01/virt72693/domeenid/www.talesofreval.ee/tor-full-stack || exit
+set -euo pipefail
 
-# Log file
+APP_ROOT="/data01/virt72693/domeenid/www.talesofreval.ee/tor-full-stack"
 LOGFILE="/data01/virt72693/domeenid/www.talesofreval.ee/deploy.log"
 
-# Pull the latest changes from the repository
-echo "Starting deployment at $(date)" >> $LOGFILE
-git pull origin main >> $LOGFILE 2>&1
-
-# Build the application
-cd /data01/virt72693/domeenid/www.talesofreval.ee/tor-full-stack/frontend || exit
-npm run build
-
-# Add additional deployment tasks here
-# For example, you might need to restart your server or perform build steps
-# sudo systemctl restart nginx >> $LOGFILE 2>&1
+{
+  echo "Starting deployment at $(date)"
+  cd "$APP_ROOT"
+  npm install --omit=dev
+  npm ci --prefix frontend
+  CI=false npm run build --prefix frontend
+  node backend/scripts/syncRuntimeSiteSettings.js
+  pm2 reload tor-full --update-env
+  echo "Deployment finished at $(date)"
+} >> "$LOGFILE" 2>&1
