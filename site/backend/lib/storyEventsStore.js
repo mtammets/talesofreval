@@ -1,5 +1,6 @@
 const fs = require('fs/promises');
 const { runtimeStoryEventsFile } = require('./storagePaths');
+const { normalizeLocalizedImageAlt } = require('./localizedImageAlt');
 
 const DATA_FILE = runtimeStoryEventsFile;
 
@@ -79,6 +80,7 @@ const defaultImageShape = (image = {}) => ({
     return {
       src: image.src || preferredVariant?.src || '',
       name: image.name || '',
+      alt: normalizeLocalizedImageAlt(image.alt),
       width: Number(image.width) || preferredVariant?.width || 1200,
       height: Number(image.height) || preferredVariant?.height || 760,
       format: image.format || preferredVariant?.format || '',

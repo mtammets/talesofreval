@@ -1,5 +1,6 @@
 import ImageFocusEditor from './ImageFocusEditor';
 import AdminModalShell from './AdminModalShell';
+import LocalizedImageAltFields from './LocalizedImageAltFields';
 
 const cloneValue = (value) =>
   value === null || value === undefined ? value : JSON.parse(JSON.stringify(value));
@@ -97,6 +98,15 @@ function HeroImageEditorModal({
                     </button>
                   ) : null}
                 </div>
+                <LocalizedImageAltFields
+                  image={draftImage || currentImage}
+                  onChange={(patch) =>
+                    onChangeImage?.((current) => ({
+                      ...(current || currentImage || {}),
+                      ...patch,
+                    }))
+                  }
+                />
               </div>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import {
   getLocalizedSiteText,
+  getSiteImageAlt,
   getImageObjectPosition,
   getImageZoom,
   resolveSiteImageMedia,
@@ -32,6 +33,7 @@ function OurTeamCard({
   const imageSrc = responsiveMedia?.src || image?.src || image || '';
   const imagePosition = responsiveMedia?.objectPosition || getImageObjectPosition(image);
   const imageZoom = responsiveMedia?.zoom || getImageZoom(image);
+  const imageAlt = getSiteImageAlt(image, language, title);
 
   return (
     <div className={`team ${showPaymentButton ? 'team--tippable' : 'team-home'}`}>
@@ -40,7 +42,7 @@ function OurTeamCard({
           src={imageSrc}
           srcSet={responsiveMedia?.srcSet || undefined}
           sizes={responsiveMedia?.sizes || undefined}
-          alt={title}
+          alt={imageAlt}
           style={{
             objectPosition: imagePosition,
             transform: `scale(${imageZoom})`,

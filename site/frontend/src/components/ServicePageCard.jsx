@@ -1,4 +1,5 @@
 import {
+  getSiteImageAlt,
   getImageObjectPosition,
   getImageZoom,
 } from '../content/siteSettingsDefaults';
@@ -16,6 +17,8 @@ function ServicePageCard({
   const imageSrc = imageMedia?.src || card.imageSrc || '';
   const imagePosition = imageMedia?.objectPosition || getImageObjectPosition(card.image);
   const imageZoom = imageMedia?.zoom || getImageZoom(card.image);
+  const language = localStorage.getItem('language') || 'en';
+  const imageAlt = getSiteImageAlt(card.image, language, card.title);
 
   return (
     <div className="service-page-card-wrapper">
@@ -40,7 +43,7 @@ function ServicePageCard({
               src={imageSrc}
               srcSet={imageMedia?.srcSet || undefined}
               sizes={imageMedia?.sizes || undefined}
-              alt={card.title}
+              alt={imageAlt}
               style={{
                 objectPosition: imagePosition,
                 transform: `scale(${imageZoom})`,

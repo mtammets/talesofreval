@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { getLocalizedSiteText, resolveSiteImage } from '../content/siteSettingsDefaults';
+import {
+  getLocalizedSiteText,
+  normalizeLocalizedSiteTextValue,
+  resolveSiteImage,
+} from '../content/siteSettingsDefaults';
 import {
   PAYMENT_METHODS,
   createEmptyPaymentLinks,
@@ -15,6 +19,7 @@ import AdminModalShell from './AdminModalShell';
 import ConfirmDialog from './ConfirmDialog';
 import GuideQrCard from './GuideQrCard';
 import ImageFocusEditor from './ImageFocusEditor';
+import LocalizedImageAltFields from './LocalizedImageAltFields';
 
 const HOMEPAGE_TEAM_CARD_PREVIEW_RATIO = '296 / 160';
 
@@ -195,6 +200,7 @@ function HomeTeamEditorModal({
               image: {
                 ...(member.image || {}),
                 name: fileName,
+                alt: normalizeLocalizedSiteTextValue(member.name),
                 focusX: 50,
                 focusY: 50,
                 zoom: 1,
@@ -617,6 +623,11 @@ function HomeTeamEditorModal({
                     <span className="story-admin-file-picker__button">{fileButtonLabel}</span>
                   </span>
                 </label>
+
+                <LocalizedImageAltFields
+                  image={activeMember.image}
+                  onChange={(patch) => updateMemberImageFocus(activeMemberIndex, patch)}
+                />
               </div>
 
               <div className="home-team-editor__media">

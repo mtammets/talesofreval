@@ -79,7 +79,7 @@ function DesktopHeader({
   return (
     <div className="header-container">
       <div className="header-logo" onClick={navhome}>
-        <img src={logo} alt="" />
+        <img src={logo} alt="Tales of Reval" />
       </div>
       {virtual ? (
         <div className={`virtual-bar flex space-between ${hideOnScroll ? 'hide' : ''}`}>

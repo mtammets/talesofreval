@@ -6,6 +6,7 @@ const multer = require('multer');
 
 const adminAuth = require('../middleware/adminAuth');
 const { getPublicStoryEvents, readStoryEvents, writeStoryEvents } = require('../lib/storyEventsStore');
+const { normalizeLocalizedImageAlt } = require('../lib/localizedImageAlt');
 const { runtimeStoryUploadsDir } = require('../lib/storagePaths');
 const { IMAGE_PRESETS, processUploadedImage } = require('../lib/uploadedImageProcessor');
 
@@ -144,6 +145,10 @@ const stripTransientImageFields = (image = {}) => {
   return rest;
 };
 
+const resolveImageAlt = (providedImage = null, fallbackImage = null) =>
+  normalizeLocalizedImageAlt(providedImage?.alt) ||
+  normalizeLocalizedImageAlt(fallbackImage?.alt);
+
 const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage = null) => {
   const baseImage = processedImage || fallbackImage || null;
 
@@ -155,6 +160,7 @@ const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage 
 
   return {
     ...cleanBaseImage,
+    alt: resolveImageAlt(providedImage, fallbackImage),
     focusX:
       Number(providedImage?.focusX) >= 0
         ? Number(providedImage.focusX)

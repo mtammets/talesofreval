@@ -388,7 +388,7 @@ function ContactUs({
         description={contactMetaDescription}
         path="/contacts"
         image={contactHeroMedia?.src}
-        imageAlt={contactUsText}
+        imageAlt={getLocalizedSiteText(contactHeroMedia?.alt, language, contactUsText)}
         language={language}
         keywords="Contact Tales of Reval, Book a Tour in Tallinn, Inquire About Medieval Tours, Tour Booking Contact, Tallinn Tour Inquiries, Medieval Tour Customer Service, Private Tours in Tallinn, Team Events Tallinn, Unique Tallinn Experiences"
         schema={contactStructuredData}

@@ -27,6 +27,7 @@ import {
   DEFAULT_SITE_SETTINGS,
   HERO_MEDIA_SIZES,
   createPreviewMediaAsset,
+  getLocalizedSiteText,
   resolveSiteImage,
   resolveSiteImageMedia,
 } from '../content/siteSettingsDefaults';
@@ -580,7 +581,7 @@ function StoryPage({
         description={storyMetaDescription}
         path="/story"
         image={storyHeroMedia?.src}
-        imageAlt={ourStoryText}
+        imageAlt={getLocalizedSiteText(storyHeroMedia?.alt, language, ourStoryText)}
         language={language}
         keywords="Medieval Themed Events, Tallinn Team Building Events, Private Medieval Events, Unique Event Hosting Tallinn, Corporate Events in Tallinn, Team Building Activities Tallinn, Special Events Tallinn, Medieval Feasts and Events, Customized Medieval Events, Tallinn Event Management"
         schema={storyStructuredData}

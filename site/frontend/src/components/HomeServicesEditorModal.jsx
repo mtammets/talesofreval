@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { resolveSiteImage } from '../content/siteSettingsDefaults';
+import {
+  normalizeLocalizedSiteTextValue,
+  resolveSiteImage,
+} from '../content/siteSettingsDefaults';
 import {
   HERO_IMAGE_PREPARATION_OPTIONS,
   prepareImageFileForUpload,
 } from '../utils/prepareImageFilesForUpload';
 import AdminModalShell from './AdminModalShell';
 import ImageFocusEditor from './ImageFocusEditor';
+import LocalizedImageAltFields from './LocalizedImageAltFields';
 
 const HOMEPAGE_SERVICE_CARD_PREVIEW_RATIO = '237 / 319';
 
@@ -111,6 +115,7 @@ function HomeServicesEditorModal({
               image: {
                 ...(item.image || {}),
                 name: fileName,
+                alt: normalizeLocalizedSiteTextValue(item.title),
                 focusX: 50,
                 focusY: 50,
                 zoom: 1,
@@ -302,6 +307,11 @@ function HomeServicesEditorModal({
                       <span className="story-admin-file-picker__button">Choose file</span>
                     </span>
                   </label>
+
+                  <LocalizedImageAltFields
+                    image={activeItem.image}
+                    onChange={(patch) => updateItemImageFocus(activeItemIndex, patch)}
+                  />
                 </div>
 
                 <div className="home-services-editor__media home-editor-card">

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const { getLocalizedImageAlt } = require('./localizedImageAlt');
 const { readSiteSettings } = require('./siteSettingsStore');
 
 const SITE_NAME = 'Tales of Reval';
@@ -300,6 +301,9 @@ const resolveImageSource = (preferredSrc = '', fallbackAssetKey = '') => {
   return DEFAULT_OG_IMAGE_PATH;
 };
 
+const resolveSeoImageAlt = (image = null, fallback = '') =>
+  getLocalizedImageAlt(image?.alt, DEFAULT_LANGUAGE, fallback);
+
 const buildBaseSeo = (siteUrl, pagePath, overrides = {}) => ({
   canonicalUrl: buildAbsoluteUrl(pagePath, siteUrl),
   description: HOME_META.description,
@@ -326,11 +330,12 @@ const buildHomeSeo = (siteSettings, siteUrl) => {
   const imageSrc = resolveImageSource(siteSettings.homeHero?.image?.src, 'homeBg');
   const address = localizedEn(siteSettings.footer?.address);
   const sameAs = Object.values(siteSettings.footer?.socialLinks || {}).filter(Boolean);
+  const imageAlt = resolveSeoImageAlt(siteSettings.homeHero?.image, HOME_META.title);
 
   return buildBaseSeo(siteUrl, '/', {
     description: HOME_META.description,
     image: buildAbsoluteUrl(imageSrc, siteUrl),
-    imageAlt: HOME_META.title,
+    imageAlt,
     keywords: HOME_META.keywords,
     schema: [
       buildWebsiteSchema({
@@ -361,11 +366,12 @@ const buildHomeSeo = (siteSettings, siteUrl) => {
 const buildStorySeo = (siteSettings, siteUrl) => {
   const imageSrc = resolveImageSource(siteSettings.storyPage?.image?.src, 'storyBg');
   const title = `Our story | ${SITE_NAME}`;
+  const imageAlt = resolveSeoImageAlt(siteSettings.storyPage?.image, 'Our story');
 
   return buildBaseSeo(siteUrl, '/story', {
     description: STORY_META_DESCRIPTION,
     image: buildAbsoluteUrl(imageSrc, siteUrl),
-    imageAlt: 'Our story',
+    imageAlt,
     schema: [
       buildWebPageSchema({
         title,
@@ -391,11 +397,12 @@ const buildContactSeo = (siteSettings, siteUrl) => {
   const imageSrc = resolveImageSource(siteSettings.contactPage?.image?.src, 'contactBg');
   const address = localizedEn(siteSettings.footer?.address || siteSettings.contactPage?.address);
   const sameAs = Object.values(siteSettings.footer?.socialLinks || {}).filter(Boolean);
+  const imageAlt = resolveSeoImageAlt(siteSettings.contactPage?.image, CONTACT_META.title);
 
   return buildBaseSeo(siteUrl, '/contacts', {
     description: CONTACT_META.description,
     image: buildAbsoluteUrl(imageSrc, siteUrl),
-    imageAlt: CONTACT_META.title,
+    imageAlt,
     schema: [
       buildWebPageSchema({
         title: CONTACT_META.title,
@@ -470,12 +477,16 @@ const buildServiceSeo = (siteSettings, siteUrl, serviceKey) => {
     siteSettings.servicePageHeroes?.[serviceKey]?.image?.src,
     seoConfig.heroKey
   );
+  const imageAlt = resolveSeoImageAlt(
+    siteSettings.servicePageHeroes?.[serviceKey]?.image,
+    pageTitle
+  );
   const pathName = `/service/${serviceKey}`;
 
   return buildBaseSeo(siteUrl, pathName, {
     description,
     image: buildAbsoluteUrl(imageSrc, siteUrl),
-    imageAlt: pageTitle,
+    imageAlt,
     keywords: seoConfig.keywords,
     schema: [
       buildWebPageSchema({

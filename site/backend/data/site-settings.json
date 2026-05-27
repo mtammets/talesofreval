@@ -530,7 +530,25 @@
           "ee": "Interaktiivsed keskaegsed tiimiüritused Tallinnas, mis toovad inimesed kokku huumori, lugude jutustamise ja live-esinemiste kaudu."
         },
         "imageKey": "serviceTeam",
-        "image": null
+        "image": {
+          "src": "",
+          "name": "",
+          "alt": {
+            "en": "Guests and a medieval host at an outdoor team event in Tallinn",
+            "ee": "Külalised ja keskaegne võõrustaja Tallinna vabaõhu tiimiüritusel"
+          },
+          "width": 640,
+          "height": 520,
+          "format": "",
+          "pixelRatio": 1,
+          "focusX": 50,
+          "focusY": 50,
+          "zoom": 1,
+          "mobileFocusX": 50,
+          "mobileFocusY": 50,
+          "mobileZoom": 1,
+          "variants": []
+        }
       },
       {
         "key": "private",

@@ -3,6 +3,7 @@ import { FaRegCircle, FaCircle } from "react-icons/fa";
 import { ArrowLeft } from '../icons/ArrowLeft.tsx';
 import { ArrowRight } from '../icons/ArrowRight.tsx';
 import {
+  getSiteImageAlt,
   getImageObjectPosition,
   getImageRotation,
   getImageZoom,
@@ -462,6 +463,11 @@ function StoryYear({
     const frameStyle = getGalleryFrameStyle(item.image, {
       '--story-gallery-ratio': `${imageWidth} / ${imageHeight}`,
     });
+    const fallbackAlt =
+      item.galleryItems?.length > 1
+        ? `${item.title} ${language === 'ee' ? `pilt ${itemIndex + 1}` : `image ${itemIndex + 1}`}`
+        : item.title;
+    const imageAlt = getSiteImageAlt(item.image, language, fallbackAlt);
 
     if (item.canEdit) {
       return (
@@ -496,7 +502,7 @@ function StoryYear({
           src={item.src}
           srcSet={item.media?.srcSet || undefined}
           sizes={item.media?.sizes || undefined}
-          alt=""
+          alt={imageAlt}
           className="year-gallery-image"
           style={{
             objectPosition: item.position,
@@ -520,6 +526,7 @@ function StoryYear({
       singleImageMedia?.objectPosition || getImageObjectPosition(image);
     const singleImageZoom = singleImageMedia?.zoom || getImageZoom(image);
     const singleImageRotation = getImageRotation(image);
+    const singleImageAlt = getSiteImageAlt(image, language, title);
     const canEditMedia = isEditable && !isMeasure && !isTarget && !isMobile;
     const galleryMediaItems =
       mediaType === 1 && Array.isArray(images)
@@ -539,6 +546,7 @@ function StoryYear({
                     width,
                     height,
                     orientation: getImageOrientation(width, height),
+                    title,
                     position: media?.objectPosition || getImageObjectPosition(galleryImage),
                     zoom: media?.zoom || getImageZoom(galleryImage),
                     canEdit: canEditMedia,
@@ -586,8 +594,7 @@ function StoryYear({
                 src={singleImageSrc}
                 srcSet={singleImageMedia?.srcSet || undefined}
                 sizes={singleImageMedia?.sizes || undefined}
-                alt=""
-                aria-hidden="true"
+                alt={singleImageAlt}
                 style={{
                   objectPosition: singleImagePosition,
                   transform: `scale(${getSingleImageScale(singleImageZoom, singleImageRotation)}) rotate(${singleImageRotation}deg)`,

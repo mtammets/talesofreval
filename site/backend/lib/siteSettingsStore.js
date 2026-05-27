@@ -6,6 +6,7 @@ const {
   applyBookingCountsToSchedule,
   normalizeFreeTourSchedule,
 } = require('./freeTourSchedule');
+const { normalizeLocalizedImageAlt } = require('./localizedImageAlt');
 
 const DATA_FILE = runtimeSiteSettingsFile;
 
@@ -72,6 +73,7 @@ const imageShape = (image = {}, fallbackWidth = 1440, fallbackHeight = 700) => (
     return {
       src: image.src || preferredVariant?.src || '',
       name: image.name || '',
+      alt: normalizeLocalizedImageAlt(image.alt),
       width: Number(image.width) || preferredVariant?.width || fallbackWidth,
       height: Number(image.height) || preferredVariant?.height || fallbackHeight,
       format: image.format || preferredVariant?.format || '',

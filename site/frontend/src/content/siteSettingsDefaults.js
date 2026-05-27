@@ -406,6 +406,11 @@ export const normalizeLocalizedSiteTextValue = (value, fallback = '') => {
   };
 };
 
+export const getSiteImageAlt = (image = null, language = 'en', fallback = '') => {
+  const resolvedAlt = getLocalizedSiteText(image?.alt, language, '').trim();
+  return resolvedAlt || fallback;
+};
+
 const normalizeResponsiveVariants = (variants = []) =>
   Array.isArray(variants)
     ? variants
@@ -542,6 +547,7 @@ export const resolveSiteImageMedia = (image, imageKey = '', sizes = '100vw') => 
 
   return {
     src: resolvedSrc,
+    alt: image?.alt,
     srcSet: variants.length
       ? variants.map((variant) => `${variant.src} ${variant.width}w`).join(', ')
       : '',
@@ -608,6 +614,7 @@ export const createPreviewMediaAsset = (src, sizes = '100vw', image = null) =>
 
         return {
           src,
+          alt: image?.alt,
           srcSet: '',
           sizes,
           width: 0,

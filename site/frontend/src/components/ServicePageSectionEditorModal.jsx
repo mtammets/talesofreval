@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { resolveSiteImage } from '../content/siteSettingsDefaults';
 import AdminModalShell from './AdminModalShell';
 import ImageFocusEditor from './ImageFocusEditor';
+import LocalizedImageAltFields from './LocalizedImageAltFields';
 
 const cloneValue = (value) =>
   value === null || value === undefined ? value : JSON.parse(JSON.stringify(value));
@@ -137,6 +138,10 @@ function ServicePageSectionEditorModal({
                     </button>
                   ) : null}
                 </div>
+                <LocalizedImageAltFields
+                  image={section.image || currentImage}
+                  onChange={updateImageFocus}
+                />
               </div>
             </div>
           </div>

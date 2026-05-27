@@ -1,5 +1,6 @@
 import {
   getImageBackgroundPosition,
+  getSiteImageAlt,
   getImageZoom,
   resolveSiteImageMedia,
 } from '../../content/siteSettingsDefaults';
@@ -15,6 +16,8 @@ function OurTeamCard({image, title}) {
   const imagePosition =
     responsiveMedia?.objectPosition || getImageBackgroundPosition(image);
   const imageZoom = responsiveMedia?.zoom || getImageZoom(image);
+  const language = localStorage.getItem('language') || 'en';
+  const imageAlt = getSiteImageAlt(image, language, title);
 
   return (
     <div className="contacts-team">
@@ -24,7 +27,7 @@ function OurTeamCard({image, title}) {
           src={imageSrc}
           srcSet={responsiveMedia?.srcSet || undefined}
           sizes={responsiveMedia?.sizes || undefined}
-          alt={title}
+          alt={imageAlt}
           style={{
             objectPosition: imagePosition,
             transform: `scale(${imageZoom})`,

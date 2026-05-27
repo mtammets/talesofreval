@@ -1,5 +1,6 @@
 import ImageFocusEditor from './ImageFocusEditor';
 import AdminModalShell from './AdminModalShell';
+import LocalizedImageAltFields from './LocalizedImageAltFields';
 import {
   getRetainedHomeHeroDraftKey,
   getSelectedHomeHeroDraftKey,
@@ -228,6 +229,10 @@ function HomeHeroEditorModal({
                 {slideshowItems.length} / {maxImageCount} image(s)
               </span>
             </div>
+            <p className="story-admin-help">
+              Add alt text for each hero image so social sharing previews and search engines
+              get a meaningful description.
+            </p>
             {slideshowItems.length ? (
               <div className="hero-editor-gallery__grid">
                 {slideshowItems.map((item) => (
@@ -273,6 +278,11 @@ function HomeHeroEditorModal({
                         </button>
                       </div>
                     </div>
+                    <LocalizedImageAltFields
+                      image={item.image}
+                      onChange={item.onChange}
+                      helperText={null}
+                    />
                   </div>
                 ))}
               </div>

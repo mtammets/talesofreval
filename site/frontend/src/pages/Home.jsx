@@ -527,7 +527,7 @@ function Home({
           description={homeMetaDescription}
           path="/"
           image={preloadHeroMedia?.src}
-          imageAlt={homeMetaTitle}
+          imageAlt={getLocalizedSiteText(preloadHeroMedia?.alt, language, homeMetaTitle)}
           language={language}
           keywords="Medieval Tours in Tallinn, Historical Experiences in Estonia, Interactive Medieval Experiences, Tallinn Guided Tours, Live Medieval Shows, Top Rated Tallinn Tours, Unique Tallinn Experiences, Authentic Tallinn Tours, Best Tallinn Attractions, Tallinn Tour Company"
           schema={homeStructuredData}

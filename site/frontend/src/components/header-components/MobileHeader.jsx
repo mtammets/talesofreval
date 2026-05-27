@@ -81,7 +81,7 @@ function MobileHeader({
   return (
     <div className={`mobile-header${ourServicesOpen ? ' mobile-header--menu-open' : ''}`}>
       <div className="header-logo" onClick={goHome}>
-        <img src={logo} alt="Logo" />
+        <img src={logo} alt="Tales of Reval" />
       </div>
       {
         virtual ? 

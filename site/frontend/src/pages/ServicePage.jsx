@@ -28,6 +28,7 @@ import {
   HERO_MEDIA_SIZES,
   createPreviewMediaAsset,
   getLocalizedSiteText,
+  normalizeLocalizedSiteTextValue,
   resolveSiteImage,
   resolveSiteImageMedia,
 } from '../content/siteSettingsDefaults';
@@ -560,6 +561,7 @@ function ServicePage({
         image: {
           ...(current.image || {}),
           name: preparedFile.name,
+          alt: normalizeLocalizedSiteTextValue(current.title),
           focusX: 50,
           focusY: 50,
           zoom: 1,
@@ -701,7 +703,7 @@ function ServicePage({
         description={pageMetaDescription}
         path={servicePath}
         image={backgroundMedia?.src}
-        imageAlt={pageTitle}
+        imageAlt={getLocalizedSiteText(backgroundMedia?.alt, language, pageTitle)}
         language={language}
         keywords={
           seoKeywords ||

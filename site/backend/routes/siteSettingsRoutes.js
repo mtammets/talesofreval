@@ -7,6 +7,7 @@ const { sendFreeTourCancellationEmails } = require('../controllers/emailControll
 const { normalizeSiteEmailTemplates } = require('../lib/siteEmailTemplates');
 const { cancelFreeTourBookingsForSlotIds } = require('../lib/freeTourBookingsStore');
 const { getEffectiveFreeTourSlots, normalizeFreeTourSchedule } = require('../lib/freeTourSchedule');
+const { normalizeLocalizedImageAlt } = require('../lib/localizedImageAlt');
 const { readSiteSettings, writeSiteSettings } = require('../lib/siteSettingsStore');
 const { runtimeSiteUploadsDir } = require('../lib/storagePaths');
 const { IMAGE_PRESETS, processUploadedImage } = require('../lib/uploadedImageProcessor');
@@ -67,6 +68,10 @@ const normalizeImageZoom = (value, fallback = 1) => {
   return Math.min(2.5, Math.max(1, Number(resolvedValue.toFixed(2))));
 };
 
+const resolveImageAlt = (providedImage = null, fallbackImage = null) =>
+  normalizeLocalizedImageAlt(providedImage?.alt) ||
+  normalizeLocalizedImageAlt(fallbackImage?.alt);
+
 const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage = null) => {
   const focusX =
     Number(providedImage?.focusX) >= 0
@@ -87,6 +92,7 @@ const mergeImageMetadata = (processedImage, fallbackImage = null, providedImage 
 
   return {
     ...(processedImage || fallbackImage || null),
+    alt: resolveImageAlt(providedImage, fallbackImage),
     focusX,
     focusY,
     zoom,

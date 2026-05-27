@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom"
 import { scrollViewportTop } from '../../utils/scrollViewportTop';
 import {
+  getSiteImageAlt,
   getImageObjectPosition,
   getImageZoom,
   resolveSiteImageMedia,
@@ -40,6 +41,8 @@ function ServiceCard({
   const imageZoom = responsiveMedia?.zoom || getImageZoom(imageValue);
   const mobileImageZoom =
     responsiveMedia?.mobileZoom || getImageZoom(imageValue, 'mobile');
+  const language = localStorage.getItem('language') || 'en';
+  const imageAlt = getSiteImageAlt(imageValue, language, title);
 
   const handleClick = () => {
     setOurServicesOpen?.(false);
@@ -60,8 +63,7 @@ function ServiceCard({
               src={imageSrc}
               srcSet={responsiveMedia?.srcSet || undefined}
               sizes={responsiveMedia?.sizes || undefined}
-              alt=""
-              aria-hidden="true"
+              alt={imageAlt}
               style={{
                 '--service-desktop-position': imagePosition,
                 '--service-mobile-position': mobileImagePosition,

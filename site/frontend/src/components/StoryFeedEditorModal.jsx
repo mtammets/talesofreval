@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { resolveSiteImage } from '../content/siteSettingsDefaults';
+import {
+  normalizeLocalizedSiteTextValue,
+  resolveSiteImage,
+} from '../content/siteSettingsDefaults';
 import {
   HERO_IMAGE_PREPARATION_OPTIONS,
   prepareImageFileForUpload,
@@ -10,6 +13,7 @@ import {
 import { normalizeVideoEmbedUrl } from '../features/events/storyAdminUtils';
 import AdminModalShell from './AdminModalShell';
 import ImageFocusEditor from './ImageFocusEditor';
+import LocalizedImageAltFields from './LocalizedImageAltFields';
 
 const STORY_SINGLE_IMAGE_RATIO = '30 / 19';
 
@@ -98,6 +102,10 @@ function StoryFeedEditorModal({
       image: {
         ...(current.image || {}),
         name: fileName,
+        alt: normalizeLocalizedSiteTextValue({
+          en: current.title,
+          ee: current.title_estonian,
+        }),
         focusX: 50,
         focusY: 50,
         zoom: 1,
@@ -130,6 +138,10 @@ function StoryFeedEditorModal({
         ...(current.images || []),
         ...files.map((file, index) => ({
           name: file.name,
+          alt: normalizeLocalizedSiteTextValue({
+            en: current.title,
+            ee: current.title_estonian,
+          }),
           focusX: 50,
           focusY: 50,
           zoom: 1,
@@ -403,15 +415,21 @@ function StoryFeedEditorModal({
                 ) : null}
 
                 {singleImageUrl ? (
-                  <ImageFocusEditor
-                    image={form.image}
-                    imageUrl={singleImageUrl}
-                    onChange={updateSingleImageFocus}
-                    aspectRatio={STORY_SINGLE_IMAGE_RATIO}
-                    label={null}
-                    helpText={null}
-                    allowZoom
-                  />
+                  <>
+                    <ImageFocusEditor
+                      image={form.image}
+                      imageUrl={singleImageUrl}
+                      onChange={updateSingleImageFocus}
+                      aspectRatio={STORY_SINGLE_IMAGE_RATIO}
+                      label={null}
+                      helpText={null}
+                      allowZoom
+                    />
+                    <LocalizedImageAltFields
+                      image={form.image}
+                      onChange={updateSingleImageFocus}
+                    />
+                  </>
                 ) : (
                   <div className="story-feed-editor__empty">
                     <span>Choose an image to preview it here.</span>
@@ -474,6 +492,11 @@ function StoryFeedEditorModal({
                           aspectRatio={STORY_SINGLE_IMAGE_RATIO}
                           label={null}
                           helpText={null}
+                        />
+                        <LocalizedImageAltFields
+                          image={item.image}
+                          onChange={(patch) => updateGalleryImageFocus(index, patch)}
+                          helperText={null}
                         />
                         <div className="story-feed-editor__gallery-actions">
                           <button
