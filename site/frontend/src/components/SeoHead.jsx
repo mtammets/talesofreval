@@ -2,8 +2,19 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 
 export const SITE_NAME = 'Tales of Reval';
-export const SITE_URL =
-  (process.env.REACT_APP_SITE_URL || 'https://www.talesofreval.ee').replace(/\/+$/, '');
+const resolveSiteUrl = () => {
+  if (process.env.REACT_APP_SITE_URL) {
+    return process.env.REACT_APP_SITE_URL.replace(/\/+$/, '');
+  }
+
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return window.location.origin.replace(/\/+$/, '');
+  }
+
+  return 'https://talesofreval.ee';
+};
+
+export const SITE_URL = resolveSiteUrl();
 const DEFAULT_OG_IMAGE_PATH = '/logo512.png';
 const DEFAULT_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 const NOINDEX_ROBOTS = 'noindex,nofollow,noarchive';

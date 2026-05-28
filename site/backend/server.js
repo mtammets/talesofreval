@@ -39,6 +39,7 @@ const previewNoIndex = process.env.PREVIEW_NOINDEX === 'true';
 const defaultPublicSiteUrl = 'https://talesofreval.ee';
 const adminRoutes = require('./routes/adminRoutes');
 const emailRoutes = require('./routes/emailRoutes');
+const { resolveLegacyRedirect } = require('./lib/legacyRedirects');
 const { isKnownFrontendRoute, renderAppHtml } = require('./lib/seo');
 const storyEventsRoutes = require('./routes/storyEventsRoutes');
 const siteSettingsRoutes = require('./routes/siteSettingsRoutes');
@@ -51,6 +52,14 @@ const resolvePublicSiteUrl = () =>
 
 const resolveGuideTipPublicSiteUrl = () =>
   (process.env.PUBLIC_SITE_URL || defaultPublicSiteUrl).replace(/\/+$/, '');
+
+const resolveCanonicalSiteUrl = () => {
+  try {
+    return new URL(resolvePublicSiteUrl());
+  } catch (_error) {
+    return null;
+  }
+};
 
 const createCspNonce = () => crypto.randomBytes(16).toString('base64');
 
@@ -84,6 +93,12 @@ const getLastModified = (filePath) => {
 
 const formatSitemapDate = (value) => new Date(value).toISOString();
 
+const isLocalRequestHost = (host = '') =>
+  host.startsWith('localhost') ||
+  host.startsWith('127.') ||
+  host.startsWith('[::1]') ||
+  host.endsWith('.local');
+
 const buildSitemapXml = () => {
   const siteUrl = resolvePublicSiteUrl();
   const siteSettingsUpdatedAt = getLastModified(runtimeSiteSettingsFile);
@@ -92,6 +107,7 @@ const buildSitemapXml = () => {
     siteSettingsUpdatedAt > storyEventsUpdatedAt ? siteSettingsUpdatedAt : storyEventsUpdatedAt;
   const routes = [
     { path: '/', priority: '1.0', changefreq: 'weekly', lastmod: siteSettingsUpdatedAt },
+    { path: '/services', priority: '0.9', changefreq: 'monthly', lastmod: siteSettingsUpdatedAt },
     { path: '/story', priority: '0.8', changefreq: 'monthly', lastmod: storyPageUpdatedAt },
     { path: '/contacts', priority: '0.8', changefreq: 'monthly', lastmod: siteSettingsUpdatedAt },
     { path: '/virtual', priority: '0.7', changefreq: 'monthly', lastmod: siteSettingsUpdatedAt },
@@ -165,6 +181,40 @@ app.use((req, res, next) => {
   }
 
   next();
+});
+
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV !== 'production') {
+    return next();
+  }
+
+  const canonicalSiteUrl = resolveCanonicalSiteUrl();
+  if (!canonicalSiteUrl) {
+    return next();
+  }
+
+  const requestHost = String(req.headers.host || '').toLowerCase();
+  if (!requestHost || isLocalRequestHost(requestHost)) {
+    return next();
+  }
+
+  if (requestHost === canonicalSiteUrl.host.toLowerCase()) {
+    return next();
+  }
+
+  const redirectUrl = new URL(req.originalUrl || req.url || '/', canonicalSiteUrl.origin);
+  return res.redirect(301, redirectUrl.toString());
+});
+
+app.use((req, res, next) => {
+  const redirectPath = resolveLegacyRedirect(req.path);
+  if (!redirectPath) {
+    return next();
+  }
+
+  const queryIndex = req.originalUrl.indexOf('?');
+  const query = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+  return res.redirect(301, `${redirectPath}${query}`);
 });
 
 if (previewNoIndex) {

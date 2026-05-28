@@ -46,6 +46,13 @@ const CONTACT_META = {
   description:
     'Get in touch with Tales of Reval for inquiries about our medieval tours, private tours, team events, and more. Contact us today to book your unique Tallinn experience.',
 };
+const SERVICES_META = {
+  title: 'Services and Medieval Experiences in Tallinn | Tales of Reval',
+  description:
+    'Browse medieval tours, private experiences, team events, destination management and themed celebrations in Tallinn by Tales of Reval.',
+  keywords:
+    'Tallinn tour services, Medieval experiences Tallinn, Private tours Tallinn, Team events Tallinn, Destination management Estonia, Wedding entertainment Tallinn',
+};
 const VIRTUAL_META_TITLE = 'Self-Guided Medieval Tour App in Tallinn | Tales of Reval';
 
 const SERVICE_SEO = {
@@ -433,6 +440,42 @@ const buildContactSeo = (siteSettings, siteUrl) => {
   });
 };
 
+const buildServicesSeo = (siteSettings, siteUrl) => {
+  const imageSrc = resolveImageSource(
+    siteSettings.servicePageHeroes?.team?.image?.src,
+    'serviceTeamHero'
+  );
+  const imageAlt = resolveSeoImageAlt(
+    siteSettings.servicePageHeroes?.team?.image,
+    SERVICES_META.title
+  );
+
+  return buildBaseSeo(siteUrl, '/services', {
+    description: SERVICES_META.description,
+    image: buildAbsoluteUrl(imageSrc, siteUrl),
+    imageAlt,
+    keywords: SERVICES_META.keywords,
+    schema: [
+      buildWebPageSchema({
+        title: SERVICES_META.title,
+        description: SERVICES_META.description,
+        path: '/services',
+        image: imageSrc,
+        siteUrl,
+        type: 'CollectionPage',
+      }),
+      buildBreadcrumbSchema(
+        [
+          { name: 'Home', path: '/' },
+          { name: 'Services', path: '/services' },
+        ],
+        siteUrl
+      ),
+    ],
+    title: SERVICES_META.title,
+  });
+};
+
 const buildVirtualSeo = (siteSettings, siteUrl) => {
   const pageTitle =
     `${localizedEn(siteSettings.virtualTourPage?.titleLine1)} ${localizedEn(
@@ -531,6 +574,10 @@ const resolveSeoForPath = (siteSettings, siteUrl, pathname) => {
 
   if (normalizedPath === '/story') {
     return buildStorySeo(siteSettings, siteUrl);
+  }
+
+  if (normalizedPath === '/services') {
+    return buildServicesSeo(siteSettings, siteUrl);
   }
 
   if (normalizedPath === '/contacts') {

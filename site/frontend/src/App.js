@@ -30,6 +30,10 @@ const StoryPage = lazyWithRetry(
   () => import('./pages/StoryPage'),
   'lazy-retry:story-page'
 );
+const ServicesOverview = lazyWithRetry(
+  () => import('./pages/ServicesOverview'),
+  'lazy-retry:services-overview'
+);
 const ContactUs = lazyWithRetry(
   () => import('./pages/ContactUs'),
   'lazy-retry:contact-us'
@@ -277,6 +281,10 @@ function AppShell() {
                   isEditMode={editControlsVisible}
                 />
               }
+            />
+            <Route
+              path="/services"
+              element={<ServicesOverview siteSettings={siteSettings} />}
             />
             <Route path="/styles" element={<StyleGuide />} />
             <Route
