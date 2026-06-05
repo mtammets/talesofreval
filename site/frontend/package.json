@@ -21,12 +21,14 @@
     "sharp": "^0.33.4"
   },
   "scripts": {
-    "start": "node node_modules/react-scripts/scripts/start.js",
-    "build": "node node_modules/react-scripts/scripts/build.js",
+    "clean:sourcemaps": "node scripts/clean-source-map-warnings.mjs",
+    "start": "node scripts/run-react-scripts.mjs start",
+    "build": "node scripts/run-react-scripts.mjs build",
     "optimize-images": "node scripts/optimize-images.mjs",
-    "test": "node node_modules/react-scripts/scripts/test.js",
+    "test": "node scripts/run-react-scripts.mjs test",
     "eject": "react-scripts eject",
-    "postbuild": ""
+    "postbuild": "",
+    "postinstall": "node scripts/clean-source-map-warnings.mjs"
   },
   "eslintConfig": {
     "extends": [

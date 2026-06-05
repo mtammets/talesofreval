@@ -5,10 +5,8 @@ const projectRoot = process.cwd();
 const frontendRoot = path.join(projectRoot, "site", "frontend");
 const frontendBuildScript = path.join(
   frontendRoot,
-  "node_modules",
-  "react-scripts",
-  "bin",
-  "react-scripts.js"
+  "scripts",
+  "run-react-scripts.mjs"
 );
 
 const buildProcess = spawn(

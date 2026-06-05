@@ -46,6 +46,10 @@ const GuideTipPage = lazyWithRetry(
   () => import('./pages/GuideTipPage'),
   'lazy-retry:guide-tip-page'
 );
+const BookingPage = lazyWithRetry(
+  () => import('./pages/BookingPage'),
+  'lazy-retry:booking-page'
+);
 const AdminLoginPage = lazyWithRetry(
   () => import('./pages/AdminLoginPage'),
   'lazy-retry:admin-login'
@@ -74,6 +78,7 @@ function AppShell() {
   const [editControlsVisible, setEditControlsVisible] = useState(Boolean(getStoredStoryAdminAuth()));
   const location = useLocation();
   const isAdminLogin = location.pathname === '/login';
+  const isBookingPage = location.pathname === '/booking';
   const isGuideTipPage = location.pathname.startsWith('/tip/');
 
   useEffect(() => {
@@ -283,6 +288,15 @@ function AppShell() {
               }
             />
             <Route
+              path="/booking"
+              element={
+                <BookingPage
+                  siteSettings={siteSettings}
+                  setShowFreeBookNow={setShowFreeBookNow}
+                />
+              }
+            />
+            <Route
               path="/services"
               element={<ServicesOverview siteSettings={siteSettings} />}
             />
@@ -327,7 +341,7 @@ function AppShell() {
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Suspense>
-      {!isGuideTipPage ? (
+      {!isGuideTipPage && !isBookingPage ? (
         <Footer
           setShowFreeBookNow={setShowFreeBookNow}
           adminToken={adminToken}

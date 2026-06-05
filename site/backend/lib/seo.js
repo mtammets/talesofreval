@@ -588,6 +588,15 @@ const resolveSeoForPath = (siteSettings, siteUrl, pathname) => {
     return buildVirtualSeo(siteSettings, siteUrl);
   }
 
+  if (normalizedPath === '/booking') {
+    return buildNoindexPageSeo(
+      siteUrl,
+      normalizedPath,
+      `Free Tour Booking | ${SITE_NAME}`,
+      'Standalone free tour booking page for Tales of Reval QR campaigns.'
+    );
+  }
+
   if (normalizedPath === '/login') {
     return buildNoindexPageSeo(
       siteUrl,

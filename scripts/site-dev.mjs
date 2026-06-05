@@ -10,10 +10,8 @@ const backendRoot = path.join(siteRoot, "backend");
 const backendEnvPath = path.join(backendRoot, ".env");
 const frontendScript = path.join(
   frontendRoot,
-  "node_modules",
-  "react-scripts",
-  "bin",
-  "react-scripts.js"
+  "scripts",
+  "run-react-scripts.mjs"
 );
 const backendScript = path.join(
   siteRoot,
@@ -24,19 +22,48 @@ const backendScript = path.join(
 );
 
 function getNetworkUrls(port) {
-  const urls = [];
   const interfaces = os.networkInterfaces();
+  const preferredInterfaceNames = ["en0", "en1", "Wi-Fi", "Ethernet"];
+  const collected = [];
 
-  for (const entries of Object.values(interfaces)) {
+  for (const [name, entries] of Object.entries(interfaces)) {
     if (!entries) continue;
 
     for (const entry of entries) {
       if (entry.family !== "IPv4" || entry.internal) continue;
-      urls.push(`http://${entry.address}:${port}/`);
+      collected.push({
+        interfaceName: name,
+        address: entry.address,
+        url: `http://${entry.address}:${port}/`
+      });
     }
   }
 
-  return [...new Set(urls)];
+  const priorityFor = (interfaceName) => {
+    const preferredIndex = preferredInterfaceNames.indexOf(interfaceName);
+    if (preferredIndex >= 0) {
+      return preferredIndex;
+    }
+
+    if (/^en\d+$/.test(interfaceName)) {
+      return preferredInterfaceNames.length + Number(interfaceName.slice(2));
+    }
+
+    return preferredInterfaceNames.length + 100;
+  };
+
+  return collected
+    .sort((left, right) => {
+      const priorityDiff =
+        priorityFor(left.interfaceName) - priorityFor(right.interfaceName);
+
+      if (priorityDiff !== 0) {
+        return priorityDiff;
+      }
+
+      return left.interfaceName.localeCompare(right.interfaceName);
+    })
+    .filter((entry, index, list) => list.findIndex((item) => item.url === entry.url) === index);
 }
 
 function spawnCommand(command, args, options) {
@@ -51,18 +78,20 @@ const backendPort = Number(process.env.BACKEND_PORT || 5020);
 const localUrl = `http://localhost:${frontendPort}/`;
 const networkUrls = getNetworkUrls(frontendPort);
 const publicSiteUrl =
-  process.env.REACT_APP_PUBLIC_SITE_URL || networkUrls[0] || localUrl;
+  process.env.REACT_APP_PUBLIC_SITE_URL || networkUrls[0]?.url || localUrl;
 
 console.log("");
 console.log("Tales Of Reval full-stack dev runner");
 console.log(`Arvutis:  ${localUrl}`);
 console.log(
-  `Telefonis: ${networkUrls[0] || "võrguaadressi ei tuvastatud automaatselt"}`
+  `Telefonis: ${networkUrls[0]?.url || "võrguaadressi ei tuvastatud automaatselt"}`
 );
 
 if (networkUrls.length > 1) {
   for (const extraUrl of networkUrls.slice(1)) {
-    console.log(`Telefonis (alternatiiv): ${extraUrl}`);
+    console.log(
+      `Telefonis (alternatiiv, ${extraUrl.interfaceName}): ${extraUrl.url}`
+    );
   }
 }
 
@@ -79,7 +108,7 @@ if (!fs.existsSync(path.join(siteRoot, "package.json"))) {
 }
 
 if (!fs.existsSync(frontendScript)) {
-  console.error("Puudub site/frontend/node_modules/react-scripts. Kontrolli, et frontend sõltuvused oleksid kaasas või paigalda need uuesti.");
+  console.error("Puudub site/frontend/scripts/run-react-scripts.mjs. Kontrolli, et frontend setup oleks olemas.");
   process.exit(1);
 }
 
