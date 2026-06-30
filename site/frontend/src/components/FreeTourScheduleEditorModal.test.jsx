@@ -602,6 +602,50 @@ describe('FreeTourScheduleEditorModal', () => {
     }
   });
 
+  test('opens on the first upcoming configured month instead of the oldest saved month', () => {
+    jest.useFakeTimers();
+
+    try {
+      jest.setSystemTime(new Date('2026-06-30T12:00:00'));
+
+      render(
+        <FreeTourScheduleEditorModal
+          schedule={{
+            isCustomized: true,
+            slots: [
+              { date: '2026-05-12', time: '10:00', bookings: 0 },
+              { date: '2026-05-12', time: '13:00', bookings: 0 },
+              { date: '2026-08-04', time: '10:00', bookings: 0 },
+              { date: '2026-08-04', time: '13:00', bookings: 0 },
+            ],
+          }}
+          setSchedule={jest.fn()}
+          onSave={jest.fn()}
+          onCancel={jest.fn()}
+          isSaving={false}
+        />
+      );
+
+      expect(
+        document.querySelector(
+          '.free-tour-calendar-editor__calendar-month[aria-label="August 2026"]'
+        )
+      ).not.toBeNull();
+      expect(
+        document.querySelector(
+          '.free-tour-calendar-editor__calendar-month[aria-label="May 2026"]'
+        )
+      ).toBeNull();
+      expect(
+        document.querySelector(
+          '[data-free-tour-date-key="2026-08-04"]'
+        )?.closest('.react-datepicker__day')?.className
+      ).toContain('free-tour-calendar-editor__calendar-day--active-with-slots');
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   test('does not switch months when clicking a visible day from the next month', () => {
     const monthDate = getMonthWithVisibleNextMonthDay();
     const nextMonthDate = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 1, 12, 0, 0, 0);

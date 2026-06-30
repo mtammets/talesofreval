@@ -51,6 +51,12 @@ const createTomorrow = () => {
   return date;
 };
 
+const createToday = () => {
+  const date = new Date();
+  date.setHours(12, 0, 0, 0);
+  return date;
+};
+
 const formatMonthLabel = (date) => MONTH_LABEL_FORMATTER.format(date);
 
 const formatMonthParts = (date) => {
@@ -117,6 +123,14 @@ const getMonthDateKeys = (monthDate) => {
 
 const formatCountLabel = (count, singular, plural = `${singular}s`) =>
   `${count} ${count === 1 ? singular : plural}`;
+
+const getInitialEditorDate = (groupedSchedule = []) => {
+  const today = createToday();
+  const todayKey = toFreeTourDateKey(today);
+  const upcomingDateKey = groupedSchedule.find((day) => day.date >= todayKey)?.date;
+
+  return parseFreeTourDate(upcomingDateKey) || today;
+};
 
 const getFreeTourSlotId = (slot = {}) => `${slot.date}-${slot.time}`;
 const FREE_TOUR_TIME_INPUT_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
@@ -238,17 +252,14 @@ function FreeTourScheduleEditorModal({
     [emailTemplates]
   );
   const [visibleMonth, setVisibleMonth] = useState(() => {
-    const firstDate = groupedSchedule[0]?.date;
-    return toCalendarMonthStart(parseFreeTourDate(firstDate) || createTomorrow());
+    return toCalendarMonthStart(getInitialEditorDate(groupedSchedule));
   });
   const [activeDate, setActiveDate] = useState(() => {
-    const firstDate = groupedSchedule[0]?.date;
-    return parseFreeTourDate(firstDate) || createTomorrow();
+    return getInitialEditorDate(groupedSchedule);
   });
   const [isBulkSelectionMode, setIsBulkSelectionMode] = useState(false);
   const [bulkSelectedDateKeys, setBulkSelectedDateKeys] = useState(() => {
-    const firstDate = groupedSchedule[0]?.date;
-    const initialDate = parseFreeTourDate(firstDate) || createTomorrow();
+    const initialDate = getInitialEditorDate(groupedSchedule);
     return [toFreeTourDateKey(initialDate)];
   });
   const [isDraggingBulkSelection, setIsDraggingBulkSelection] = useState(false);
