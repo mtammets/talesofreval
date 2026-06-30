@@ -1664,8 +1664,8 @@
       "body": "The following free tour registrations were cancelled because their slot was removed:\n\nCancellation reason:\n{cancellation_reason}\n\n{cancelled_list}"
     },
     "bookingClient": {
-      "subject": "Copy of Booking Email",
-      "body": "<p>Greetings!</p><p><br></p><p>This is a confirmation that we have received your booking request.<br>We will get back to you as soon as possible to confirm the details of your booking.</p><p>Service type: {event_type}</p><p><br></p><p>With warm regards</p><p><br></p><p>Tales of Reval<br><a href=\"https://www.talesofreval.ee\" rel=\"noopener noreferrer\" target=\"_blank\">https://www.talesofreval.ee</a><br>info@talesofreval.ee<br>+372 5560 4421</p>"
+      "subject": "Copy of Your Request",
+      "body": "<p>Greetings!</p><p><br></p><p>This is a confirmation that we have received your request.<br>We will get back to you as soon as possible.</p><p><br></p><p>With warm regards</p><p><br></p><p>Tales of Reval<br><a href=\"https://www.talesofreval.ee\" rel=\"noopener noreferrer\" target=\"_blank\">https://www.talesofreval.ee</a><br>info@talesofreval.ee<br>+372 5560 4421</p>"
     },
     "bookingAdmin": {
       "subject": "Tor Booking",

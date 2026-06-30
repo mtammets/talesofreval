@@ -60,13 +60,64 @@ const syncHomeServiceImageAlt = (runtimeSettings = {}, bundledSettings = {}) => 
   return changed;
 };
 
+const hasBlankTemplateValues = (template = {}) =>
+  !String(template?.subject || '').trim() || !String(template?.body || '').trim();
+
+const isLegacyBookingClientTemplate = (template = {}) => {
+  const subject = String(template?.subject || '').trim();
+  const body = String(template?.body || '').trim();
+
+  return (
+    subject === 'Copy of Booking Email' &&
+    body.includes('received your booking request') &&
+    body.includes('confirm the details of your booking')
+  );
+};
+
+const syncBookingClientEmailTemplate = (runtimeSettings = {}, bundledSettings = {}) => {
+  const bundledTemplate = bundledSettings.emailTemplates?.bookingClient;
+
+  if (!bundledTemplate?.subject || !bundledTemplate?.body) {
+    return 0;
+  }
+
+  if (!runtimeSettings.emailTemplates || typeof runtimeSettings.emailTemplates !== 'object') {
+    runtimeSettings.emailTemplates = {};
+  }
+
+  const runtimeTemplate = runtimeSettings.emailTemplates.bookingClient;
+  const shouldSync =
+    !runtimeTemplate ||
+    hasBlankTemplateValues(runtimeTemplate) ||
+    isLegacyBookingClientTemplate(runtimeTemplate);
+
+  if (!shouldSync) {
+    return 0;
+  }
+
+  if (
+    runtimeTemplate?.subject === bundledTemplate.subject &&
+    runtimeTemplate?.body === bundledTemplate.body
+  ) {
+    return 0;
+  }
+
+  runtimeSettings.emailTemplates.bookingClient = { ...bundledTemplate };
+  return 1;
+};
+
 const main = async () => {
   const [runtimeSettings, bundledSettings] = await Promise.all([
     readJson(runtimeSiteSettingsFile),
     readJson(bundledSiteSettingsFile),
   ]);
 
-  const changed = syncHomeServiceImageAlt(runtimeSettings, bundledSettings);
+  const syncedServiceImageAltCount = syncHomeServiceImageAlt(runtimeSettings, bundledSettings);
+  const syncedBookingClientTemplateCount = syncBookingClientEmailTemplate(
+    runtimeSettings,
+    bundledSettings
+  );
+  const changed = syncedServiceImageAltCount + syncedBookingClientTemplateCount;
 
   if (!changed) {
     console.log('No runtime site settings changes were needed.');
@@ -74,7 +125,25 @@ const main = async () => {
   }
 
   await fs.writeFile(runtimeSiteSettingsFile, `${JSON.stringify(runtimeSettings, null, 2)}\n`, 'utf8');
-  console.log(`Synced ${changed} service image alt text entr${changed === 1 ? 'y' : 'ies'} into runtime site settings.`);
+  const changeSummary = [];
+
+  if (syncedServiceImageAltCount > 0) {
+    changeSummary.push(
+      `${syncedServiceImageAltCount} service image alt text entr${
+        syncedServiceImageAltCount === 1 ? 'y' : 'ies'
+      }`
+    );
+  }
+
+  if (syncedBookingClientTemplateCount > 0) {
+    changeSummary.push(
+      `${syncedBookingClientTemplateCount} booking client email template entr${
+        syncedBookingClientTemplateCount === 1 ? 'y' : 'ies'
+      }`
+    );
+  }
+
+  console.log(`Synced ${changeSummary.join(' and ')} into runtime site settings.`);
 };
 
 main().catch((error) => {

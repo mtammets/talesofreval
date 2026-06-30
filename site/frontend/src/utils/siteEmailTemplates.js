@@ -76,13 +76,11 @@ Cancellation reason:
 {cancelled_list}`,
   }),
   bookingClient: Object.freeze({
-    subject: 'Copy of Booking Email',
+    subject: 'Copy of Your Request',
     body: `Greetings!
 
-This is a confirmation that we have received your booking request.
-We will get back to you as soon as possible to confirm the details of your booking.
-
-Service type: {event_type}
+This is a confirmation that we have received your request.
+We will get back to you as soon as possible.
 
 With warm regards
 
