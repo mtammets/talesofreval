@@ -111,5 +111,13 @@ jobs:
             cd "$REMOTE_PATH"
             npm install --omit=dev
             node backend/scripts/syncRuntimeSiteSettings.js
-            pm2 reload tales-preview --update-env
+            pm2 update
+
+            if pm2 describe tales-preview >/dev/null 2>&1; then
+              pm2 restart tales-preview --update-env
+            else
+              pm2 start ecosystem.preview.config.js --only tales-preview --update-env
+            fi
+
+            pm2 save
           EOF
