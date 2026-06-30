@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ButtonPrimary from './style-components/ButtonPrimary';
 import ButtonSecondary from './style-components/ButtonSecondary';
 import { FaCheck } from "react-icons/fa";
@@ -11,7 +11,11 @@ import { getDates, reset as resetDates } from '../features/tour/tourSlice';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getFallbackText } from '../content/fallbackContent';
-import { parseFreeTourDate, toFreeTourDateKey } from '../utils/freeTourSchedule';
+import { toFreeTourDateKey } from '../utils/freeTourSchedule';
+import {
+    getAvailableFreeTourDateKeys,
+    getHighlightedFreeTourDates,
+} from '../utils/freeTourBookingCalendar';
 
 function FreeBookNow({ showBookNow, setShowBookNow }) {
     const [submitted, setSubmitted] = useState(false);
@@ -72,27 +76,13 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
         }
     }, [language, numberOfPeople]);
 
+    const availableDateKeys = useMemo(() => getAvailableFreeTourDateKeys(dates), [dates]);
+    const availableDateKeySet = useMemo(() => new Set(availableDateKeys), [availableDateKeys]);
+    const highlightedDates = useMemo(() => getHighlightedFreeTourDates(dates), [dates]);
+
     const isDateAvailable = (date) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Set the time to midnight for accurate comparison
-    
-        if (date <= today) {
-            if (date.getTime() === today.getTime()) {
-                // Get the current time in the Estonian time zone
-                const estonianTime = new Date().toLocaleString("en-US", { timeZone: "Europe/Tallinn" });
-                const estonianDate = new Date(estonianTime);
-                const currentHourInEstonia = estonianDate.getHours();
-    
-                if (currentHourInEstonia >= 15) {
-                    return false;
-                }
-            }
-            return false;
-        }
-    
         const formattedDate = toFreeTourDateKey(date);
-        const isAvailable = dates.some(d => d.date === formattedDate);
-        return isAvailable;
+        return availableDateKeySet.has(formattedDate);
     };
 
     const getDateObject = (date, time) => {
@@ -230,15 +220,7 @@ function FreeBookNow({ showBookNow, setShowBookNow }) {
                             <DatePicker
                                 selected={selectedDate}
                                 onChange={(date) => setSelectedDate(date)}
-                                highlightDates={dates
-                                    .map(d => parseFreeTourDate(d.date))
-                                    .filter(Boolean)
-                                    .filter(date => {
-                                        const today = new Date();
-                                        today.setHours(0, 0, 0, 0);
-                                        return date > today;
-                                    })
-                                }
+                                highlightDates={highlightedDates}
                                 filterDate={isDateAvailable}
                                 dateFormat="yyyy-MM-dd"
                                 placeholderText={selectDatePlaceholder}
