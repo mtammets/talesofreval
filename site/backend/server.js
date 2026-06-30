@@ -69,12 +69,12 @@ const isHttpsRequest = (req) =>
 const buildContentSecurityPolicy = (nonce) =>
   [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}'`,
-    "style-src 'self' 'unsafe-inline'",
+    `script-src 'self' 'nonce-${nonce}' https://app.trysoro.com`,
+    "style-src 'self' 'unsafe-inline' https://app.trysoro.com",
     "img-src 'self' data: https:",
-    "font-src 'self' data:",
-    "connect-src 'self' https://leplace.leplace-api.com",
-    "frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com",
+    "font-src 'self' data: https://app.trysoro.com",
+    "connect-src 'self' https://leplace.leplace-api.com https://app.trysoro.com",
+    "frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com https://app.trysoro.com",
     "manifest-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",
@@ -108,6 +108,7 @@ const buildSitemapXml = () => {
   const routes = [
     { path: '/', priority: '1.0', changefreq: 'weekly', lastmod: siteSettingsUpdatedAt },
     { path: '/services', priority: '0.9', changefreq: 'monthly', lastmod: siteSettingsUpdatedAt },
+    { path: '/blog', priority: '0.8', changefreq: 'weekly', lastmod: siteSettingsUpdatedAt },
     { path: '/story', priority: '0.8', changefreq: 'monthly', lastmod: storyPageUpdatedAt },
     { path: '/contacts', priority: '0.8', changefreq: 'monthly', lastmod: siteSettingsUpdatedAt },
     { path: '/virtual', priority: '0.7', changefreq: 'monthly', lastmod: siteSettingsUpdatedAt },

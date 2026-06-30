@@ -34,6 +34,10 @@ const ServicesOverview = lazyWithRetry(
   () => import('./pages/ServicesOverview'),
   'lazy-retry:services-overview'
 );
+const BlogPage = lazyWithRetry(
+  () => import('./pages/BlogPage'),
+  'lazy-retry:blog-page'
+);
 const ContactUs = lazyWithRetry(
   () => import('./pages/ContactUs'),
   'lazy-retry:contact-us'
@@ -299,6 +303,10 @@ function AppShell() {
             <Route
               path="/services"
               element={<ServicesOverview siteSettings={siteSettings} />}
+            />
+            <Route
+              path="/blog"
+              element={<BlogPage siteSettings={siteSettings} />}
             />
             <Route path="/styles" element={<StyleGuide />} />
             <Route

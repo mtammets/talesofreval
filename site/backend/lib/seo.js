@@ -46,6 +46,13 @@ const CONTACT_META = {
   description:
     'Get in touch with Tales of Reval for inquiries about our medieval tours, private tours, team events, and more. Contact us today to book your unique Tallinn experience.',
 };
+const BLOG_META = {
+  title: 'Blog | Tales of Reval',
+  description:
+    'Read medieval Tallinn stories, travel insights and behind-the-scenes notes from Tales of Reval.',
+  keywords:
+    'Tallinn blog, medieval Tallinn, Tallinn stories, Tallinn experiences, Tales of Reval blog',
+};
 const SERVICES_META = {
   title: 'Services and Medieval Experiences in Tallinn | Tales of Reval',
   description:
@@ -476,6 +483,36 @@ const buildServicesSeo = (siteSettings, siteUrl) => {
   });
 };
 
+const buildBlogSeo = (siteSettings, siteUrl) => {
+  const imageSrc = resolveImageSource(siteSettings.storyPage?.image?.src, 'storyBg');
+  const imageAlt = resolveSeoImageAlt(siteSettings.storyPage?.image, BLOG_META.title);
+
+  return buildBaseSeo(siteUrl, '/blog', {
+    description: BLOG_META.description,
+    image: buildAbsoluteUrl(imageSrc, siteUrl),
+    imageAlt,
+    keywords: BLOG_META.keywords,
+    schema: [
+      buildWebPageSchema({
+        title: BLOG_META.title,
+        description: BLOG_META.description,
+        path: '/blog',
+        image: imageSrc,
+        siteUrl,
+        type: 'CollectionPage',
+      }),
+      buildBreadcrumbSchema(
+        [
+          { name: 'Home', path: '/' },
+          { name: 'Blog', path: '/blog' },
+        ],
+        siteUrl
+      ),
+    ],
+    title: BLOG_META.title,
+  });
+};
+
 const buildVirtualSeo = (siteSettings, siteUrl) => {
   const pageTitle =
     `${localizedEn(siteSettings.virtualTourPage?.titleLine1)} ${localizedEn(
@@ -578,6 +615,10 @@ const resolveSeoForPath = (siteSettings, siteUrl, pathname) => {
 
   if (normalizedPath === '/services') {
     return buildServicesSeo(siteSettings, siteUrl);
+  }
+
+  if (normalizedPath === '/blog') {
+    return buildBlogSeo(siteSettings, siteUrl);
   }
 
   if (normalizedPath === '/contacts') {

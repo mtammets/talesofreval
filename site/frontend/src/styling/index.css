@@ -11120,3 +11120,49 @@ button.year-event-switch.disabled{
     margin-top: 0;
   }
 }
+
+.blog-page__container{
+  padding-bottom: 72px;
+}
+
+.blog-page__intro{
+  max-width: 880px;
+}
+
+.blog-page__intro p{
+  margin: 18px 0 0;
+  color: var(--black);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.blog-embed-section{
+  padding-bottom: 24px;
+}
+
+.blog-embed-shell{
+  min-height: 320px;
+  padding: 24px;
+  border: 1px solid rgba(32, 37, 51, 0.12);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(230, 221, 215, 0.58) 0%, rgba(255, 255, 255, 0.96) 100%);
+  box-shadow: 0 20px 44px rgba(32, 37, 51, 0.08);
+}
+
+.blog-embed-error{
+  margin: 20px 0 0;
+  color: var(--error);
+  font-weight: 600;
+}
+
+@media screen and (max-width: 768px){
+  .blog-page__container{
+    padding-bottom: 56px;
+  }
+
+  .blog-embed-shell{
+    padding: 16px;
+    border-radius: 22px;
+  }
+}
