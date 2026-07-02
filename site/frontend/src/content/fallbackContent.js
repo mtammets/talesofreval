@@ -15,6 +15,7 @@ const createEntries = (values) =>
 const HEADER_EN = {
   home: "Home",
   "our-story": "Our story",
+  blog: "Blog",
   contacts: "Contacts",
   "eesti-keeles": "Eesti keeles",
   "book-now": "Book now",
@@ -23,6 +24,7 @@ const HEADER_EN = {
 const HEADER_EE = {
   home: "Avaleht",
   "our-story": "Meie lugu",
+  blog: "Blogi",
   contacts: "Kontakt",
   "eesti-keeles": "English",
   "book-now": "Broneeri",

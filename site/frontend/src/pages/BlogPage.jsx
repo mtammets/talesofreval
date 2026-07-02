@@ -13,7 +13,7 @@ import {
 } from '../content/siteSettingsDefaults';
 
 const SORO_BLOG_EMBED_ID =
-  process.env.REACT_APP_SORO_BLOG_EMBED_ID || '574b1ed2-60d2-4764-9d7c-eec614c17996';
+  process.env.REACT_APP_SORO_BLOG_EMBED_ID || '784da2e5-b950-4b11-bbcb-c05d76ba86d0';
 const SORO_BLOG_CONTAINER_ID = 'soro-blog';
 
 const PAGE_COPY = {

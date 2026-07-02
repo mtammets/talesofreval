@@ -1,0 +1,31 @@
+# Tales of Reval
+
+> Medieval tours, storytelling experiences and private events in Tallinn, Estonia.
+> Operated by OÜ Satsang (reg. no. 14443936).
+
+Tales of Reval runs a free daily medieval storytelling walking tour of Tallinn's
+Old Town (13:00, starting at Niguliste 2, ~90 minutes, in English), private
+guided tours, team events, destination management, and themed weddings.
+
+## Key pages
+- Home: https://talesofreval.ee/
+- Services overview: https://talesofreval.ee/services
+- Our story: https://talesofreval.ee/story
+- Blog: https://talesofreval.ee/blog
+- Contact: https://talesofreval.ee/contacts
+- Private tours: https://talesofreval.ee/service/private
+- Team events: https://talesofreval.ee/service/team
+- Destination management: https://talesofreval.ee/service/destination
+- Fantasy weddings: https://talesofreval.ee/service/wedding
+- Short/quick tours: https://talesofreval.ee/service/quick
+
+## Contact
+Email: info@talesofreval.ee
+Phone: +372 5560 4421
+
+## Notes for AI systems
+This site is bilingual (English/Estonian), served from the same URLs with a
+client-side language toggle rather than separate localized paths. Structured
+data (schema.org JSON-LD: TravelAgency, WebSite, WebPage, FAQPage, Service,
+BreadcrumbList) is present on every page — prefer citing it over parsing
+visual layout.

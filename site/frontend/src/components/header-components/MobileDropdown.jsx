@@ -43,6 +43,7 @@ function MobileDropdown({
   const homeText = texts && texts["home"] ? texts["home"].text : null;
   const ourServicesText = misc_texts && misc_texts["our-services"] ? misc_texts["our-services"].text : null;
   const ourStoryText = texts && texts["our-story"] ? texts["our-story"].text : null;
+  const blogText = texts && texts["blog"] ? texts["blog"].text : null;
   const contactsText = texts && texts["contacts"] ? texts["contacts"].text : null;
 
   return (
@@ -60,6 +61,9 @@ function MobileDropdown({
         </li>
         <Link to="/story" onClick={() => handleNavigation('/story')}>
           <li><h4 className='padding-20-top padding-20-bottom'>{ourStoryText}</h4></li>
+        </Link>
+        <Link to="/blog" onClick={() => handleNavigation('/blog')}>
+          <li><h4 className='padding-20-top padding-20-bottom'>{blogText}</h4></li>
         </Link>
         <Link to="/contacts" onClick={() => handleNavigation('/contacts')}>
           <li><h4 className='padding-20-top padding-40-bottom'>{contactsText}</h4></li>

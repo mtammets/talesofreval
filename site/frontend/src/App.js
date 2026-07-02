@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import Spinner from './components/Spinner';
 import Footer from './components/Footer';
+import HomeFaq from './components/HomeFaq';
 import storyAdminService, {
   getStoredStoryAdminAuth,
   setStoredStoryAdminAuth,
@@ -84,6 +85,7 @@ function AppShell() {
   const isAdminLogin = location.pathname === '/login';
   const isBookingPage = location.pathname === '/booking';
   const isGuideTipPage = location.pathname.startsWith('/tip/');
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     if (localStorage.getItem('language') === null) {
@@ -360,6 +362,9 @@ function AppShell() {
           isCalendarEditorOpen={isFreeTourCalendarEditorOpen}
           setIsCalendarEditorOpen={setIsFreeTourCalendarEditorOpen}
         />
+      ) : null}
+      {isHomePage ? (
+        <HomeFaq language={localStorage.getItem('language') || 'en'} />
       ) : null}
     </>
   );

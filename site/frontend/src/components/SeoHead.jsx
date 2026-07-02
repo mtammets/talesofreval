@@ -25,6 +25,12 @@ const resolveCspNonce = () =>
 
 const resolveLanguageCode = (language = 'en') => (language === 'ee' ? 'et' : 'en');
 const resolveLocale = (language = 'en') => (language === 'ee' ? 'et_EE' : 'en_US');
+const CLARITY_PROJECT_ID = 'x6v3bdy9l7';
+const CLARITY_SNIPPET = `(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "${CLARITY_PROJECT_ID}");`;
 
 export const buildAbsoluteUrl = (value = '/', baseUrl = SITE_URL) => {
   try {
@@ -155,6 +161,31 @@ export const buildBreadcrumbSchema = (items = []) => {
   };
 };
 
+const stripFaqIndex = (value = '') => String(value).replace(/^\d+\.\s*/, '').trim();
+
+export const buildFAQSchema = ({ items = [] } = {}) => {
+  const faqItems = Array.isArray(items)
+    ? items.filter((item) => item?.question && item?.answer)
+    : [];
+
+  if (!faqItems.length) {
+    return null;
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: stripFaqIndex(toPlainText(item.question)),
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: toPlainText(item.answer),
+      },
+    })),
+  };
+};
+
 function SeoHead({
   title = SITE_NAME,
   description = '',
@@ -201,6 +232,7 @@ function SeoHead({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={cleanedDescription} />
       <meta name="twitter:image" content={imageUrl} />
+      <script nonce={cspNonce} type="text/javascript">{CLARITY_SNIPPET}</script>
       {children}
       {schemaItems.map((entry, index) => (
         <script key={`structured-data-${index}`} nonce={cspNonce} type="application/ld+json">

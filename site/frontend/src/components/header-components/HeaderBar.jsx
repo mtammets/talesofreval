@@ -40,6 +40,7 @@ function HeaderBar({
   const homeText = texts && texts["home"] ? texts["home"].text : null;
   const ourServicesText = misc_texts && misc_texts["our-services"] ? misc_texts["our-services"].text : null;
   const ourStoryText = texts && texts["our-story"] ? texts["our-story"].text : null;
+  const blogText = texts && texts["blog"] ? texts["blog"].text : null;
   const contactsText = texts && texts["contacts"] ? texts["contacts"].text : null;
   const eestiKeelesText = texts && texts["eesti-keeles"] ? texts["eesti-keeles"].text : null;
   const canEditServicesFromDropdown = Boolean(adminToken) && isEditMode && isHomeLikePage;
@@ -56,6 +57,7 @@ function HeaderBar({
           <MenuItem title={homeText} onClick={() => handleClick("/")} />
           <MenuItem title={ourServicesText} dropdown selected={ourServicesOpen} onClick={() => setOurServicesOpen(!ourServicesOpen)} />
           <MenuItem title={ourStoryText} onClick={() => handleClick("/story")} />
+          <MenuItem title={blogText} onClick={() => handleClick("/blog")} />
           <MenuItem title={contactsText} onClick={() => handleClick("/contacts")} />
         </div>
         <div className="header-actions">

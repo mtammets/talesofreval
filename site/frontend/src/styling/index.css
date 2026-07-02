@@ -1702,6 +1702,86 @@ p.line-height-spaced{
   width: min(1184px, calc(100% - 48px));
 }
 
+
+.home-faq{
+  margin-top: 0;
+  padding-top: 20px;
+  background: var(--dark-blue);
+  color: var(--cream);
+  border-radius: 0;
+  padding-inline: 48px;
+  padding-bottom: 48px;
+}
+
+.home-faq__header{
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.home-faq__header h2{
+  margin: 0;
+  color: var(--cream);
+  font-size: 24px;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.home-faq__grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 20px;
+}
+
+.home-faq__item{
+  min-width: 0;
+  padding: 10px 0 0;
+  border-top: 1px solid rgba(244, 239, 232, 0.12);
+}
+
+.home-faq__question{
+  list-style: none;
+  margin: 0;
+  color: var(--cream);
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-faq__question::-webkit-details-marker{
+  display: none;
+}
+
+.home-faq__question::after{
+  content: '+';
+  flex: 0 0 auto;
+  color: rgba(244, 239, 232, 0.72);
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1), color 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.home-faq__item[open] .home-faq__question::after{
+  content: '-';
+  color: var(--cream);
+}
+
+.home-faq__panel{
+  overflow: hidden;
+  padding-top: 8px;
+}
+
+.home-faq__answer{
+  margin: 4px 0 0;
+  color: rgba(244, 239, 232, 0.78);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .home-landing{
   height: 700px;
   max-width: 1440px;
@@ -5275,6 +5355,18 @@ button.year-event-switch.disabled{
  .google-maps{
   display: none;
 }
+
+@media only screen and (max-width:1100px) {
+  .home-faq{
+    margin-top: 0;
+    padding-inline: 32px;
+  }
+
+  .home-faq__grid{
+    gap: 8px 20px;
+  }
+}
+
  /* END FOOTER */
 
 }
@@ -6006,6 +6098,38 @@ button.year-event-switch.disabled{
   .home-page .container,
   .home-landing-content{
     width: calc(100% - 32px);
+  }
+
+    .home-faq{
+    margin-top: 0;
+    padding-top: 16px;
+    border-radius: 0;
+    padding-inline: 24px;
+  }
+
+  .home-faq__header{
+    margin-bottom: 12px;
+  }
+
+  .home-faq__header h2{
+    font-size: 20px;
+  }
+
+  .home-faq__grid{
+    grid-template-columns: 1fr;
+    gap: 8px 0;
+  }
+
+  .home-faq__item{
+    padding-top: 8px;
+  }
+
+  .home-faq__question{
+    font-size: 12px;
+  }
+
+  .home-faq__answer{
+    font-size: 11px;
   }
 
   .home-landing{
@@ -11121,6 +11245,24 @@ button.year-event-switch.disabled{
   }
 }
 
+.blog-page-hero__media{
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 1440px;
+  margin: auto;
+  color: var(--cream);
+  padding-top: 80px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.blog-page-hero__media h1{
+  font-size: 4rem;
+  line-height: 4.5rem;
+}
+
 .blog-page__container{
   padding-bottom: 72px;
 }
@@ -11129,9 +11271,13 @@ button.year-event-switch.disabled{
   max-width: 880px;
 }
 
+.blog-page__intro h4{
+  color: var(--cream);
+}
+
 .blog-page__intro p{
   margin: 18px 0 0;
-  color: var(--black);
+  color: var(--cream);
   font-size: 1.05rem;
   line-height: 1.7;
 }
@@ -11145,9 +11291,36 @@ button.year-event-switch.disabled{
   padding: 24px;
   border: 1px solid rgba(32, 37, 51, 0.12);
   border-radius: 28px;
-  background:
-    linear-gradient(180deg, rgba(230, 221, 215, 0.58) 0%, rgba(255, 255, 255, 0.96) 100%);
-  box-shadow: 0 20px 44px rgba(32, 37, 51, 0.08);
+  background: transparent;
+}
+
+.blog-embed-shell .soro-blog-card-title{
+  color: var(--cream);
+}
+
+.blog-embed-shell .soro-blog-card-excerpt{
+  color: rgba(230, 221, 215, 0.75);
+}
+
+.blog-embed-shell .soro-blog-back{
+  color: rgba(230, 221, 215, 0.75);
+}
+
+.blog-embed-shell .soro-blog-article-title{
+  color: var(--cream);
+}
+
+.blog-embed-shell .soro-blog-article-date{
+  color: rgba(230, 221, 215, 0.6);
+}
+
+.blog-embed-shell .soro-blog-article-content{
+  color: rgba(230, 221, 215, 0.85);
+}
+
+.blog-embed-shell .soro-blog-article-content h2,
+.blog-embed-shell .soro-blog-article-content h3{
+  color: var(--cream);
 }
 
 .blog-embed-error{
@@ -11157,6 +11330,22 @@ button.year-event-switch.disabled{
 }
 
 @media screen and (max-width: 768px){
+
+  .blog-page{
+    padding-top: 84px;
+  }
+
+  .blog-page-hero__media{
+    text-align: center;
+    height: 400px;
+    width: 100%;
+  }
+
+  .blog-page-hero__media h1{
+    font-size: 3.5rem;
+    line-height: 4rem;
+  }
+
   .blog-page__container{
     padding-bottom: 56px;
   }

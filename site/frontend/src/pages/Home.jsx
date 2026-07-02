@@ -9,6 +9,7 @@ import HomeExploreBannerEditorModal from '../components/HomeExploreBannerEditorM
 import HomeReviewEditorModal from '../components/HomeReviewEditorModal';
 import HomeTeamEditorModal from '../components/HomeTeamEditorModal';
 import ManagedServicesSection from '../components/ManagedServicesSection';
+import { FAQ_COPY } from '../components/HomeFaq';
 import OurTeam from '../components/OurTeam';
 import Reviews from '../components/Reviews';
 import { getHomeTexts, getMiscTexts, reset } from '../features/texts/textSlice';
@@ -41,6 +42,7 @@ import {
   getSelectedHomeHeroDraftKey,
 } from '../utils/homeHeroDraftSelection';
 import SeoHead, {
+  buildFAQSchema,
   buildTravelAgencySchema,
   buildWebPageSchema,
   buildWebsiteSchema,
@@ -323,6 +325,7 @@ function Home({
         type: 'WebPage',
         language,
       }),
+      buildFAQSchema({ items: (FAQ_COPY[language] || FAQ_COPY.en).items }),
     ],
     [
       homeAddress,
